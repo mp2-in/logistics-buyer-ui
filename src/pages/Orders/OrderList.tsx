@@ -93,5 +93,6 @@ export default () => {
                 </div>
             </div>
         </div>
+        <p>{import.meta.env.PLACES_KEY}</p>
     </div>
 }
