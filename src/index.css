@@ -1,0 +1,30 @@
+:root {
+  font-family: "Nunito Sans", sans-serif;
+  letter-spacing: 1px;
+  font-size: 16px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #F6F6F6;
+  height: 100%;
+  width: 100%;
+}
+
+#root {
+  width: 100%;
+  max-width: 1600px;
+  margin: auto;
+  position: relative;
+  height: 100%;
+  background: white;
+  border: 1px solid #fff;
+}
