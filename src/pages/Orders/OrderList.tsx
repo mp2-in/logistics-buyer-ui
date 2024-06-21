@@ -93,6 +93,6 @@ export default () => {
                 </div>
             </div>
         </div>
-        <p>{import.meta.env.VITE_PLACES_KEY}</p>
+        {/* <p>{import.meta.env.VITE_PLACES_KEY}</p> */}
     </div>
 }
