@@ -11,8 +11,21 @@
     &>*{
         margin: 10px;
 
-        &:nth-child(3) {
-            margin-top: 50px;
+        &:nth-child(4) {
+            margin-top: 30px;
+        }
+
+        &.errMsgContainer {
+            visibility: hidden;
+            p {
+                color: red;
+                font-weight: 600;
+                font-size: 17px;
+            }
+
+            &.visible {
+                visibility: visible;
+            }
         }
     }
 }
