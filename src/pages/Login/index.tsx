@@ -5,7 +5,7 @@ import cn from 'classnames'
 import Input from '@components/Input'
 import Button from '@components/Button'
 
-import { useAppConfigStore } from 'stores/appConfigStore'
+import { useAppConfigStore } from 'stores/appConfig'
 
 import styles from './Login.module.scss'
 
