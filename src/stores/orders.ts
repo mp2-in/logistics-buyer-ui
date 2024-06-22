@@ -31,18 +31,18 @@ interface Attributes {
 }
 
 interface State extends Attributes {
-    getOrders: () => void,
+    getOrders: (token: string) => void,
 }
 
 const initialState: Attributes = { orders: [], activity: {}};
 
 export const useOrdersStore = create<State>()((set) => ({
     ...initialState,
-    getOrders: async () => {
+    getOrders: async (token: string) => {
         set(produce((state: State) => {
             state.activity.getOrders = false
         }))
-        Api('/webui/orders', { method: 'post', headers: { 'Cookie': 'access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtcDJfdGVzdF91c2VyfG1wMl9wcmVwcm9kIiwiZXhwIjoxNzE5MDQ5Mzg5Ljg3Nzk5fQ.BYCsXmS3XfAfaYBVbfyDNHm-xLJpCWv1rEm5avymPhA', 'Content-Type': 'application/json' }, data: {} })
+        Api('/webui/orders', { method: 'post', headers: { 'Cookie': `access_token=${token}`, 'Content-Type': 'application/json' }, data: {} })
             .then(res => {
                 set(produce((state: State) => {
                     state.orders = res

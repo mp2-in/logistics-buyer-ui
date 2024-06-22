@@ -3,13 +3,17 @@ import moreIcon from '@assets/more.png'
 import styles from './OrderList.module.scss'
 import { useOrdersStore } from 'stores/orders'
 import { useEffect } from 'react'
+import { useAppConfigStore } from 'stores/appConfig'
 
 
 export default () => {
     const { getOrders, orders } = useOrdersStore(state => ({ orders: state.orders, getOrders: state.getOrders, activity: state.activity }))
+    const { token } = useAppConfigStore(state => ({ token: state.token }))
 
     useEffect(() => {
-        getOrders()
+        if(token) {
+            getOrders(token)
+        }
     }, [])
 
     return <div className={styles.container}>
