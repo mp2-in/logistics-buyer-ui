@@ -53,7 +53,6 @@ export const useAppConfigStore = create<State>()((set) => ({
                 state.loggedIn = true
             }))
         }
-
         callback()
     }
 }))

@@ -3,7 +3,7 @@ import accountIcon from "@assets/account.png"
 
 import styles from './TopBar.module.scss'
 
-export default () => {
+export default ({ accountId }: { accountId: string }) => {
     return <div className={styles.container}>
         <div className={styles.menuAndTitle}>
             <img src={menuIcon} />
@@ -11,7 +11,7 @@ export default () => {
         </div>
         <div className={styles.account}>
             <img src={accountIcon} />
-            <p>Mahesh Herle</p>
+            <p>{accountId}</p>
         </div>
     </div>
 }

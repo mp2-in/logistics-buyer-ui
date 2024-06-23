@@ -1,7 +1,8 @@
 import {
   Routes,
   Route,
-  Navigate
+  Navigate,
+  Outlet
 } from "react-router-dom";
 
 import './index.css'
@@ -35,7 +36,7 @@ export default function App() {
     {checkStatus ? <Routes>
       <Route path="" element={<Navigate to={'/login'} />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/u/" element={<RequireAuth loggedIn={loggedIn}><Navigate to={'/u/orders'} /></RequireAuth>}>
+      <Route path="/u/" element={<RequireAuth loggedIn={loggedIn}><><Outlet /></></RequireAuth>}>
         <Route path="orders" element={<Orders />} />
       </Route>
     </Routes> : <ActivityIndicator />}
