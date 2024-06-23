@@ -11,6 +11,7 @@ interface Attributes {
 
 interface State extends Attributes {
     login: (username: string, password: string, successCallback: () => void, errCallback: () => void) => void,
+    checkLoginStatus: (callback: () => void) => void
 }
 
 const initialState: Attributes = { loggedIn: false, activity: {} };
@@ -38,5 +39,19 @@ export const useAppConfigStore = create<State>()((set) => ({
                 }))
                 errCallback()
             })
+    },
+    checkLoginStatus: async (callback) => {
+        const token = localStorage.getItem("token");
+        const accountId = localStorage.getItem("accountId");
+
+        if(token && accountId) {
+            set(produce((state: State) => {
+                state.token = token
+                state.accountId = accountId
+                state.loggedIn = true
+            }))
+        }
+
+        callback()
     }
 }))

@@ -30,7 +30,7 @@ export default () => {
             <p>Invalid credentials !</p>
         </div>
         <Button title='Sign In' variant='primary' disabled={!username || !password} onClick={() => {
-            login(username, password, () => navigate('/orders'), () => errMsgDisplay(true))
+            login(username, password, () => navigate('/u/orders'), () => errMsgDisplay(true))
         }} loading={activity.login} />
     </div>
 }

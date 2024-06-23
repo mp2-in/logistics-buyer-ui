@@ -13,7 +13,7 @@ export default () => {
     return <div>
         <TopBar />
         <div className={styles.btnContainer}>
-            <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" iconPosition="left" onClick={() => setAddOrderDisplay(true)} />
+            <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" iconPosition="left" onClick={() => setAddOrderDisplay(false)} />
         </div>
         <OrderList />
         <AddOrder open={showAddOrder} onClose={() => setAddOrderDisplay(false)} />

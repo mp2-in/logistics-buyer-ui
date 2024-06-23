@@ -42,7 +42,7 @@ export const useOrdersStore = create<State>()((set) => ({
         set(produce((state: State) => {
             state.activity.getOrders = false
         }))
-        Api('/webui/orders', { method: 'post', headers: { 'Cookie': `access_token=${token}`, 'Content-Type': 'application/json' }, data: {} })
+        Api('/webui/orders', { method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {} })
             .then(res => {
                 set(produce((state: State) => {
                     state.orders = res
