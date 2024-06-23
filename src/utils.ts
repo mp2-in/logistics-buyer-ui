@@ -7,7 +7,6 @@ export const Api = (url: string, options: { method: 'post' | 'put' | 'delete' | 
     axios
       .request({
         url: `${apiHost}${url}`,
-        headers: { "content-type": "application/json" },
         ...options,
       })
       .then((respJson) => {
