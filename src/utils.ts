@@ -12,15 +12,7 @@ export const Api = (url: string, options: { method: 'post' | 'put' | 'delete' | 
       })
       .then((respJson) => {
         if (respJson.status === 200) {
-          if (['post', 'patch', 'put', 'delete'].includes(options.method)) {
-            if (respJson.data["success"]) {
-              resolve(respJson.data);
-            } else {
-              reject(respJson.data);
-            }
-          } else {
-            resolve(respJson.data);
-          }
+          resolve(respJson.data);
         } else {
           throw new Error();
         }
