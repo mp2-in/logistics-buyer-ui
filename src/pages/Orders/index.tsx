@@ -1,24 +1,34 @@
-import Button from "@components/Button";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+
 import OrderList from "./OrderList";
 import TopBar from "./TopBar";
-import addIcon from "@assets/add.png"
-
-import styles from './Orders.module.scss'
-import { useState } from "react";
 import AddOrder from "./AddOrder";
+
 import { useAppConfigStore } from "stores/appConfig";
+import { useOrdersStore } from "stores/orders";
+
 
 export default () => {
     const [showAddOrder, setAddOrderDisplay] = useState(false)
     const { token, accountId } = useAppConfigStore(state => ({ token: state.token, accountId: state.accountId }))
+    const { getOrders, orders } = useOrdersStore(state => ({ orders: state.orders, getOrders: state.getOrders, activity: state.activity }))
+
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (token) {
+            getOrders(token)
+        } else {
+            navigate('/login')
+        }
+    }, [])
+
 
 
     return <div>
-        <TopBar accountId={accountId || ''}/>
-        <div className={styles.btnContainer}>
-            <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" iconPosition="left" onClick={() => setAddOrderDisplay(false)} />
-        </div>
-        <OrderList token={token || ''} />
+        <TopBar accountId={accountId || ''} />
+        <OrderList onAddOrder={() => setAddOrderDisplay(false)} onRefresh={() => token ? getOrders(token) : null} orders={orders}/>
         <AddOrder open={showAddOrder} onClose={() => setAddOrderDisplay(false)} />
     </div>
 }       

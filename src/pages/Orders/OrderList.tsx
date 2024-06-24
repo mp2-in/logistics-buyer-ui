@@ -1,26 +1,21 @@
-import { useEffect } from 'react'
-import {useNavigate} from 'react-router-dom'
-
-import { useOrdersStore } from 'stores/orders'
+import dayjs from 'dayjs'
+import Button from "@components/Button";
 
 import moreIcon from '@assets/more.png'
+import addIcon from "@assets/add.png"
+import refreshIcon from "@assets/refresh.png"
+
+import {Order} from 'stores/orders'
 
 import styles from './OrderList.module.scss'
 
 
-export default ({token}: {token: string}) => {
-    const { getOrders, orders } = useOrdersStore(state => ({ orders: state.orders, getOrders: state.getOrders, activity: state.activity }))
-    const navigate  = useNavigate()
-
-    useEffect(() => {
-        if(token) {
-            getOrders(token)
-        } else {
-            navigate('/login')
-        }
-    }, [])
-
+export default ({ onAddOrder, onRefresh, orders }: { onAddOrder: () => void, onRefresh: () => void , orders: Order[]}) => {
     return <div className={styles.container}>
+        <div className={styles.btnContainer}>
+            <Button title="Refresh" icon={<img src={refreshIcon} />} variant="primary" iconPosition="left" onClick={onRefresh} />
+            <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" iconPosition="left" onClick={onAddOrder} />
+        </div>
         <div className={styles.header}>
             <p>Date</p>
             <p>Order Id</p>
@@ -33,12 +28,12 @@ export default ({token}: {token: string}) => {
         <div className={styles.body}>
             {orders.map(e => {
                 return <div>
-                    <p>{e.created_at}</p>
+                    <p>{e.created_at ? dayjs(e.created_at).format('DD MMM, hh:mm A') : '--'}</p>
                     <p>{e.client_order_id}</p>
-                    <p>{e.lsp.name}l</p>
+                    <p>{e.lsp.name}</p>
                     <p>{e.lsp.item_id}</p>
-                    <p>{e.price}</p>
-                    <p>{e.distance}m</p>
+                    <p>{e.price ? `₹ ${e.price}` : 0}</p>
+                    <p>{e.distance ? `${e.distance}m` : 0}</p>
                     <div>
                         <img src={moreIcon} />
                     </div>
