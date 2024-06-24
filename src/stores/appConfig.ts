@@ -26,12 +26,12 @@ export const useAppConfigStore = create<State>()((set) => ({
             .then(res => {
                 set(produce((state: State) => {
                     state.token = res.access_token
-                    state.accountId = res.accountId
+                    state.accountId = res.account_id
                     state.loggedIn = true
                     state.activity.login = false
                 }))
                 localStorage.setItem("token", res.access_token);
-                localStorage.setItem("accountId",res.accountId);
+                localStorage.setItem("accountId",res.account_id);
                 successCallback()
             })
             .catch(() => {
