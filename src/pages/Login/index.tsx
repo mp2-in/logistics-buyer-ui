@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import cn from 'classnames'
 
@@ -14,8 +14,14 @@ export default () => {
     const [password, setPassword] = useState('')
     const [showErrMsg, errMsgDisplay] = useState(false)
 
-    const { login, activity } = useAppConfigStore(state => ({ login: state.login, activity: state.activity }))
+    const { login, activity, loggedIn } = useAppConfigStore(state => ({ login: state.login, activity: state.activity, loggedIn: state.loggedIn }))
     const navigate = useNavigate()
+
+    useEffect(() => {
+        if(loggedIn) {
+            navigate('/u/orders')
+        }
+    }, [loggedIn])
 
     return <div className={styles.container}>
         <Input label='Username' required value={username || ''} onChange={val => {
