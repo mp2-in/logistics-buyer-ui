@@ -20,7 +20,7 @@ export const useAppConfigStore = create<State>()((set) => ({
     ...initialState,
     login: async (username, password, successCallback, errCallback) => {
         set(produce((state: State) => {
-            state.activity.login = false
+            state.activity.login = true
         }))
         Api('/webui/login', { method: 'post', headers: { 'x-mp2-api-key': 'MP2Kktmeeezr309axf9eagfrrds61tqauv1am5qqh6dzyhuzqv4ggb8x7jts4bim', 'Content-Type': 'application/json' }, data: { username, password } })
             .then(res => {
