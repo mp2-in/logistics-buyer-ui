@@ -19,7 +19,8 @@ interface State {
     name: string,
     phoneNumber: string,
     value: string,
-    rto: boolean
+    rto: boolean,
+    store: string
 }
 
 const reducer = (state: State, payload: Partial<State>) => {
@@ -33,7 +34,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, activity, pickup
     open: boolean, onClose: () => void, onPlacesSearch: (searchText: string,
         callback: (data: Place[]) => void) => void, getPickupList: () => void, activity: { [k: string]: boolean }, pickupStores: PickupStore[]
 }) => {
-    const [state, dispatch] = useReducer(reducer, { placesResponse: [], address: '', placeId: '', name: '', phoneNumber: '', value: '', rto: false })
+    const [state, dispatch] = useReducer(reducer, { placesResponse: [], address: '', placeId: '', name: '', phoneNumber: '', value: '', rto: false, store: '' })
 
     useEffect(() => {
         if (open) {
@@ -49,7 +50,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, activity, pickup
             </div>
             <div className={styles.body}>
                 <div>
-                    <Select label="Outlet" options={pickupStores.map(e => ({ label: e.address.name, value: e.storeId }))} />
+                    <Select label="Outlet" options={pickupStores.map(e => ({ label: e.address.name, value: e.storeId }))} onChange={val => dispatch({store: val})} value={state.store}/>
                     <p className={styles.link}>Add Outlet</p>
                 </div>
                 <p className={styles.sectionHeader}>Drop</p>
