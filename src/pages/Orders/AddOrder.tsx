@@ -36,8 +36,10 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, activity }: {
     const [state, dispatch] = useReducer(reducer, { placesResponse: [], address: '', placeId: '', name: '', phoneNumber: '', value:  '', rto: false })
 
     useEffect(() => {
-        getPickupList()
-    }, [])
+        if(open) {
+            getPickupList()
+        }
+    }, [open])
 
     return <Modal open={open} onClose={onClose} loading={activity.getPickupList}>
         <div className={styles.container} onClick={e => e.stopPropagation()}>
