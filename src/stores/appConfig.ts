@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { produce } from 'immer'
-import { Api } from 'utils'
+import { Api } from '@lib/utils'
 
 interface Attributes {
     token?: string,

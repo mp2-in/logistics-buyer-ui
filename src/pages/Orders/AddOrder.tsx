@@ -8,7 +8,7 @@ import Input from "@components/Input"
 import Switch from "@components/Switch"
 import Button from "@components/Button"
 
-import { Place } from 'stores/orders'
+import { Place, PickupStore } from '@lib/interfaces'
 
 import styles from './AddOrder.module.scss'
 
@@ -29,14 +29,14 @@ const reducer = (state: State, payload: Partial<State>) => {
     }
 }
 
-export default ({ open, onClose, onPlacesSearch, getPickupList, activity }: {
+export default ({ open, onClose, onPlacesSearch, getPickupList, activity, pickupStores }: {
     open: boolean, onClose: () => void, onPlacesSearch: (searchText: string,
-        callback: (data: Place[]) => void) => void, getPickupList: () => void, activity: {[k: string]: boolean}
+        callback: (data: Place[]) => void) => void, getPickupList: () => void, activity: { [k: string]: boolean }, pickupStores: PickupStore[]
 }) => {
-    const [state, dispatch] = useReducer(reducer, { placesResponse: [], address: '', placeId: '', name: '', phoneNumber: '', value:  '', rto: false })
+    const [state, dispatch] = useReducer(reducer, { placesResponse: [], address: '', placeId: '', name: '', phoneNumber: '', value: '', rto: false })
 
     useEffect(() => {
-        if(open) {
+        if (open) {
             getPickupList()
         }
     }, [open])
@@ -49,42 +49,44 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, activity }: {
             </div>
             <div className={styles.body}>
                 <div>
-                    <Select label="Outlet" />
+                    <Select label="Outlet" options={pickupStores.map(e => ({ label: e.address.name, value: e.storeId }))} />
                     <p className={styles.link}>Add Outlet</p>
                 </div>
                 <p className={styles.sectionHeader}>Drop</p>
                 <div className={styles.dropDetails}>
-                    <Input label="Name" value={state.name} onChange={val => dispatch({name: val})}/>
-                    <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => /^[0-9]*$/.test(val) && dispatch({phoneNumber: val})}/>
+                    <Input label="Name" value={state.name} onChange={val => dispatch({ name: val })} />
+                    <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => /^[0-9]*$/.test(val) && dispatch({ phoneNumber: val })} />
                 </div>
                 <div className={styles.address}>
                     <Input label="Address" onChange={val => {
                         dispatch({ address: val })
                         if (val.length > 2) {
                             onPlacesSearch(val, (data) => {
-                                dispatch({placesResponse:data.map(e => {
-                                    return {
-                                        id: e.id,
-                                        name: e.displayName.text,
-                                        address: e.formattedAddress,
-                                        latitude: e.location.latitude,
-                                        longitude: e.location.longitude
-                                    }
-                                })})
+                                dispatch({
+                                    placesResponse: data.map(e => {
+                                        return {
+                                            id: e.id,
+                                            name: e.displayName.text,
+                                            address: e.formattedAddress,
+                                            latitude: e.location.latitude,
+                                            longitude: e.location.longitude
+                                        }
+                                    })
+                                })
                             })
                         }
                     }} autoCompleteOptions={state.placesResponse.map(e => ({ label: `${e.name.toString()} (${e.address.toString()})`, value: e.id.toString() }))} size="extraLarge" value={state.address} onSelect={(l, v) => {
-                        dispatch({address: l, placeId: v})
+                        dispatch({ address: l, placeId: v })
                     }} />
                 </div>
                 <p className={styles.sectionHeader}>Order  Details</p>
                 <div>
                     <Select label="Type" />
-                    <Input label="Value" size="small" value={state.value} onChange={val => /^[0-9]*$/.test(val) && dispatch({value: val})}/>
+                    <Input label="Value" size="small" value={state.value} onChange={val => /^[0-9]*$/.test(val) && dispatch({ value: val })} />
                 </div>
                 <div className={styles.rto}>
                     <p>RTO Required: </p>
-                    <Switch on={state.rto} onClick={() => dispatch({rto: !state.rto})} />
+                    <Switch on={state.rto} onClick={() => dispatch({ rto: !state.rto })} />
                 </div>
                 <div>
                     <Select label="LSP" />

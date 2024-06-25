@@ -5,7 +5,7 @@ import moreIcon from '@assets/more.png'
 import addIcon from "@assets/add.png"
 import refreshIcon from "@assets/refresh.png"
 
-import {Order} from 'stores/orders'
+import {Order} from '@lib/interfaces'
 
 import styles from './OrderList.module.scss'
 
