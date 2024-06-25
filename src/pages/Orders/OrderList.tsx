@@ -27,7 +27,7 @@ export default ({ onAddOrder, onRefresh, orders }: { onAddOrder: () => void, onR
         </div>
         <div className={styles.body}>
             {orders.map(e => {
-                return <div>
+                return <div key={e.id}>
                     <p>{e.created_at ? dayjs(e.created_at).format('DD MMM, hh:mm A') : '--'}</p>
                     <p>{e.client_order_id}</p>
                     <p>{e.lsp.name}</p>

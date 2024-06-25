@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import {useAppConfigStore} from 'stores/appConfig'
+
 const apiHost = "https://preprod.logistics-buyer.mp2.in"
 
 export const Api = (url: string, options: { method: 'post' | 'put' | 'delete' | 'get', data?: any, headers?: { [k: string]: string } }) => {
@@ -17,6 +19,10 @@ export const Api = (url: string, options: { method: 'post' | 'put' | 'delete' | 
         }
       })
       .catch((err) => {
+        if (err.response.status === 401) {
+          useAppConfigStore.getState().clearAuth()
+          window.location.reload()
+        }
         reject(err);
       });
   });

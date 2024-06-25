@@ -30,7 +30,7 @@ export default function App() {
         setStatus(true)
       })
     }
-  }, [])
+  }, [loggedIn])
 
   return <>
     {checkStatus ? <Routes>
