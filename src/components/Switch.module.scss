@@ -1,0 +1,20 @@
+.outer-container {
+    width: 45px;
+    height: 24px;
+    border-radius: 15px;
+    padding: 2px;
+    background: #999;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    .inner-container {
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
+        background: white;
+    }
+    &.selected {
+        background: #0066ff;
+        flex-direction: row-reverse;
+    }
+}

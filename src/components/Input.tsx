@@ -8,6 +8,7 @@ interface Props {
     type?: string,
     value?: string | number,
     onChange?: (a: string) => void,
+    onSelect?: (label: string, value: string) => void,
     size?: "small" | "medium" | "large" | "extraLarge"
     placeholder?: string,
     readOnly?: boolean,
@@ -22,7 +23,7 @@ interface Props {
     error?: boolean
 }
 
-const Input = ({ label, type, value, onChange, size, placeholder, readOnly, onBlur, required, validation, max, onChangeCallback, autoCompleteOptions, error, minDate, maxDate}: Props) => {
+const Input = ({ label, type, value, onChange, size, placeholder, readOnly, onBlur, required, validation, max, onChangeCallback, autoCompleteOptions, error, minDate, maxDate, onSelect}: Props) => {
 
     let selectContainerRef = createRef<HTMLInputElement>();
     const [showOptions, optionsDisplay] = useState(false)
@@ -98,8 +99,8 @@ const Input = ({ label, type, value, onChange, size, placeholder, readOnly, onBl
                 >
                     <div ref={selectContainerRef} className={cn({ [styles.optionsList]: true, [styles.large]: size === 'large', [styles.extraLarge]: size === 'extraLarge', [styles.readOnly]: readOnly })}>
                         {autoCompleteOptions.map(eachOption => <p onClick={() => {
-                            if (onChange) {
-                                onChange(eachOption.value)
+                            if (onSelect) {
+                                onSelect(eachOption.label,eachOption.value)
                             }
                             optionsDisplay(false)
                         }}>{eachOption.label}</p>)}

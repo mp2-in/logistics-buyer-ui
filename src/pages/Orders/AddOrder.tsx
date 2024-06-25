@@ -1,17 +1,96 @@
+import { useEffect, useReducer } from "react"
+
 import Modal from "@components/Modal"
 import closeIcon from '@assets/close.png'
 
+import Select from "@components/Select"
+import Input from "@components/Input"
+import Switch from "@components/Switch"
+import Button from "@components/Button"
+
+import { Place } from 'stores/orders'
+
 import styles from './AddOrder.module.scss'
 
-export default ({ open, onClose }: { open: boolean, onClose: () => void }) => {
-    return <Modal open={open} onClose={onClose}>
-        <div className={styles.container}>
-            <div>
-                <p>Add Order</p>
-                <img src={closeIcon} onClick={onClose}/>
-            </div>
-            <div>
+interface State {
+    placesResponse: { [k: string]: string | number }[]
+    address: string
+    placeId: string,
+    name: string,
+    phoneNumber: string,
+    value: string,
+    rto: boolean
+}
 
+const reducer = (state: State, payload: Partial<State>) => {
+    return {
+        ...state,
+        ...payload
+    }
+}
+
+export default ({ open, onClose, onPlacesSearch, getPickupList, activity }: {
+    open: boolean, onClose: () => void, onPlacesSearch: (searchText: string,
+        callback: (data: Place[]) => void) => void, getPickupList: () => void, activity: {[k: string]: boolean}
+}) => {
+    const [state, dispatch] = useReducer(reducer, { placesResponse: [], address: '', placeId: '', name: '', phoneNumber: '', value:  '', rto: false })
+
+    useEffect(() => {
+        getPickupList()
+    }, [])
+
+    return <Modal open={open} onClose={onClose} loading={activity.getPickupList}>
+        <div className={styles.container} onClick={e => e.stopPropagation()}>
+            <div className={styles.header}>
+                <p>Add Order</p>
+                <img src={closeIcon} onClick={onClose} />
+            </div>
+            <div className={styles.body}>
+                <div>
+                    <Select label="Outlet" />
+                    <p className={styles.link}>Add Outlet</p>
+                </div>
+                <p className={styles.sectionHeader}>Drop</p>
+                <div className={styles.dropDetails}>
+                    <Input label="Name" value={state.name} onChange={val => dispatch({name: val})}/>
+                    <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => /^[0-9]*$/.test(val) && dispatch({phoneNumber: val})}/>
+                </div>
+                <div className={styles.address}>
+                    <Input label="Address" onChange={val => {
+                        dispatch({ address: val })
+                        if (val.length > 2) {
+                            onPlacesSearch(val, (data) => {
+                                dispatch({placesResponse:data.map(e => {
+                                    return {
+                                        id: e.id,
+                                        name: e.displayName.text,
+                                        address: e.formattedAddress,
+                                        latitude: e.location.latitude,
+                                        longitude: e.location.longitude
+                                    }
+                                })})
+                            })
+                        }
+                    }} autoCompleteOptions={state.placesResponse.map(e => ({ label: `${e.name.toString()} (${e.address.toString()})`, value: e.id.toString() }))} size="extraLarge" value={state.address} onSelect={(l, v) => {
+                        dispatch({address: l, placeId: v})
+                    }} />
+                </div>
+                <p className={styles.sectionHeader}>Order  Details</p>
+                <div>
+                    <Select label="Type" />
+                    <Input label="Value" size="small" value={state.value} onChange={val => /^[0-9]*$/.test(val) && dispatch({value: val})}/>
+                </div>
+                <div className={styles.rto}>
+                    <p>RTO Required: </p>
+                    <Switch on={state.rto} onClick={() => dispatch({rto: !state.rto})} />
+                </div>
+                <div>
+                    <Select label="LSP" />
+                    <p className={styles.link}>Check Prices</p>
+                </div>
+                <div className={styles.actionBtn}>
+                    <Button title="Create Order" variant="primary" />
+                </div>
             </div>
         </div>
     </Modal>

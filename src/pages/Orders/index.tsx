@@ -12,7 +12,7 @@ import { useOrdersStore } from "stores/orders";
 export default () => {
     const [showAddOrder, setAddOrderDisplay] = useState(false)
     const { token, accountId } = useAppConfigStore(state => ({ token: state.token, accountId: state.accountId }))
-    const { getOrders, orders } = useOrdersStore(state => ({ orders: state.orders, getOrders: state.getOrders, activity: state.activity }))
+    const { getOrders, orders, googlePlacesApi, getPickupList,activity } = useOrdersStore(state => ({ orders: state.orders, getOrders: state.getOrders, googlePlacesApi: state.googlePlacesApi, activity: state.activity, getPickupList: state.getPickupList }))
 
     const navigate = useNavigate()
 
@@ -24,11 +24,11 @@ export default () => {
         }
     }, [])
 
-
-
     return <div>
         <TopBar accountId={accountId || ''} />
-        <OrderList onAddOrder={() => setAddOrderDisplay(false)} onRefresh={() => token ? getOrders(token) : null} orders={orders}/>
-        <AddOrder open={showAddOrder} onClose={() => setAddOrderDisplay(false)} />
+        <OrderList onAddOrder={() => setAddOrderDisplay(true)} onRefresh={() => token ? getOrders(token) : null} orders={orders} />
+        <AddOrder open={showAddOrder} onClose={() => setAddOrderDisplay(false)} onPlacesSearch={(searchText, callback) => {
+            googlePlacesApi(searchText, callback)
+        }} getPickupList={() => token?getPickupList(token):null} activity={activity}/>
     </div>
 }       

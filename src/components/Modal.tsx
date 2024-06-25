@@ -1,6 +1,7 @@
 import { ReactElement, JSXElementConstructor } from 'react'
 
 import styles from "./Modal.module.scss";
+import ActivityIndicator from './ActivityIndicator';
 
 interface Props {
   open: boolean,
@@ -10,6 +11,7 @@ interface Props {
   extra_large?: boolean,
   title?: string,
   children: ReactElement<any, string | JSXElementConstructor<any>>
+  loading?: boolean
 }
 
 const Modal = (props: Props) => {
@@ -17,6 +19,7 @@ const Modal = (props: Props) => {
   return open ? (
     <div className={styles.modalContainer} onClick={() => onClose()}>
         {props.children}
+        {props.loading?<ActivityIndicator />:null}
     </div>
   ) : null;
 };
