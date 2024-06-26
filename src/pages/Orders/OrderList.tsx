@@ -4,11 +4,12 @@ import Button from "@components/Button";
 import moreIcon from '@assets/more.png'
 import addIcon from "@assets/add.png"
 import refreshIcon from "@assets/refresh.png"
+import ActivityIndicator from '@components/ActivityIndicator';
 
 import {Order} from '@lib/interfaces'
 
 import styles from './OrderList.module.scss'
-import ActivityIndicator from '@components/ActivityIndicator';
+
 
 
 export default ({ onAddOrder, onRefresh, orders, activity }: { onAddOrder: () => void, onRefresh: () => void , orders: Order[], activity: {[k: string]: boolean}}) => {

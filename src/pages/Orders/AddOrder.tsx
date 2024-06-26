@@ -14,9 +14,11 @@ import { Place, PickupStore } from '@lib/interfaces'
 import styles from './AddOrder.module.scss'
 
 interface State {
-    placesResponse: { [k: string]: string | number }[]
+    placesResponse: { id: string, name: string, address: string, latitude: number, longitude: number }[]
     address: string
     placeId: string,
+    latitude?: number,
+    longitude?: number
     name: string,
     phoneNumber: string,
     value: string,
@@ -62,8 +64,8 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, activity, pickup
                 </div>
                 <p className={styles.sectionHeader}>Drop</p>
                 <div className={styles.dropDetails}>
-                    <Input label="Name" value={state.name} onChange={val => dispatch({ type: 'update', payload: { name: val } })} />
                     <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { phoneNumber: val } })} />
+                    <Input label="Name" value={state.name} onChange={val => dispatch({ type: 'update', payload: { name: val } })} />
                 </div>
                 <div className={styles.address}>
                     <PlacesSearchInput label="Address" onChange={val => {
@@ -86,7 +88,10 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, activity, pickup
                             })
                         }
                     }} autoCompleteOptions={state.placesResponse.map(e => ({ name: e.name.toString(), address: e.address.toString(), value: e.id.toString() }))} value={state.address} onSelect={(v) => {
-                        dispatch({ type: 'update', payload: { placeId: v } })
+                        const chosenPlace = state.placesResponse.find(e => e.id === v)
+                        if(chosenPlace) {
+                            dispatch({ type: 'update', payload: { placeId: v, address: chosenPlace.address, latitude: chosenPlace.latitude, longitude: chosenPlace.longitude, name: chosenPlace.name } })
+                        }
                     }} />
                 </div>
                 <p className={styles.sectionHeader}>Order  Details</p>

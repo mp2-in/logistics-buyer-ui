@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import {useAppConfigStore} from 'stores/appConfig'
+import { useAppConfigStore } from 'stores/appConfig'
 
 const apiHost = "https://preprod.logistics-buyer.mp2.in"
 
@@ -40,7 +40,7 @@ export const GooglePlacesApi = (searchText: string) => {
           'X-Goog-Api-Key': 'AIzaSyCjJ17_wImrwzxtfqmZ8hq168NXx19qoo4',
           'X-Goog-FieldMask': 'places.displayName,places.shortFormattedAddress,places.id,places.location,places.addressComponents'
         },
-        data: {textQuery: searchText}
+        data: { textQuery: searchText, locationRestriction: { rectangle: { low: { latitude: 11.812442, longitude: 77.232848 }, high: { latitude: 14.252600, longitude: 77.562438} } } }
       })
       .then((respJson) => {
         if (respJson.status === 200) {
