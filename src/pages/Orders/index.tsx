@@ -31,7 +31,7 @@ export default () => {
 
     return <div>
         <TopBar accountId={accountId || ''} showAccountDetails={() => setAccountDetailsDisplay(true)}/>
-        <OrderList onAddOrder={() => setAddOrderDisplay(true)} onRefresh={() => token ? getOrders(token) : null} orders={orders} />
+        <OrderList onAddOrder={() => setAddOrderDisplay(true)} onRefresh={() => token ? getOrders(token) : null} orders={orders} activity={activity}/>
         <AddOrder open={showAddOrder} onClose={() => setAddOrderDisplay(false)} onPlacesSearch={(searchText, callback) => {
             googlePlacesApi(searchText, callback)
         }} getPickupList={() => token?getPickupList(token):null} activity={activity} pickupStores={pickupStores}/>

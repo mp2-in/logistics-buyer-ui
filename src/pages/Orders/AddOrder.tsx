@@ -5,6 +5,7 @@ import closeIcon from '@assets/close.png'
 
 import Select from "@components/Select"
 import Input from "@components/Input"
+import PlacesSearchInput from "@components/PlacesSearchInput"
 import Switch from "@components/Switch"
 import Button from "@components/Button"
 
@@ -65,7 +66,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, activity, pickup
                     <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { phoneNumber: val } })} />
                 </div>
                 <div className={styles.address}>
-                    <Input label="Address" onChange={val => {
+                    <PlacesSearchInput label="Address" onChange={val => {
                         dispatch({ type: 'update', payload: { address: val } })
                         if (val.length > 2) {
                             onPlacesSearch(val, (data) => {
@@ -84,8 +85,8 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, activity, pickup
                                 })
                             })
                         }
-                    }} autoCompleteOptions={state.placesResponse.map(e => ({ label: `${e.name.toString()} (${e.address.toString()})`, value: e.id.toString() }))} size="extraLarge" value={state.address} onSelect={(l, v) => {
-                        dispatch({ type: 'update', payload: { address: l, placeId: v } })
+                    }} autoCompleteOptions={state.placesResponse.map(e => ({ name: e.name.toString(), address: e.address.toString(), value: e.id.toString() }))} value={state.address} onSelect={(v) => {
+                        dispatch({ type: 'update', payload: { placeId: v } })
                     }} />
                 </div>
                 <p className={styles.sectionHeader}>Order  Details</p>

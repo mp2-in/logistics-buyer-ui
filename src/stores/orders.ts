@@ -21,7 +21,7 @@ export const useOrdersStore = create<State>()((set) => ({
     ...initialState,
     getOrders: async (token: string) => {
         set(produce((state: State) => {
-            state.activity.getOrders = false
+            state.activity.getOrders = true
         }))
         Api('/webui/orders', { method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {} })
             .then(res => {

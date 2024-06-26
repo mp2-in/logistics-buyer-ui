@@ -8,9 +8,10 @@ import refreshIcon from "@assets/refresh.png"
 import {Order} from '@lib/interfaces'
 
 import styles from './OrderList.module.scss'
+import ActivityIndicator from '@components/ActivityIndicator';
 
 
-export default ({ onAddOrder, onRefresh, orders }: { onAddOrder: () => void, onRefresh: () => void , orders: Order[]}) => {
+export default ({ onAddOrder, onRefresh, orders, activity }: { onAddOrder: () => void, onRefresh: () => void , orders: Order[], activity: {[k: string]: boolean}}) => {
     return <div className={styles.container}>
         <div className={styles.btnContainer}>
             <Button title="Refresh" icon={<img src={refreshIcon} />} variant="primary" iconPosition="left" onClick={onRefresh} />
@@ -40,6 +41,7 @@ export default ({ onAddOrder, onRefresh, orders }: { onAddOrder: () => void, onR
                 </div>
             })}
         </div>
+        {activity.getOrders?<ActivityIndicator />:null}
         {/* <p>{import.meta.env.VITE_PLACES_KEY}</p> */}
     </div>
 }
