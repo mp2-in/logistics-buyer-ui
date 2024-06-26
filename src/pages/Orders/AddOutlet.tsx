@@ -51,7 +51,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, activity, pickup
     return <Modal open={open} onClose={onClose} loading={activity.getPickupList}>
         <div className={styles.container} onClick={e => e.stopPropagation()}>
             <div className={styles.header}>
-                <p>Add Order</p>
+                <p>Create Pickup</p>
                 <img src={closeIcon} onClick={onClose} />
             </div>
             <div className={styles.body}>

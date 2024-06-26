@@ -24,7 +24,7 @@ export interface Order {
 
 export interface Place {
     id: string,
-    formattedAddress: string,
+    shortFormattedAddress: string,
     location: {
         latitude: number,
         longitude: number

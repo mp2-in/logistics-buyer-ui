@@ -38,7 +38,7 @@ export const GooglePlacesApi = (searchText: string) => {
         headers: {
           'Content-Type': 'application/json',
           'X-Goog-Api-Key': 'AIzaSyCjJ17_wImrwzxtfqmZ8hq168NXx19qoo4',
-          'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.id,places.location'
+          'X-Goog-FieldMask': 'places.displayName,places.shortFormattedAddress,places.id,places.location,places.addressComponents'
         },
         data: {textQuery: searchText}
       })
