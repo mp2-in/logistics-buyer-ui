@@ -28,7 +28,7 @@ export const useAppConfigStore = create<State>()((set) => ({
         set(produce((state: State) => {
             state.activity.login = true
         }))
-        Api('/webui/login', { method: 'post', headers: {'Content-Type': 'application/json' }, data: { username, password } })
+        Api('/webui/login', { method: 'post', headers: {'x-mp2-api-key': 'MP2Kktmeeezr309axf9eagfrrds61tqauv1am5qqh6dzyhuzqv4ggb8x7jts4bim', 'Content-Type': 'application/json' }, data: { username, password } })
             .then(res => {
                 set(produce((state: State) => {
                     state.token = res.access_token
