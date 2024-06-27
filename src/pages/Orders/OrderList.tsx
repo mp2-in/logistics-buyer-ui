@@ -51,7 +51,7 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, orders, activity }: {
             <p>Date</p>
             <p>Order Id</p>
             <p>LSP</p>
-            <p>Item Id</p>
+            <p>Status</p>
             <p>Price</p>
             <p>Distance</p>
             <p></p>
@@ -62,7 +62,7 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, orders, activity }: {
                     <p>{e.created_at ? dayjs(e.created_at).format('DD MMM, hh:mm A') : '--'}</p>
                     <p>{e.client_order_id}</p>
                     <p>{e.lsp.name}</p>
-                    <p>{e.lsp.item_id}</p>
+                    <p>{e.state}</p>
                     <p>{e.price ? `₹ ${e.price}` : 0}</p>
                     <p>{e.distance ? `${e.distance}m` : 0}</p>
                     <div>
