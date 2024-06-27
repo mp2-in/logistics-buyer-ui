@@ -20,7 +20,7 @@ export const Api = (url: string, options: { method: 'post' | 'put' | 'delete' | 
         }
       })
       .catch((err) => {
-        if (err.response?.status === 401) {
+        if (err.response?.status === 401 && !url.includes('login')) {
           useAppConfigStore.getState().clearAuth()
           window.location.reload()
         }
