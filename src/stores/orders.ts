@@ -10,7 +10,7 @@ interface Attributes {
 }
 
 interface State extends Attributes {
-    getOrders: (token: string) => void,
+    getOrders: () => void,
     getPickupList: (token: string) => void,
     googlePlacesApi: (searchText: string, callback: (data: Place[]) => void) => void
     createOrder: (token: string, billNumber: string, storeId: string, drop: DropLocation, amount: string, callback: (success: boolean) => void) => void
@@ -21,7 +21,7 @@ const initialState: Attributes = { orders: [], activity: {}, pickupStores: [] };
 
 export const useOrdersStore = create<State>()((set) => ({
     ...initialState,
-    getOrders: async (token: string) => {
+    getOrders: async () => {
         set(produce((state: State) => {
             state.activity.getOrders = true
         }))

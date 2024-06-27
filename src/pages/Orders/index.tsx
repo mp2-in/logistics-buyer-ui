@@ -25,7 +25,7 @@ export default () => {
 
     useEffect(() => {
         if (token) {
-            getOrders(token)
+            getOrders()
         } else {
             navigate('/login')
         }
@@ -33,10 +33,10 @@ export default () => {
 
     return <div>
         <TopBar accountId={accountId || ''} showAccountDetails={() => setAccountDetailsDisplay(true)} />
-        <OrderList onAddOrder={() => setAddOrderDisplay(true)} onRefresh={() => token ? getOrders(token) : null} onCancelOrder={(orderId, reason, callback) => {
+        <OrderList onAddOrder={() => setAddOrderDisplay(true)} onRefresh={() => token ? getOrders() : null} onCancelOrder={(orderId, reason, callback) => {
             cancelOrder(token || '', orderId, reason, (success) => {
                 if(success) {
-                    setToast('Order cancelled', 'success')
+                    setToast('Order cancelled.', 'success')
                     callback()
                 } else {
                     setToast('Error cancelling order', 'error')
@@ -50,7 +50,7 @@ export default () => {
                 createOrder(token || '', billNumber, storeId, drop, amount, (success) => {
                     if(success) {
                         setAddOrderDisplay(false)
-                        getOrders(token || '')
+                        getOrders()
                         setToast('Order created successfully', 'success')
                     } else {
                         setToast('Error creating order', 'error')
