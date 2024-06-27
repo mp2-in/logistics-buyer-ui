@@ -31,7 +31,11 @@ export interface Place {
     },
     displayName: {
         text: string,
-    }
+    },
+    addressComponents: {
+        longText: string,
+        types: string[]
+    }[]
 }
 
 export interface PickupStore {
@@ -49,4 +53,19 @@ export interface PickupStore {
     pincode: string,
     phone: string,
     googlePlaceId: string
+}
+
+export interface DropLocation {
+    lat: number,
+    lng: number,
+    address: {
+        name: string,
+        line1: string,
+        line2: string,
+        city: string,
+        state: string
+    },
+    pincode: string,
+    phone: string,
+    code: string
 }

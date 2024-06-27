@@ -12,6 +12,7 @@ import Orders from "@pages/Orders";
 import { useAppConfigStore } from "stores/appConfig";
 import { useEffect, useState } from "react";
 import ActivityIndicator from "@components/ActivityIndicator";
+import Toast from "@components/Toast";
 
 
 const RequireAuth = ({ children, loggedIn }: { children: React.ReactNode, loggedIn: boolean }) => {
@@ -40,5 +41,6 @@ export default function App() {
         <Route path="orders" element={<Orders />} />
       </Route>
     </Routes> : <ActivityIndicator />}
+    <Toast />
   </>
 }

@@ -1,0 +1,68 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  bottom: 50px;
+  left: 0;
+  right: 0;
+  z-index: 111;
+
+  .inner-container {
+    background: #1ab2ff;
+    width: 700px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.error {
+      background: #ff4d4d 80%;
+    }
+
+    &.warning {
+      background: orange 80%;
+    }
+
+    .message {
+      font-size: 17px;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .close-logo {
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      cursor: pointer;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+
+.alert {
+  &-enter {
+    opacity: 0;
+    transform: scale(0.9);
+
+    &-active {
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 10ms, transform 1000ms;
+    }
+  }
+
+  &-exit {
+    opacity: 1;
+
+    &-active {
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 1000ms, transform 1000ms;
+    }
+  }
+}

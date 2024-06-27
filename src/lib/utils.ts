@@ -40,7 +40,7 @@ export const GooglePlacesApi = (searchText: string) => {
           'X-Goog-Api-Key': 'AIzaSyCjJ17_wImrwzxtfqmZ8hq168NXx19qoo4',
           'X-Goog-FieldMask': 'places.displayName,places.shortFormattedAddress,places.id,places.location,places.addressComponents'
         },
-        data: { textQuery: searchText, locationRestriction: { rectangle: { low: { latitude: 11.812442, longitude: 77.232848 }, high: { latitude: 14.252600, longitude: 77.562438} } } }
+        data: { textQuery: searchText, locationRestriction: { rectangle: { low: { latitude: 11.812442, longitude: 77.232848 }, high: { latitude: 14.252600, longitude: 77.562438 } } } }
       })
       .then((respJson) => {
         if (respJson.status === 200) {
@@ -54,3 +54,42 @@ export const GooglePlacesApi = (searchText: string) => {
       });
   });
 };
+
+export const formatAddress = (address: string, components: { longText: string, types: string[]}[]) => {
+  const addressSplit = address.split(/\s*,\s*/)
+  let addrLine1: string[] = []
+  let addrLine2: string[] = []
+  let city = ''
+  let state = ''
+  let pincode = ''
+
+  let line1Complete = false
+
+  for (let i = 0; i < addressSplit.length; i++) {
+    if (!line1Complete && [...addrLine1, addressSplit[i]].join(',').length < address.length / 2) {
+      addrLine1.push(addressSplit[i])
+    } else if(!line1Complete) {
+      line1Complete = true
+    }
+
+    if(line1Complete) {
+      addrLine2.push(addressSplit[i])
+    }
+  }
+
+  for(let i=0;i<components.length;i++) {
+    if(components[i].types.includes('locality')) {
+      city = components[i].longText
+    }
+
+    if(components[i].types.includes('postal_code')) {
+      pincode = components[i].longText
+    }
+
+    if(components[i].types.includes('administrative_area_level_1')) {
+      state = components[i].longText
+    }
+  }
+
+  return {line1: addrLine1.join(', '), line2: addrLine2.join(', '), city, pincode, state}
+}

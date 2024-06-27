@@ -6,6 +6,9 @@ interface Attributes {
     token?: string,
     accountId?: string,
     loggedIn: boolean,
+    toastMessage: string,
+    toastType?: 'success' | 'warning' | 'error',
+    toastVisibility: boolean,
     activity: {[k: string]: boolean}
 }
 
@@ -13,9 +16,11 @@ interface State extends Attributes {
     login: (username: string, password: string, successCallback: () => void, errCallback: () => void) => void,
     checkLoginStatus: (callback: () => void) => void
     clearAuth: () => void
+    setToast: (message: string, type: 'success' | 'warning' | 'error') => void,
+    hideToast: () => void,
 }
 
-const initialState: Attributes = { loggedIn: false, activity: {} };
+const initialState: Attributes = { loggedIn: false, activity: {}, toastMessage: '', toastVisibility: false };
 
 export const useAppConfigStore = create<State>()((set) => ({
     ...initialState,
@@ -64,5 +69,17 @@ export const useAppConfigStore = create<State>()((set) => ({
             state.accountId = undefined
             state.loggedIn = false
         }))
-    }
+    },
+    setToast: (message, type) => {
+        set(produce((state: State) => {
+            state.toastMessage = message
+            state.toastType = type
+            state.toastVisibility = true
+        }))
+    },
+    hideToast: () => {
+        set(produce((state: State) => {
+            state.toastVisibility = false
+        }))
+    },
 }))

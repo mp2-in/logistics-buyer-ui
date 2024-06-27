@@ -13,10 +13,11 @@ interface Props {
     placeholder?: string,
     readOnly?: boolean,
     required?: boolean,
+    onChangeCallback?: (a?: string | number) => void,
     autoCompleteOptions?: { name: string, address: string, value: string }[]
 }
 
-const Input = ({ label, value, onChange, placeholder, readOnly, required, autoCompleteOptions, onSelect}: Props) => {
+const Input = ({ label, value, onChange, placeholder, readOnly, required, autoCompleteOptions, onSelect, onChangeCallback}: Props) => {
 
     let selectContainerRef = createRef<HTMLInputElement>();
     const [showOptions, optionsDisplay] = useState(false)
@@ -36,6 +37,16 @@ const Input = ({ label, value, onChange, placeholder, readOnly, required, autoCo
             document.removeEventListener("click", handleClickOutside, true);
         };
     });
+
+    useEffect(() => {
+        if (onChangeCallback) {
+            const delayDebounceFn = setTimeout(() => {
+                onChangeCallback(value)
+            }, 200)
+
+            return () => clearTimeout(delayDebounceFn)
+        }
+    }, [value])
 
     return <div className={cn({ [styles.outerContainer]: true, [styles.noLabel]: !label })}>
         <div className={cn({ [styles.container]: true, [styles.extraLarge]: true, [styles.readOnly]: readOnly })}>
@@ -68,7 +79,7 @@ const Input = ({ label, value, onChange, placeholder, readOnly, required, autoCo
                                 onSelect(eachOption.value)
                             }
                             optionsDisplay(false)
-                        }}>
+                        }} key={eachOption.value}>
                             <img src={locPin}/>
                             <p>{eachOption.name}</p>
                             <p>-</p>
