@@ -1,31 +1,33 @@
 import { create } from 'zustand'
 import { produce } from 'immer'
 import { Api, GooglePlacesApi } from '@lib/utils'
-import { DropLocation, Order, PickupStore, Place } from '@lib/interfaces'
+import { DropLocation, Order, PickupStore, Place, PriceQuote } from '@lib/interfaces'
 
 interface Attributes {
     orders: Order[],
     activity: { [k: string]: boolean },
-    pickupStores: PickupStore[]
+    pickupStores: PickupStore[],
+    orderPriceQuote: PriceQuote[]
 }
 
 interface State extends Attributes {
-    getOrders: () => void,
+    getOrders: (token: string) => void,
     getPickupList: (token: string) => void,
     googlePlacesApi: (searchText: string, callback: (data: Place[]) => void) => void
     createOrder: (token: string, billNumber: string, storeId: string, drop: DropLocation, amount: string, callback: (success: boolean) => void) => void
     cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean) => void) => void
+    getPriceQuote: (token: string, storeId: string, drop: DropLocation, orderAmount: number, callback: () => void) => void
 }
 
-const initialState: Attributes = { orders: [], activity: {}, pickupStores: [] };
+const initialState: Attributes = { orders: [], activity: {}, pickupStores: [], orderPriceQuote: [] };
 
-export const useOrdersStore = create<State>()((set) => ({
+export const useOrdersStore = create<State>()((set, get) => ({
     ...initialState,
-    getOrders: async () => {
+    getOrders: async (token) => {
         set(produce((state: State) => {
             state.activity.getOrders = true
         }))
-        Api('/webui/orders', { method: 'post', headers: { 'Content-Type': 'application/json' }, data: {} }, true)
+        Api('/webui/orders', { method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {} })
             .then(res => {
                 set(produce((state: State) => {
                     state.orders = res
@@ -94,7 +96,7 @@ export const useOrdersStore = create<State>()((set) => ({
                 set(produce((state: State) => {
                     state.activity.createOrder = false
                 }))
-                if(res.status === 1) {
+                if (res.status === 1) {
                     callback(true)
                 } else {
                     callback(false)
@@ -122,7 +124,7 @@ export const useOrdersStore = create<State>()((set) => ({
             set(produce((state: State) => {
                 state.activity.cancelOrder = false
             }))
-            if(res.status === 1) {
+            if (res.status === 1) {
                 callback(true)
             } else {
                 callback(false)
@@ -133,5 +135,45 @@ export const useOrdersStore = create<State>()((set) => ({
             }))
             callback(false)
         })
-    }
+    },
+    getPriceQuote: async (token, storeId, drop, orderAmount, callback) => {
+        set(produce((state: State) => {
+            state.activity.getPriceQuote = true
+        }))
+
+        const storeDetails = get().pickupStores.find(e => e.storeId === storeId)
+
+        if (storeDetails) {
+            Api('/webui/quotes', {
+                method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {
+                    pickup: {
+                        lat: storeDetails.latitude,
+                        lng: storeDetails.longitude,
+                        pincode: storeDetails.pincode
+                    },
+                    drop: {
+                        lat: drop.lat,
+                        lng: drop.lng,
+                        pincode: drop.pincode
+                    },
+                    city: storeDetails.address.city,
+                    order_category: "F&B",
+                    search_category: "Immediate Delivery",
+                    order_amount: orderAmount
+                }
+            })
+                .then(res => {
+                    set(produce((state: State) => {
+                        state.activity.getPriceQuote = false
+                        state.orderPriceQuote = res.quotes
+                    }))
+                    callback()
+                })
+                .catch(() => {
+                    set(produce((state: State) => {
+                        state.activity.getPriceQuote = false
+                    }))
+                })
+        }
+    },
 }))

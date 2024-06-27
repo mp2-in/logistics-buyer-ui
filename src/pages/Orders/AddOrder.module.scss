@@ -52,12 +52,16 @@
         }
 
         .rto {
-            margin: 20px 10px;
+            margin: 20px 10px 0 10px;
         }
 
         .actionBtn {
             justify-content: center;
             margin: 40px 0 20px 0;
+        }
+        
+        .getQuote {
+            flex-direction: row-reverse;
         }
     }
 }

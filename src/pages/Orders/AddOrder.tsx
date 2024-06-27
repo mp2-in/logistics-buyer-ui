@@ -40,10 +40,11 @@ const reducer = (state: State, action: { type: 'reset' } | { type: 'update', pay
     }
 }
 
-export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, activity, pickupStores }: {
+export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, checkPrice, activity, pickupStores }: {
     open: boolean, onClose: () => void, onPlacesSearch: (searchText: string,
         callback: (data: Place[]) => void) => void, getPickupList: () => void, activity: { [k: string]: boolean }, pickupStores: PickupStore[]
     , createOrder: (billNumber: string, storeId: string, amount: string, drop: DropLocation) => void,
+    checkPrice: (toreId: string, amount: string, drop: DropLocation) => void
 }) => {
     const [state, dispatch] = useReducer(reducer, initialValue)
 
@@ -111,9 +112,27 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, act
                     <p>RTO Required: </p>
                     <Switch on={state.rto} onClick={() => dispatch({ type: 'update', payload: { rto: !state.rto } })} />
                 </div>
-                <div>
-                    <Select label="LSP" />
-                    <p className={styles.link}>Check Prices</p>
+                <div className={styles.getQuote}>
+                    <Button title="Check Price"  onClick={() => {
+                        const chosenPlace = state.placesResponse.find(e => e.id === state.placeId)
+                        if (chosenPlace && state.latitude && state.longitude) {
+                            const formattedAddress = formatAddress(chosenPlace.address, chosenPlace.addrComponents)
+                            checkPrice(state.store, state.orderAmount, {
+                                lat: state.latitude,
+                                lng: state.longitude,
+                                address: {
+                                    name: state.name,
+                                    line1: formattedAddress.line1,
+                                    line2: formattedAddress.line2,
+                                    city: formattedAddress.city,
+                                    state: formattedAddress.state
+                                },
+                                pincode: formattedAddress.pincode,
+                                phone: state.phoneNumber,
+                                code: '1234'
+                            })
+                        }
+                    }} disabled={!state.billNumber || !state.store || !state.address || !state.phoneNumber || !state.type || !state.orderAmount || activity.createOrder} loading={activity.getPriceQuote}/>
                 </div>
                 <div className={styles.actionBtn}>
                     <Button title="Create Order" variant="primary" onClick={() => {
@@ -135,7 +154,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, act
                                 code: '1234'
                             })
                         }
-                    }} disabled={!state.billNumber || !state.store || !state.address || !state.phoneNumber || !state.type || !state.orderAmount} loading={activity.createOrder}/>
+                    }} disabled={!state.billNumber || !state.store || !state.address || !state.phoneNumber || !state.type || !state.orderAmount || activity.getPriceQuote} loading={activity.createOrder} />
                 </div>
             </div>
         </div>

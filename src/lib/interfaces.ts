@@ -69,3 +69,13 @@ export interface DropLocation {
     phone: string,
     code: string
 }
+
+export interface PriceQuote {
+    lsp_id: string,
+    item_id: string,
+    sla: number,
+    pickup_eta: number,
+    price_forward: number,
+    price_rto: number,
+    logistics_seller: string
+}
