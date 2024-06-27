@@ -4,11 +4,12 @@ import { useAppConfigStore } from 'stores/appConfig'
 
 const apiHost = "https://preprod.logistics-buyer.mp2.in"
 
-export const Api = (url: string, options: { method: 'post' | 'put' | 'delete' | 'get', data?: any, headers?: { [k: string]: string } }) => {
+export const Api = (url: string, options: { method: 'post' | 'put' | 'delete' | 'get', data?: any, headers?: { [k: string]: string } }, withCredentials?: boolean) => {
   return new Promise<any>((resolve, reject) => {
     axios
       .request({
         url: `${apiHost}${url}`,
+        withCredentials: withCredentials || false,
         ...options,
       })
       .then((respJson) => {
@@ -19,7 +20,7 @@ export const Api = (url: string, options: { method: 'post' | 'put' | 'delete' | 
         }
       })
       .catch((err) => {
-        if (err.response.status === 401) {
+        if (err.response?.status === 401) {
           useAppConfigStore.getState().clearAuth()
           window.location.reload()
         }
