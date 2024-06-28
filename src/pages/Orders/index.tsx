@@ -9,18 +9,20 @@ import { useAppConfigStore } from "stores/appConfig";
 import { useOrdersStore } from "stores/orders";
 import AccountDetails from "./AccountDetails";
 import ShowPriceQuotes from "./ShowPriceQuotes";
+import AddOutlet from "./AddOutlet";
 
 
 export default () => {
     const [showAddOrder, setAddOrderDisplay] = useState(false)
     const [showAccountDetails, setAccountDetailsDisplay] = useState(false)
     const [showPriceQuotes, setQuotesDisplay] = useState(false)
+    const [showAddOutlet, setAddOutletDisplay] = useState(false)
 
     const { token, accountId, clearAuth, setToast } = useAppConfigStore(state => ({ token: state.token, accountId: state.accountId, clearAuth: state.clearAuth, setToast: state.setToast }))
-    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, getPriceQuote, orderPriceQuote } = useOrdersStore(state => ({
+    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, getPriceQuote, addOutlet, orderPriceQuote } = useOrdersStore(state => ({
         orders: state.orders, getOrders: state.getOrders, googlePlacesApi: state.googlePlacesApi, activity: state.activity, getPriceQuote: state.getPriceQuote,
         getPickupList: state.getPickupList, pickupStores: state.pickupStores, createOrder: state.createOrder, cancelOrder: state.cancelOrder,
-        orderPriceQuote: state.orderPriceQuote
+        orderPriceQuote: state.orderPriceQuote, addOutlet: state.addOutlet
     }))
 
     const navigate = useNavigate()
@@ -62,8 +64,21 @@ export default () => {
                 getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), () => {
                     setQuotesDisplay(true)
                 })
-            }} />
+            }} showNewOutletForm={() => setAddOutletDisplay(true)}/>
         <AccountDetails open={showAccountDetails} onClose={() => setAccountDetailsDisplay(false)} accountId={accountId || ''} onLogout={() => clearAuth()} />
-        <ShowPriceQuotes open={showPriceQuotes} onClose={() => setQuotesDisplay(false)} priceQuotes={orderPriceQuote}/>
+        <ShowPriceQuotes open={showPriceQuotes} onClose={() => setQuotesDisplay(false)} priceQuotes={orderPriceQuote} />
+        <AddOutlet open={showAddOutlet} onClose={() => setAddOutletDisplay(false)} onPlacesSearch={(searchText, callback) => {
+            googlePlacesApi(searchText, callback)
+        }} activity={activity} addOutlet={(storeId, address, placesId) => {
+            addOutlet(token || '', storeId, address, placesId, (success) => {
+                if (success) {
+                    setAddOutletDisplay(false)
+                    getPickupList(token || '')
+                    setToast('Outlet created successfully', 'success')
+                } else {
+                    setToast('Error creating outlet', 'error')
+                }
+            })
+        }}/>
     </div>
 }       

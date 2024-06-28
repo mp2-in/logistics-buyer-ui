@@ -2,29 +2,25 @@ import { useEffect, useReducer } from "react"
 
 import Modal from "@components/Modal"
 import closeIcon from '@assets/close.png'
-
-import Select from "@components/Select"
 import Input from "@components/Input"
-import Switch from "@components/Switch"
+import PlacesSearchInput from "@components/PlacesSearchInput"
+
+import { LocationAddress, Place } from '@lib/interfaces'
+
+import styles from './AddOutlet.module.scss'
 import Button from "@components/Button"
-
-import { Place, PickupStore } from '@lib/interfaces'
-
-import styles from './AddOrder.module.scss'
+import { formatAddress } from "@lib/utils"
 
 interface State {
-    placesResponse: { [k: string]: string | number }[]
+    placesResponse: { id: string, name: string, address: string, latitude: number, longitude: number, addrComponents: { longText: string, types: string[] }[] }[]
     address: string
     placeId: string,
     name: string,
     phoneNumber: string,
-    value: string,
-    rto: boolean,
-    store: string,
-    type: string
+    storeId: string,
 }
 
-const initialValue: State = { placesResponse: [], address: '', placeId: '', name: '', phoneNumber: '', value: '', rto: false, store: '', type: '' }
+const initialValue: State = { placesResponse: [], address: '', placeId: '', name: '', phoneNumber: '', storeId: '' }
 
 const reducer = (state: State, action: { type: 'reset' } | { type: 'update', payload: Partial<State> }) => {
     switch (action.type) {
@@ -35,37 +31,32 @@ const reducer = (state: State, action: { type: 'reset' } | { type: 'update', pay
     }
 }
 
-export default ({ open, onClose, onPlacesSearch, getPickupList, activity, pickupStores }: {
+export default ({ open, onClose, onPlacesSearch, addOutlet, activity }: {
     open: boolean, onClose: () => void, onPlacesSearch: (searchText: string,
-        callback: (data: Place[]) => void) => void, getPickupList: () => void, activity: { [k: string]: boolean }, pickupStores: PickupStore[]
+        callback: (data: Place[]) => void) => void, activity: { [k: string]: boolean }, addOutlet: (storeId: string, address: LocationAddress, placeId: string) => void
 }) => {
     const [state, dispatch] = useReducer(reducer, initialValue)
 
     useEffect(() => {
-        if (open) {
-            getPickupList()
-        }
         dispatch({ type: 'reset' })
     }, [open])
 
     return <Modal open={open} onClose={onClose} loading={activity.getPickupList}>
         <div className={styles.container} onClick={e => e.stopPropagation()}>
             <div className={styles.header}>
-                <p>Create Pickup</p>
+                <p>Add Outlet</p>
                 <img src={closeIcon} onClick={onClose} />
             </div>
             <div className={styles.body}>
                 <div>
-                    <Select label="Outlet" options={pickupStores.map(e => ({ label: e.address.name, value: e.storeId }))} onChange={val => dispatch({ type: 'update', payload: { store: val } })} value={state.store} />
-                    <p className={styles.link}>Add Outlet</p>
+                    <Input label="Store Id" value={state.storeId} onChange={val => dispatch({ type: 'update', payload: { storeId: val } })} />
                 </div>
-                <p className={styles.sectionHeader}>Drop</p>
                 <div className={styles.dropDetails}>
-                    <Input label="Name" value={state.name} onChange={val => dispatch({ type: 'update', payload: { name: val } })} />
                     <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { phoneNumber: val } })} />
+                    <Input label="Name" value={state.name} onChange={val => dispatch({ type: 'update', payload: { name: val } })} />
                 </div>
                 <div className={styles.address}>
-                    <Input label="Address" onChange={val => {
+                    <PlacesSearchInput label="Address" onChange={val => {
                         dispatch({ type: 'update', payload: { address: val } })
                         if (val.length > 2) {
                             onPlacesSearch(val, (data) => {
@@ -77,33 +68,42 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, activity, pickup
                                                 name: e.displayName.text,
                                                 address: e.shortFormattedAddress,
                                                 latitude: e.location.latitude,
-                                                longitude: e.location.longitude
+                                                longitude: e.location.longitude,
+                                                addrComponents: e.addressComponents
                                             }
                                         })
                                     }
                                 })
                             })
                         }
-                    }} autoCompleteOptions={state.placesResponse.map(e => ({ label: `${e.name.toString()} (${e.address.toString()})`, value: e.id.toString() }))} size="extraLarge" value={state.address} onSelect={(l, v) => {
-                        dispatch({ type: 'update', payload: { address: l, placeId: v } })
+                    }} autoCompleteOptions={state.placesResponse.map(e => ({ name: e.name.toString(), address: e.address.toString(), value: e.id.toString() }))} value={state.address} onSelect={(v) => {
+                        const chosenPlace = state.placesResponse.find(e => e.id === v)
+                        if (chosenPlace) {
+                            dispatch({ type: 'update', payload: { placeId: v, address: chosenPlace.address, name: chosenPlace.name } })
+                        }
                     }} />
                 </div>
-                <p className={styles.sectionHeader}>Order  Details</p>
-                <div>
-                    <Select label="Type" options={[{label: 'Food', value: 'food'}, {label: 'Grocery', value: 'grocery'}]} onChange={val => dispatch({type: 'update', payload: ({type: val})})} value={state.type}/>
-                    <Input label="Value" size="small" value={state.value} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { value: val } })} />
-                </div>
-                <div className={styles.rto}>
-                    <p>RTO Required: </p>
-                    <Switch on={state.rto} onClick={() => dispatch({ type: 'update', payload: { rto: !state.rto } })} />
-                </div>
-                <div>
-                    <Select label="LSP" />
-                    <p className={styles.link}>Check Prices</p>
-                </div>
-                <div className={styles.actionBtn}>
-                    <Button title="Create Order" variant="primary" />
-                </div>
+            </div>
+            <div className={styles.addBtnContainer}>
+                <Button title="Add Outlet" variant="primary" onClick={() => {
+                    const chosenPlace = state.placesResponse.find(e => e.id === state.placeId)
+                    if (chosenPlace) {
+                        const formattedAddress = formatAddress(chosenPlace.address, chosenPlace.addrComponents)
+                        addOutlet(state.storeId, {
+                            lat: chosenPlace.latitude,
+                            lng: chosenPlace.longitude,
+                            address: {
+                                name: state.name,
+                                line1: formattedAddress.line1,
+                                line2: formattedAddress.line2,
+                                city: formattedAddress.city,
+                                state: formattedAddress.state
+                            },
+                            pincode: formattedAddress.pincode,
+                            phone: state.phoneNumber,
+                        }, state.placeId)
+                    }
+                }} />
             </div>
         </div>
     </Modal>

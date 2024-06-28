@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { produce } from 'immer'
 import { Api, GooglePlacesApi } from '@lib/utils'
-import { DropLocation, Order, PickupStore, Place, PriceQuote } from '@lib/interfaces'
+import { LocationAddress, Order, PickupStore, Place, PriceQuote } from '@lib/interfaces'
 
 interface Attributes {
     orders: Order[],
@@ -14,9 +14,10 @@ interface State extends Attributes {
     getOrders: (token: string) => void,
     getPickupList: (token: string) => void,
     googlePlacesApi: (searchText: string, callback: (data: Place[]) => void) => void
-    createOrder: (token: string, billNumber: string, storeId: string, drop: DropLocation, amount: string, callback: (success: boolean) => void) => void
+    createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, callback: (success: boolean) => void) => void
     cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean) => void) => void
-    getPriceQuote: (token: string, storeId: string, drop: DropLocation, orderAmount: number, callback: () => void) => void
+    getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, callback: () => void) => void
+    addOutlet: (token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean) => void) => void
 }
 
 const initialState: Attributes = { orders: [], activity: {}, pickupStores: [], orderPriceQuote: [] };
@@ -175,5 +176,33 @@ export const useOrdersStore = create<State>()((set, get) => ({
                     }))
                 })
         }
+    },
+    addOutlet: async (token, storeId, drop, placesId, callback) => {
+        set(produce((state: State) => {
+            state.activity.addOutlet = true
+        }))
+        Api('/webui/pickup/create', {
+            method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {
+                store_id: storeId,
+                ...drop,
+                google_place_id: placesId
+            }
+        })
+            .then(res => {
+                set(produce((state: State) => {
+                    state.activity.addOutlet = false
+                }))
+                if (res.status === 1) {
+                    callback(true)
+                } else {
+                    callback(false)
+                }
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.activity.addOutlet = false
+                }))
+                callback(false)
+            })
     },
 }))

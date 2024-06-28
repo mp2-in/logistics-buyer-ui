@@ -55,7 +55,7 @@ export interface PickupStore {
     googlePlaceId: string
 }
 
-export interface DropLocation {
+export interface LocationAddress {
     lat: number,
     lng: number,
     address: {
@@ -67,7 +67,7 @@ export interface DropLocation {
     },
     pincode: string,
     phone: string,
-    code: string
+    code?: string
 }
 
 export interface PriceQuote {

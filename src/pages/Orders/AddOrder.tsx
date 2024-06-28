@@ -9,7 +9,7 @@ import PlacesSearchInput from "@components/PlacesSearchInput"
 import Switch from "@components/Switch"
 import Button from "@components/Button"
 
-import { Place, PickupStore, DropLocation } from '@lib/interfaces'
+import { Place, PickupStore, LocationAddress } from '@lib/interfaces'
 
 import styles from './AddOrder.module.scss'
 import { formatAddress } from "@lib/utils"
@@ -40,11 +40,11 @@ const reducer = (state: State, action: { type: 'reset' } | { type: 'update', pay
     }
 }
 
-export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, checkPrice, activity, pickupStores }: {
+export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, checkPrice, showNewOutletForm, activity, pickupStores }: {
     open: boolean, onClose: () => void, onPlacesSearch: (searchText: string,
         callback: (data: Place[]) => void) => void, getPickupList: () => void, activity: { [k: string]: boolean }, pickupStores: PickupStore[]
-    , createOrder: (billNumber: string, storeId: string, amount: string, drop: DropLocation) => void,
-    checkPrice: (toreId: string, amount: string, drop: DropLocation) => void
+    , createOrder: (billNumber: string, storeId: string, amount: string, drop: LocationAddress) => void,
+    checkPrice: (toreId: string, amount: string, drop: LocationAddress) => void, showNewOutletForm: () => void
 }) => {
     const [state, dispatch] = useReducer(reducer, initialValue)
 
@@ -67,7 +67,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 </div>
                 <div>
                     <Select label="Outlet" options={pickupStores.map(e => ({ label: e.address.name, value: e.storeId }))} onChange={val => dispatch({ type: 'update', payload: { store: val } })} value={state.store} />
-                    <p className={styles.link}>Add Outlet</p>
+                    <p className={styles.link} onClick={() => showNewOutletForm()}>Add Outlet</p>
                 </div>
                 <p className={styles.sectionHeader}>Drop</p>
                 <div className={styles.dropDetails}>
@@ -132,7 +132,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                                 code: '1234'
                             })
                         }
-                    }} disabled={!state.billNumber || !state.store || !state.address || !state.phoneNumber || !state.type || !state.orderAmount || activity.createOrder} loading={activity.getPriceQuote}/>
+                    }} disabled={!state.store || !state.address || !state.phoneNumber || !state.type || !state.orderAmount || activity.createOrder} loading={activity.getPriceQuote}/>
                 </div>
                 <div className={styles.actionBtn}>
                     <Button title="Create Order" variant="primary" onClick={() => {
