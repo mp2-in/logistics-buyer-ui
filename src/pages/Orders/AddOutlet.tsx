@@ -76,10 +76,10 @@ export default ({ open, onClose, onPlacesSearch, addOutlet, activity }: {
                                 })
                             })
                         }
-                    }} autoCompleteOptions={state.placesResponse.map(e => ({ name: e.name.toString(), address: e.address.toString(), value: e.id.toString() }))} value={state.address} onSelect={(v) => {
+                    }} autoCompleteOptions={state.placesResponse.filter(e => e.name && e.address && e.id).map(e => ({ name: e.name.toString(), address: e.address.toString(), value: e.id.toString() }))} value={state.address} onSelect={(v) => {
                         const chosenPlace = state.placesResponse.find(e => e.id === v)
                         if (chosenPlace) {
-                            dispatch({ type: 'update', payload: { placeId: v, address: chosenPlace.address, name: chosenPlace.name } })
+                            dispatch({ type: 'update', payload: { placeId: v, address: chosenPlace.address, name: state.name || chosenPlace.name } })
                         }
                     }} />
                 </div>

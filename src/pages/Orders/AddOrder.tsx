@@ -77,10 +77,10 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 <div className={styles.address}>
                     <PlacesSearchInput label="Address" onChange={val => {
                         dispatch({ type: 'update', payload: { address: val } })
-                    }} autoCompleteOptions={state.placesResponse.map(e => ({ name: e.name.toString(), address: e.address.toString(), value: e.id.toString() }))} value={state.address} onSelect={(v) => {
+                    }} autoCompleteOptions={state.placesResponse.filter(e => e.name && e.address && e.id).map(e => ({ name: e.name.toString(), address: e.address.toString(), value: e.id.toString() }))} value={state.address} onSelect={(v) => {
                         const chosenPlace = state.placesResponse.find(e => e.id === v)
                         if (chosenPlace) {
-                            dispatch({ type: 'update', payload: { placeId: v, address: chosenPlace.address, latitude: chosenPlace.latitude, longitude: chosenPlace.longitude, name: chosenPlace.name } })
+                            dispatch({ type: 'update', payload: { placeId: v, address: chosenPlace.address, latitude: chosenPlace.latitude, longitude: chosenPlace.longitude, name: state.name || chosenPlace.name } })
                         }
                     }} onChangeCallback={val => {
                         if ((val || '').toString().length > 2) {
