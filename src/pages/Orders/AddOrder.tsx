@@ -128,8 +128,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                                     state: formattedAddress.state
                                 },
                                 pincode: formattedAddress.pincode,
-                                phone: state.phoneNumber,
-                                code: '1234'
+                                phone: state.phoneNumber
                             })
                         }
                     }} disabled={!state.store || !state.address || !state.phoneNumber || !state.type || !state.orderAmount || activity.createOrder} loading={activity.getPriceQuote} />

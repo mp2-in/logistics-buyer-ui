@@ -19,7 +19,7 @@
         }
 
         img {
-            width: 35px;
+            width: 25px;
             cursor: pointer;
         }
     }
@@ -62,6 +62,27 @@
         
         .getQuote {
             flex-direction: row-reverse;
+        }
+
+        .manualAddr {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+
+            &>* {
+                margin: 5px 0;
+                &:nth-child(2) {
+                    margin: 5px 0;
+                }
+
+                &.row {
+                    &>* {
+                        &:nth-child(2) {
+                            margin-left: 15px;
+                        }
+                    }
+                }
+            }
         }
     }
 

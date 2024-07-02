@@ -1,0 +1,23 @@
+.container {
+    display: flex;
+
+    .option {
+        padding: 5px 10px;
+        cursor: pointer;
+
+        p {
+            color: grey;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        &.selected {
+            border-bottom: 2px solid #0066ff;
+            p {
+                color: #0066ff;
+            }
+        }
+    }
+
+    margin: 20px 0;
+}
