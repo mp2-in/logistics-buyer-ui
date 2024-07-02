@@ -5,9 +5,14 @@ import closeIcon from '@assets/close.png'
 import { PriceQuote } from '@lib/interfaces'
 
 import styles from './ShowPriceQuotes.module.scss'
+import RadioBtn from "@components/RadioBtn"
+import { useState } from "react"
+import Button from "@components/Button"
 
 
-export default ({ open, onClose, priceQuotes }: { open: boolean, onClose: () => void, priceQuotes: PriceQuote[] }) => {
+export default ({ open, onClose, priceQuotes, createOrder }: { open: boolean, onClose: () => void, priceQuotes: PriceQuote[], createOrder: () => void }) => {
+    const [chosenLsp, setChosenLsp] = useState('')
+
     return <Modal open={open} onClose={onClose} >
         <div className={styles.container} onClick={e => e.stopPropagation()}>
             <div className={styles.title}>
@@ -16,6 +21,7 @@ export default ({ open, onClose, priceQuotes }: { open: boolean, onClose: () => 
             </div>
             <div className={styles.content}>
                 <div className={styles.header}>
+                    <p></p>
                     <p>LSP</p>
                     <p>Pickup ETA</p>
                     <p>SLA</p>
@@ -25,6 +31,7 @@ export default ({ open, onClose, priceQuotes }: { open: boolean, onClose: () => 
                 <div className={styles.body}>
                     {priceQuotes.map(e => {
                         return <div key={e.lsp_id}>
+                            <RadioBtn checked={chosenLsp === e.lsp_id} onClick={() => setChosenLsp(e.lsp_id)} />
                             <p>{e.logistics_seller}</p>
                             <p>{e.pickup_eta} min</p>
                             <p>{e.sla} min</p>
@@ -33,6 +40,9 @@ export default ({ open, onClose, priceQuotes }: { open: boolean, onClose: () => 
                         </div>
                     })}
                 </div>
+            </div>
+            <div className={styles.createOrderBtn}>
+                <Button title="Place Order" variant='primary' disabled={!chosenLsp} onClick={() => createOrder()}/>
             </div>
         </div>
     </Modal>

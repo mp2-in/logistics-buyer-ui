@@ -1,0 +1,33 @@
+.container {
+    display: flex;
+    align-items: center;
+
+    .inner-container {
+        width: 16px;
+        height: 16px;
+        border-radius: 8px;
+        border: 1px solid #d2d1d6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+
+        &.checked {
+            border: 1px solid #3366ff;
+            background: #3366ff;
+        }
+
+        &> div {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: white;
+        }
+    }
+
+    p {
+        margin-left: 8px;
+        font-size: 16px;
+        font-weight: 500;
+    }
+}

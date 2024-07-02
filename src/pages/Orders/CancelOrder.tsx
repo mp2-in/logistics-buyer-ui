@@ -22,10 +22,8 @@ export default ({ open, onClose, onCancel, loading}: { open: boolean, onClose: (
                 <img src={closeIcon} onClick={onClose} />
             </div>
             <div className={styles.body}>
-                <Select options={[{label: 'Order / fulfillment not ready for pickup', value: '008'}, {label: 'Buyer not found or cannot be contacted', value: '011'},
-                    {label: 'Buyer refused to accept delivery', value: '013'}, {label: 'Address not found', value: '014'}, {label: 'Buyer not available at location', value: '015'},
-                    {label: 'Accident / rain / strike / vehicle issues', value: '016'}, {label: 'Order delivery delayed or not possible', value: '017'},
-                    {label: 'Delivery delayed or not possible', value: '018'}
+                <Select options={[{label: 'One or more items in the Order not available', value: '002'}, {label: 'Merchant rejected the order', value: '005'},
+                    {label: 'Order not shipped as per buyer app SLA', value: '006'}, {label: 'Buyer wants to modify details', value: '010'}, {label: 'Buyer does not want product any more', value: '012'},
                 ]} onChange={val => setCancellationReason(val)} value={cancellationReason} label="Cancellation Reason" size="large"/>
                 <Button title="Cancel Order" variant="primary" onClick={() => onCancel(cancellationReason)} loading={loading}/>
             </div>

@@ -44,7 +44,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
     open: boolean, onClose: () => void, onPlacesSearch: (searchText: string,
         callback: (data: Place[]) => void) => void, getPickupList: () => void, activity: { [k: string]: boolean }, pickupStores: PickupStore[]
     , createOrder: (billNumber: string, storeId: string, amount: string, drop: LocationAddress) => void,
-    checkPrice: (toreId: string, amount: string, drop: LocationAddress) => void, showNewOutletForm: () => void
+    checkPrice: (billNumber: string, storeId: string, amount: string, drop: LocationAddress) => void, showNewOutletForm: () => void
 }) => {
     const [state, dispatch] = useReducer(reducer, initialValue)
 
@@ -63,11 +63,11 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
             </div>
             <div className={styles.body}>
                 <div>
-                    <Input label="Bill Number" value={state.billNumber} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} />
-                </div>
-                <div>
                     <Select label="Outlet" options={pickupStores.map(e => ({ label: e.address.name, value: e.storeId }))} onChange={val => dispatch({ type: 'update', payload: { store: val } })} value={state.store} />
                     <p className={styles.link} onClick={() => showNewOutletForm()}>Add Outlet</p>
+                </div>
+                <div>
+                    <Input label="Bill Number" value={state.billNumber} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} />
                 </div>
                 <p className={styles.sectionHeader}>Drop</p>
                 <div className={styles.dropDetails}>
@@ -113,11 +113,11 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                     <Switch on={state.rto} onClick={() => dispatch({ type: 'update', payload: { rto: !state.rto } })} />
                 </div>
                 <div className={styles.getQuote}>
-                    <Button title="Check Price"  onClick={() => {
+                    <Button title="Check Price" onClick={() => {
                         const chosenPlace = state.placesResponse.find(e => e.id === state.placeId)
                         if (chosenPlace && state.latitude && state.longitude) {
                             const formattedAddress = formatAddress(chosenPlace.address, chosenPlace.addrComponents)
-                            checkPrice(state.store, state.orderAmount, {
+                            checkPrice(state.billNumber, state.store, state.orderAmount, {
                                 lat: state.latitude,
                                 lng: state.longitude,
                                 address: {
@@ -132,7 +132,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                                 code: '1234'
                             })
                         }
-                    }} disabled={!state.store || !state.address || !state.phoneNumber || !state.type || !state.orderAmount || activity.createOrder} loading={activity.getPriceQuote}/>
+                    }} disabled={!state.store || !state.address || !state.phoneNumber || !state.type || !state.orderAmount || activity.createOrder} loading={activity.getPriceQuote} />
                 </div>
                 <div className={styles.actionBtn}>
                     <Button title="Create Order" variant="primary" onClick={() => {

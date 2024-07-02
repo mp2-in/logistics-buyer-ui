@@ -13,6 +13,7 @@ import { Order } from '@lib/interfaces'
 import CancelOrder from './CancelOrder';
 
 import styles from './OrderList.module.scss'
+import Input from '@components/Input';
 
 
 export default ({ onAddOrder, onRefresh, onCancelOrder, orders, activity }: {
@@ -22,6 +23,7 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, orders, activity }: {
     const [clickedId, setClickedId] = useState('')
     const [cancelOrderId, setCancelOrderId] = useState('')
     const [showCancelOrder, setCancelOrderDisplay] = useState(false)
+    const [filterDate, setFilterDate] = useState(dayjs().format('YYYY-MM-DD'))
 
     let actionBtnContainerRef = createRef<HTMLInputElement>();
 
@@ -44,7 +46,10 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, orders, activity }: {
 
     return <div className={styles.container}>
         <div className={styles.btnContainer}>
-            <Button title="Refresh" icon={<img src={refreshIcon} />} variant="primary" iconPosition="left" onClick={onRefresh} />
+            <div className={styles.dateRefresh}>
+                <Button title="Refresh" icon={<img src={refreshIcon} />} variant="primary" iconPosition="left" onClick={onRefresh} />
+                <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => setFilterDate(val)}/>
+            </div>
             <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" iconPosition="left" onClick={onAddOrder} />
         </div>
         <div className={styles.header}>
@@ -81,7 +86,7 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, orders, activity }: {
         {activity.getOrders ? <ActivityIndicator /> : null}
         <CancelOrder open={showCancelOrder} onClose={() => setCancelOrderDisplay(false)} onCancel={reason => onCancelOrder(cancelOrderId, reason, () => {
             setCancelOrderDisplay(false)
-        })} loading={activity.cancelOrder}/>
+        })} loading={activity.cancelOrder} />
         {/* <p>{import.meta.env.VITE_PLACES_KEY}</p> */}
     </div>
 }
