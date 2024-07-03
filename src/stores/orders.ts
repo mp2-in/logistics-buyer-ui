@@ -14,7 +14,7 @@ interface State extends Attributes {
     getOrders: (token: string) => void,
     getPickupList: (token: string) => void,
     googlePlacesApi: (searchText: string, callback: (data: Place[]) => void) => void
-    createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, category: string, callback: (success: boolean) => void) => void
+    createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, category: string, lspId: string | undefined, callback: (success: boolean) => void) => void
     cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean) => void) => void
     getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, category: string, callback: () => void) => void
     addOutlet: (token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean) => void) => void
@@ -70,27 +70,35 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 }))
             })
     },
-    createOrder: async (token, billNumber, storeId, drop, amount, category, callback) => {
+    createOrder: async (token, billNumber, storeId, drop, amount, category, lspId, callback) => {
         set(produce((state: State) => {
             state.activity.createOrder = true
         }))
-        Api('/webui/order/createasync', {
-            method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {
-                client_order_id: billNumber,
-                pickup: {
-                    code: "1234",
-                    store_id: storeId
-                },
-                drop: drop,
-                order_category: category,
-                search_category: "Immediate Delivery",
-                ready_to_ship: "yes",
-                order_amount: amount,
-                order_items: [],
-                select_criteria: {
-                    mode: "auto_select"
-                }
+
+        let data: { [k: string]: string | number | string[] | LocationAddress | { [j: string]: string }, select_criteria: { mode: string, lsp_id?: string } } = {
+            client_order_id: billNumber,
+            pickup: {
+                code: "1234",
+                store_id: storeId
+            },
+            drop: drop,
+            order_category: category,
+            search_category: "Immediate Delivery",
+            ready_to_ship: "yes",
+            order_amount: amount,
+            order_items: [],
+            select_criteria: {
+                mode: "auto_select"
             }
+        }
+
+        if (lspId) {
+            data.select_criteria.mode = 'preferred_lsp'
+            data.select_criteria.lsp_id = lspId
+        }
+
+        Api('/webui/order/createasync', {
+            method: 'post', headers: { 'Content-Type': 'application/json', token }, data
         })
             .then(res => {
                 set(produce((state: State) => {

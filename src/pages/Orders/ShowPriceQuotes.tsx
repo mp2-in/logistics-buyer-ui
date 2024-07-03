@@ -10,7 +10,7 @@ import { useState } from "react"
 import Button from "@components/Button"
 
 
-export default ({ open, onClose, priceQuotes, createOrder }: { open: boolean, onClose: () => void, priceQuotes: PriceQuote[], createOrder: () => void }) => {
+export default ({ open, onClose, priceQuotes, createOrder, loading }: { open: boolean, onClose: () => void, priceQuotes: PriceQuote[], createOrder: (lspId: string) => void, loading: boolean }) => {
     const [chosenLsp, setChosenLsp] = useState('')
 
     return <Modal open={open} onClose={onClose} >
@@ -23,7 +23,7 @@ export default ({ open, onClose, priceQuotes, createOrder }: { open: boolean, on
                 <div className={styles.header}>
                     <p></p>
                     <p>LSP</p>
-                    <p>Pickup ETA</p>
+                    <p>ETA</p>
                     <p>SLA</p>
                     <p>Forward</p>
                     <p>RTO</p>
@@ -42,7 +42,7 @@ export default ({ open, onClose, priceQuotes, createOrder }: { open: boolean, on
                 </div>
             </div>
             <div className={styles.createOrderBtn}>
-                <Button title="Place Order" variant='primary' disabled={!chosenLsp} onClick={() => createOrder()}/>
+                <Button title="Place Order" variant='primary' disabled={!chosenLsp} onClick={() => createOrder(chosenLsp)} loading={loading}/>
             </div>
         </div>
     </Modal>

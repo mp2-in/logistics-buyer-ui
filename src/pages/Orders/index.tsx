@@ -72,7 +72,7 @@ export default () => {
             googlePlacesApi(searchText, callback)
         }} getPickupList={() => token ? getPickupList(token) : null} activity={activity}
             pickupStores={pickupStores} createOrder={(billNumber, storeId, amount, category, drop) => {
-                createOrder(token || '', billNumber, storeId, drop, amount, category, (success) => {
+                createOrder(token || '', billNumber, storeId, drop, amount, category, undefined, (success) => {
                     if (success) {
                         dispatch({ type: 'update', payload: { addOrderDisplay: false } })
                         getOrders(token || '')
@@ -89,9 +89,9 @@ export default () => {
         <AccountDetails open={state.accountDetailsDisplay} onClose={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: false } })} accountId={accountId || ''}
             onLogout={() => clearAuth()} />
         <ShowPriceQuotes open={state.priceQuotesDisplay} onClose={() => dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })}
-            priceQuotes={orderPriceQuote} createOrder={() => {
+            priceQuotes={orderPriceQuote} createOrder={(chosenLsp) => {
                 if(state.billNumber && state.storeId && state.orderAmount && state.drop && state.category) {
-                    createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, state.category, (success) => {
+                    createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, state.category, chosenLsp, (success) => {
                         if (success) {
                             dispatch({ type: 'update', payload: { addOrderDisplay: false, priceQuotesDisplay: false } })
                             getOrders(token || '')
@@ -101,7 +101,7 @@ export default () => {
                         }
                     })
                 }
-            }}/>
+            }} loading={activity.createOrder}/>
         <AddOutlet open={state.addOutletDisplay} onClose={() => dispatch({ type: 'update', payload: { addOutletDisplay: false } })} onPlacesSearch={(searchText, callback) => {
             googlePlacesApi(searchText, callback)
         }} activity={activity} addOutlet={(storeId, address, placesId) => {
