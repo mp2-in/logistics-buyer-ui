@@ -44,7 +44,6 @@ const reducer = (state: State, action: { type: 'reset', payload: Partial<State> 
         case "update":
             return { ...state, ...action.payload }
         case "reset":
-            console.log('called reset', action.payload)
             return { ...initialValue, ...action.payload }
     }
 }
