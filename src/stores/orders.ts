@@ -14,9 +14,9 @@ interface State extends Attributes {
     getOrders: (token: string) => void,
     getPickupList: (token: string) => void,
     googlePlacesApi: (searchText: string, callback: (data: Place[]) => void) => void
-    createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, callback: (success: boolean) => void) => void
+    createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, category: string, callback: (success: boolean) => void) => void
     cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean) => void) => void
-    getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, callback: () => void) => void
+    getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, category: string, callback: () => void) => void
     addOutlet: (token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean) => void) => void
 }
 
@@ -70,7 +70,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 }))
             })
     },
-    createOrder: async (token, billNumber, storeId, drop, amount, callback) => {
+    createOrder: async (token, billNumber, storeId, drop, amount, category, callback) => {
         set(produce((state: State) => {
             state.activity.createOrder = true
         }))
@@ -82,8 +82,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                     store_id: storeId
                 },
                 drop: drop,
-                customer_promised_time: "2024-06-26 16:06:23",
-                order_category: "F&B",
+                order_category: category,
                 search_category: "Immediate Delivery",
                 ready_to_ship: "yes",
                 order_amount: amount,
@@ -137,7 +136,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
             callback(false)
         })
     },
-    getPriceQuote: async (token, storeId, drop, orderAmount, callback) => {
+    getPriceQuote: async (token, storeId, drop, orderAmount, category, callback) => {
         set(produce((state: State) => {
             state.activity.getPriceQuote = true
         }))
@@ -158,7 +157,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                         pincode: drop.pincode
                     },
                     city: storeDetails.address.city,
-                    order_category: "F&B",
+                    order_category: category,
                     search_category: "Immediate Delivery",
                     order_amount: orderAmount
                 }

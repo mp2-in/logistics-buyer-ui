@@ -19,14 +19,12 @@ interface State {
     billNumber: string,
     address: string
     placeId: string,
-    latitude?: number,
-    longitude?: number
     name: string,
     phoneNumber: string,
     orderAmount: string,
     rto: boolean,
     storeId: string,
-    type: string
+    category: string
     addressOption: 'google' | 'manual'
     addrLine1: string
     addrLine2: string
@@ -38,7 +36,7 @@ interface State {
 
 const initialValue: State = {
     placesResponse: [], billNumber: '', address: '', placeId: '', name: '', phoneNumber: '', orderAmount: '', pincode: '',
-    rto: false, storeId: '', type: '', addressOption: 'google', addrLine1: '', addrLine2: '', city: '', state: '', geoLocation: ''
+    rto: false, storeId: '', category: 'Grocery', addressOption: 'google', addrLine1: '', addrLine2: '', city: '', state: '', geoLocation: ''
 }
 
 const reducer = (state: State, action: { type: 'reset' } | { type: 'update', payload: Partial<State> }) => {
@@ -53,8 +51,8 @@ const reducer = (state: State, action: { type: 'reset' } | { type: 'update', pay
 export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, checkPrice, showNewOutletForm, activity, pickupStores }: {
     open: boolean, onClose: () => void, onPlacesSearch: (searchText: string,
         callback: (data: Place[]) => void) => void, getPickupList: () => void, activity: { [k: string]: boolean }, pickupStores: PickupStore[]
-    , createOrder: (billNumber: string, storeId: string, amount: string, drop: LocationAddress) => void,
-    checkPrice: (billNumber: string, storeId: string, amount: string, drop: LocationAddress) => void, showNewOutletForm: () => void
+    , createOrder: (billNumber: string, storeId: string, amount: string, category: string, drop: LocationAddress) => void,
+    checkPrice: (billNumber: string, storeId: string, amount: string, category: string, drop: LocationAddress) => void, showNewOutletForm: () => void
 }) => {
     const [state, dispatch] = useReducer(reducer, initialValue)
 
@@ -64,6 +62,52 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
         }
         dispatch({ type: 'reset' })
     }, [open])
+
+    const processOrder = (action: 'checkPrice' | 'createOrder') => {
+        let drop = undefined
+        if (state.addressOption === 'google') {
+            const chosenPlace = state.placesResponse.find(e => e.id === state.placeId)
+            if (chosenPlace) {
+                const formattedAddress = formatAddress(chosenPlace.address, chosenPlace.addrComponents)
+                drop = {
+                    lat: chosenPlace.latitude,
+                    lng: chosenPlace.longitude,
+                    address: {
+                        name: state.name,
+                        line1: formattedAddress.line1,
+                        line2: formattedAddress.line2,
+                        city: formattedAddress.city,
+                        state: formattedAddress.state
+                    },
+                    pincode: formattedAddress.pincode,
+                    phone: state.phoneNumber
+                }
+            }
+        } else {
+            let match = /^([0-9.]+)\s*,\s*([0-9.]+)$/.exec(state.geoLocation)
+            if (match) {
+                drop = {
+                    lat: parseFloat(match[1]),
+                    lng: parseFloat(match[2]),
+                    address: {
+                        name: state.name,
+                        line1: state.addrLine1,
+                        line2: state.addrLine2,
+                        city: state.city,
+                        state: state.state
+                    },
+                    pincode: state.pincode,
+                    phone: state.phoneNumber,
+                }
+            }
+        }
+
+        if (action === 'checkPrice' && drop) {
+            checkPrice(state.billNumber, state.storeId, state.orderAmount, state.category, drop)
+        } else if (action === 'createOrder' && drop) {
+            createOrder(state.billNumber, state.storeId, state.orderAmount, state.category, { ...drop, code: '1234' })
+        }
+    }
 
     return <Modal open={open} onClose={onClose} loading={activity.getPickupList}>
         <div className={styles.container} onClick={e => e.stopPropagation()}>
@@ -89,7 +133,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 <SpecifyAddress onPlacesSearch={onPlacesSearch} onUpdate={payload => dispatch({ type: 'update', payload })} payload={state} />
                 <p className={'text-lg font-bold my-3 mx-1'}>Order  Details</p>
                 <div className={'flex items-center'}>
-                    <Select label="Type" options={[{ label: 'Food', value: 'food' }, { label: 'Grocery', value: 'grocery' }]} onChange={val => dispatch({ type: 'update', payload: ({ type: val }) })} value={state.type} />
+                    <Select label="Category" options={[{ label: 'Food', value: 'F&B' }, { label: 'Grocery', value: 'Grocery' }]} onChange={val => dispatch({ type: 'update', payload: ({ category: val }) })} value={state.category} />
                     <div className="ml-3">
                         <Input label="Value" size="small" value={state.orderAmount} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { orderAmount: val } })} />
                     </div>
@@ -99,47 +143,14 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                         <p className="mr-3">RTO Required: </p>
                         <Switch on={state.rto} onClick={() => dispatch({ type: 'update', payload: { rto: !state.rto } })} />
                     </div>
-                    <Button title="Check Price" onClick={() => {
-                        const chosenPlace = state.placesResponse.find(e => e.id === state.placeId)
-                        if (chosenPlace && state.latitude && state.longitude) {
-                            const formattedAddress = formatAddress(chosenPlace.address, chosenPlace.addrComponents)
-                            checkPrice(state.billNumber, state.storeId, state.orderAmount, {
-                                lat: state.latitude,
-                                lng: state.longitude,
-                                address: {
-                                    name: state.name,
-                                    line1: formattedAddress.line1,
-                                    line2: formattedAddress.line2,
-                                    city: formattedAddress.city,
-                                    state: formattedAddress.state
-                                },
-                                pincode: formattedAddress.pincode,
-                                phone: state.phoneNumber
-                            })
-                        }
-                    }} disabled={!state.storeId || !state.address || !state.phoneNumber || !state.type || !state.orderAmount || activity.createOrder} loading={activity.getPriceQuote} />
+                    <Button title="Check Price" onClick={() => processOrder('checkPrice')} disabled={!state.storeId || (state.addressOption === 'google' && !state.address) ||
+                        !state.phoneNumber || !state.category || !state.orderAmount || activity.createOrder || (state.addressOption === 'manual' && !/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation))}
+                        loading={activity.getPriceQuote} />
                 </div>
                 <div className={'flex justify-center mb-3'}>
-                    <Button title="Create Order" variant="primary" onClick={() => {
-                        const chosenPlace = state.placesResponse.find(e => e.id === state.placeId)
-                        if (chosenPlace && state.latitude && state.longitude) {
-                            const formattedAddress = formatAddress(chosenPlace.address, chosenPlace.addrComponents)
-                            createOrder(state.billNumber, state.storeId, state.orderAmount, {
-                                lat: state.latitude,
-                                lng: state.longitude,
-                                address: {
-                                    name: state.name,
-                                    line1: formattedAddress.line1,
-                                    line2: formattedAddress.line2,
-                                    city: formattedAddress.city,
-                                    state: formattedAddress.state
-                                },
-                                pincode: formattedAddress.pincode,
-                                phone: state.phoneNumber,
-                                code: '1234'
-                            })
-                        }
-                    }} disabled={!state.billNumber || !state.storeId || !state.address || !state.phoneNumber || !state.type || !state.orderAmount || activity.getPriceQuote} loading={activity.createOrder} />
+                    <Button title="Create Order" variant="primary" onClick={() => processOrder('createOrder')}
+                        disabled={!state.billNumber || !state.storeId || (state.addressOption === 'google' && !state.address) || !state.phoneNumber || !state.category || 
+                        !state.orderAmount || activity.getPriceQuote || (state.addressOption === 'manual' && !/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation))} loading={activity.createOrder} />
                 </div>
             </div>
         </div>
