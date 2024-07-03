@@ -5,7 +5,6 @@ import closeIcon from '@assets/close.png'
 
 import Select from "@components/Select"
 import Input from "@components/Input"
-import PlacesSearchInput from "@components/PlacesSearchInput"
 import Switch from "@components/Switch"
 import Button from "@components/Button"
 
@@ -13,6 +12,7 @@ import { Place, PickupStore, LocationAddress } from '@lib/interfaces'
 
 import styles from './AddOrder.module.scss'
 import { formatAddress } from "@lib/utils"
+import SpecifyAddress from "./SpecifyAddress"
 
 interface State {
     placesResponse: { id: string, name: string, address: string, latitude: number, longitude: number, addrComponents: { longText: string, types: string[] }[] }[]
@@ -25,11 +25,21 @@ interface State {
     phoneNumber: string,
     orderAmount: string,
     rto: boolean,
-    store: string,
+    storeId: string,
     type: string
+    addressOption: 'google' | 'manual'
+    addrLine1: string
+    addrLine2: string
+    city: string
+    state: string
+    pincode: string
+    geoLocation: string
 }
 
-const initialValue: State = { placesResponse: [], billNumber: '', address: '', placeId: '', name: '', phoneNumber: '', orderAmount: '', rto: false, store: '', type: '' }
+const initialValue: State = {
+    placesResponse: [], billNumber: '', address: '', placeId: '', name: '', phoneNumber: '', orderAmount: '', pincode: '',
+    rto: false, storeId: '', type: '', addressOption: 'google', addrLine1: '', addrLine2: '', city: '', state: '', geoLocation: ''
+}
 
 const reducer = (state: State, action: { type: 'reset' } | { type: 'update', payload: Partial<State> }) => {
     switch (action.type) {
@@ -61,63 +71,39 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 <p>Add Order</p>
                 <img src={closeIcon} onClick={onClose} />
             </div>
-            <div className={styles.body}>
-                <div>
-                    <Select label="Outlet" options={pickupStores.map(e => ({ label: e.address.name, value: e.storeId }))} onChange={val => dispatch({ type: 'update', payload: { store: val } })} value={state.store} />
-                    <p className={styles.link} onClick={() => showNewOutletForm()}>Add Outlet</p>
+            <div>
+                <div className={"flex items-end mb-[1.25rem]"}>
+                    <Select label="Outlet" options={pickupStores.map(e => ({ label: e.address.name, value: e.storeId }))} onChange={val => dispatch({ type: 'update', payload: { storeId: val } })} value={state.storeId} />
+                    <p className='text-blue-500 font-semibold text-lg underline cursor-pointer ml-6 mb-1' onClick={() => showNewOutletForm()}>Add Outlet</p>
                 </div>
                 <div>
                     <Input label="Bill Number" value={state.billNumber} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} />
                 </div>
-                <p className={styles.sectionHeader}>Drop</p>
-                <div className={styles.dropDetails}>
+                <p className={'text-lg font-bold my-3 mx-1'}>Drop</p>
+                <div className={'flex items-center'}>
                     <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { phoneNumber: val } })} />
-                    <Input label="Name" value={state.name} onChange={val => dispatch({ type: 'update', payload: { name: val } })} />
+                    <div className="ml-3">
+                        <Input label="Name" value={state.name} onChange={val => dispatch({ type: 'update', payload: { name: val } })} />
+                    </div>
                 </div>
-                <div className={styles.address}>
-                    <PlacesSearchInput label="Address" onChange={val => {
-                        dispatch({ type: 'update', payload: { address: val } })
-                    }} autoCompleteOptions={state.placesResponse.filter(e => e.name && e.address && e.id).map(e => ({ name: e.name.toString(), address: e.address.toString(), value: e.id.toString() }))} value={state.address} onSelect={(v) => {
-                        const chosenPlace = state.placesResponse.find(e => e.id === v)
-                        if (chosenPlace) {
-                            dispatch({ type: 'update', payload: { placeId: v, address: chosenPlace.address, latitude: chosenPlace.latitude, longitude: chosenPlace.longitude, name: state.name || chosenPlace.name } })
-                        }
-                    }} onChangeCallback={val => {
-                        if ((val || '').toString().length > 2) {
-                            onPlacesSearch((val || '').toString(), (data) => {
-                                dispatch({
-                                    type: 'update', payload: {
-                                        placesResponse: data.map(e => {
-                                            return {
-                                                id: e.id,
-                                                name: e.displayName.text,
-                                                address: e.shortFormattedAddress,
-                                                latitude: e.location.latitude,
-                                                longitude: e.location.longitude,
-                                                addrComponents: e.addressComponents
-                                            }
-                                        })
-                                    }
-                                })
-                            })
-                        }
-                    }} />
-                </div>
-                <p className={styles.sectionHeader}>Order  Details</p>
-                <div>
+                <SpecifyAddress onPlacesSearch={onPlacesSearch} onUpdate={payload => dispatch({ type: 'update', payload })} payload={state} />
+                <p className={'text-lg font-bold my-3 mx-1'}>Order  Details</p>
+                <div className={'flex items-center'}>
                     <Select label="Type" options={[{ label: 'Food', value: 'food' }, { label: 'Grocery', value: 'grocery' }]} onChange={val => dispatch({ type: 'update', payload: ({ type: val }) })} value={state.type} />
-                    <Input label="Value" size="small" value={state.orderAmount} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { orderAmount: val } })} />
+                    <div className="ml-3">
+                        <Input label="Value" size="small" value={state.orderAmount} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { orderAmount: val } })} />
+                    </div>
                 </div>
-                <div className={styles.rto}>
-                    <p>RTO Required: </p>
-                    <Switch on={state.rto} onClick={() => dispatch({ type: 'update', payload: { rto: !state.rto } })} />
-                </div>
-                <div className={styles.getQuote}>
+                <div className="flex items-center justify-between my-5">
+                    <div className="flex items-center">
+                        <p className="mr-3">RTO Required: </p>
+                        <Switch on={state.rto} onClick={() => dispatch({ type: 'update', payload: { rto: !state.rto } })} />
+                    </div>
                     <Button title="Check Price" onClick={() => {
                         const chosenPlace = state.placesResponse.find(e => e.id === state.placeId)
                         if (chosenPlace && state.latitude && state.longitude) {
                             const formattedAddress = formatAddress(chosenPlace.address, chosenPlace.addrComponents)
-                            checkPrice(state.billNumber, state.store, state.orderAmount, {
+                            checkPrice(state.billNumber, state.storeId, state.orderAmount, {
                                 lat: state.latitude,
                                 lng: state.longitude,
                                 address: {
@@ -131,14 +117,14 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                                 phone: state.phoneNumber
                             })
                         }
-                    }} disabled={!state.store || !state.address || !state.phoneNumber || !state.type || !state.orderAmount || activity.createOrder} loading={activity.getPriceQuote} />
+                    }} disabled={!state.storeId || !state.address || !state.phoneNumber || !state.type || !state.orderAmount || activity.createOrder} loading={activity.getPriceQuote} />
                 </div>
-                <div className={styles.actionBtn}>
+                <div className={'flex justify-center mb-3'}>
                     <Button title="Create Order" variant="primary" onClick={() => {
                         const chosenPlace = state.placesResponse.find(e => e.id === state.placeId)
                         if (chosenPlace && state.latitude && state.longitude) {
                             const formattedAddress = formatAddress(chosenPlace.address, chosenPlace.addrComponents)
-                            createOrder(state.billNumber, state.store, state.orderAmount, {
+                            createOrder(state.billNumber, state.storeId, state.orderAmount, {
                                 lat: state.latitude,
                                 lng: state.longitude,
                                 address: {
@@ -153,7 +139,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                                 code: '1234'
                             })
                         }
-                    }} disabled={!state.billNumber || !state.store || !state.address || !state.phoneNumber || !state.type || !state.orderAmount || activity.getPriceQuote} loading={activity.createOrder} />
+                    }} disabled={!state.billNumber || !state.storeId || !state.address || !state.phoneNumber || !state.type || !state.orderAmount || activity.getPriceQuote} loading={activity.createOrder} />
                 </div>
             </div>
         </div>

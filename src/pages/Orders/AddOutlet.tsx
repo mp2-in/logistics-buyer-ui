@@ -3,15 +3,13 @@ import { useEffect, useReducer } from "react"
 import Modal from "@components/Modal"
 import closeIcon from '@assets/close.png'
 import Input from "@components/Input"
-import PlacesSearchInput from "@components/PlacesSearchInput"
 
 import { LocationAddress, Place } from '@lib/interfaces'
 
 import styles from './AddOutlet.module.scss'
 import Button from "@components/Button"
-import { formatAddress, getStates } from "@lib/utils"
-import Tab from "@components/Tab"
-import Select from "@components/Select"
+import { formatAddress } from "@lib/utils"
+import SpecifyAddress from "./SpecifyAddress"
 
 interface State {
     placesResponse: { id: string, name: string, address: string, latitude: number, longitude: number, addrComponents: { longText: string, types: string[] }[] }[]
@@ -103,48 +101,7 @@ export default ({ open, onClose, onPlacesSearch, addOutlet, activity }: {
                     <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { phoneNumber: val } })} />
                     <Input label="Name" value={state.name} onChange={val => dispatch({ type: 'update', payload: { name: val } })} />
                 </div>
-                <Tab options={['Google Places', 'Manual']} onSelect={val => dispatch({ type: 'update', payload: { addressOption: val === 'Google Places' ? 'google' : 'manual' } })}
-                    selected={state.addressOption === 'google' ? 'Google Places' : 'Manual'} />
-                {state.addressOption === 'google' ? <div className={styles.address}>
-                    <PlacesSearchInput label="Address" onChange={val => {
-                        dispatch({ type: 'update', payload: { address: val } })
-                        if (val.length > 2) {
-                            onPlacesSearch(val, (data) => {
-                                dispatch({
-                                    type: 'update', payload: {
-                                        placesResponse: data.map(e => {
-                                            return {
-                                                id: e.id,
-                                                name: e.displayName.text,
-                                                address: e.shortFormattedAddress,
-                                                latitude: e.location.latitude,
-                                                longitude: e.location.longitude,
-                                                addrComponents: e.addressComponents
-                                            }
-                                        })
-                                    }
-                                })
-                            })
-                        }
-                    }} autoCompleteOptions={state.placesResponse.filter(e => e.name && e.address && e.id).map(e => ({ name: e.name.toString(), address: e.address.toString(), value: e.id.toString() }))} value={state.address} onSelect={(v) => {
-                        const chosenPlace = state.placesResponse.find(e => e.id === v)
-                        if (chosenPlace) {
-                            dispatch({ type: 'update', payload: { placeId: v, address: chosenPlace.address, name: state.name || chosenPlace.name } })
-                        }
-                    }} />
-                </div> : <div className={styles.manualAddr}>
-                    <Input label="Address Line 1" value={state.addrLine1} onChange={val => dispatch({ type: 'update', payload: { addrLine1: val } })} />
-                    <Input label="Address Line 2" value={state.addrLine2} onChange={val => dispatch({ type: 'update', payload: { addrLine2: val } })} />
-                    <div className={styles.row}>
-                        <Input label="City" value={state.city} onChange={val => dispatch({ type: 'update', payload: { city: val } })} size='small' />
-                        <Select label="State" value={state.state} onChange={val => dispatch({ type: 'update', payload: { state: val } })} options={getStates().map(e => ({ label: e, value: e }))} />
-                    </div>
-                    <Input label="Pincode" value={state.pincode} onChange={val => /^[0-9]{0,6}$/.test(val) && dispatch({ type: 'update', payload: { pincode: val } })} size='small' />
-                    <div className={styles.row}>
-                        <Input label="Geolocation" value={state.geoLocation} onChange={val => dispatch({ type: 'update', payload: { geoLocation: val } })} />
-                        {/^[0-9.]+\s*,\s*[0-9.]+$/.test(state.geoLocation) ? <a href={`https://maps.google.com/?q=${state.geoLocation}`} target="_blank">Maps Link</a> : <a href={`https://maps.google.com`} target="_blank">Maps Link</a>}
-                    </div>
-                </div>}
+                <SpecifyAddress onPlacesSearch={onPlacesSearch} onUpdate={payload => dispatch({ type: 'update', payload })} payload={state}/>
             </div>
             <div className={styles.addBtnContainer}>
                 <Button title="Add Outlet" variant="primary" onClick={() => onAddOutlet()}
