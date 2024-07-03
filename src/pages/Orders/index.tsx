@@ -40,10 +40,10 @@ export default () => {
     const [state, dispatch] = useReducer(reducer, initialValue)
 
     const { token, accountId, clearAuth, setToast } = useAppConfigStore(state => ({ token: state.token, accountId: state.accountId, clearAuth: state.clearAuth, setToast: state.setToast }))
-    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, getPriceQuote, addOutlet, orderPriceQuote } = useOrdersStore(state => ({
+    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, getPriceQuote, addOutlet, saveInStorage, orderPriceQuote } = useOrdersStore(state => ({
         orders: state.orders, getOrders: state.getOrders, googlePlacesApi: state.googlePlacesApi, activity: state.activity, getPriceQuote: state.getPriceQuote,
         getPickupList: state.getPickupList, pickupStores: state.pickupStores, createOrder: state.createOrder, cancelOrder: state.cancelOrder,
-        orderPriceQuote: state.orderPriceQuote, addOutlet: state.addOutlet
+        orderPriceQuote: state.orderPriceQuote, addOutlet: state.addOutlet, saveInStorage: state.saveInStorage
     }))
 
     const navigate = useNavigate()
@@ -85,7 +85,7 @@ export default () => {
                 getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), category,  () => {
                     dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, category, drop } })
                 })
-            }} showNewOutletForm={() => dispatch({ type: 'update', payload: { addOutletDisplay: true } })} />
+            }} showNewOutletForm={() => dispatch({ type: 'update', payload: { addOutletDisplay: true } })} saveInStorage={(keyName, value) => saveInStorage(keyName, value)}/>
         <AccountDetails open={state.accountDetailsDisplay} onClose={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: false } })} accountId={accountId || ''}
             onLogout={() => clearAuth()} />
         <ShowPriceQuotes open={state.priceQuotesDisplay} onClose={() => dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })}

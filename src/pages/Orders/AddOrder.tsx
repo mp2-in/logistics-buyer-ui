@@ -39,20 +39,22 @@ const initialValue: State = {
     rto: false, storeId: '', category: 'Grocery', addressOption: 'google', addrLine1: '', addrLine2: '', city: '', state: '', geoLocation: ''
 }
 
-const reducer = (state: State, action: { type: 'reset' } | { type: 'update', payload: Partial<State> }) => {
+const reducer = (state: State, action: { type: 'reset', payload: Partial<State> } | { type: 'update', payload: Partial<State> }) => {
     switch (action.type) {
         case "update":
             return { ...state, ...action.payload }
         case "reset":
-            return initialValue
+            console.log('called reset', action.payload)
+            return { ...initialValue, ...action.payload }
     }
 }
 
-export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, checkPrice, showNewOutletForm, activity, pickupStores }: {
+export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, checkPrice, showNewOutletForm, saveInStorage, activity, pickupStores }: {
     open: boolean, onClose: () => void, onPlacesSearch: (searchText: string,
         callback: (data: Place[]) => void) => void, getPickupList: () => void, activity: { [k: string]: boolean }, pickupStores: PickupStore[]
     , createOrder: (billNumber: string, storeId: string, amount: string, category: string, drop: LocationAddress) => void,
-    checkPrice: (billNumber: string, storeId: string, amount: string, category: string, drop: LocationAddress) => void, showNewOutletForm: () => void
+    checkPrice: (billNumber: string, storeId: string, amount: string, category: string, drop: LocationAddress) => void, showNewOutletForm: () => void,
+    saveInStorage: (keyName: string, value: string) => void
 }) => {
     const [state, dispatch] = useReducer(reducer, initialValue)
 
@@ -60,7 +62,12 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
         if (open) {
             getPickupList()
         }
-        dispatch({ type: 'reset' })
+        let outlet = localStorage.getItem('outlet')
+        let payload: { [k: string]: string } = {}
+        if (outlet) {
+            payload['storeId'] = outlet
+        }
+        dispatch({ type: 'reset', payload })
     }, [open])
 
     const processOrder = (action: 'checkPrice' | 'createOrder') => {
@@ -117,7 +124,10 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
             </div>
             <div>
                 <div className={"flex items-end mb-[1.25rem]"}>
-                    <Select label="Outlet" options={pickupStores.map(e => ({ label: e.address.name, value: e.storeId }))} onChange={val => dispatch({ type: 'update', payload: { storeId: val } })} value={state.storeId} />
+                    <Select label="Outlet" options={pickupStores.map(e => ({ label: e.address.name, value: e.storeId }))} onChange={val => {
+                        dispatch({ type: 'update', payload: { storeId: val } })
+                        saveInStorage('outlet', val)
+                    }} value={state.storeId} />
                     <p className='text-blue-500 font-semibold text-lg underline cursor-pointer ml-6 mb-1' onClick={() => showNewOutletForm()}>Add Outlet</p>
                 </div>
                 <div>
@@ -149,8 +159,8 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 </div>
                 <div className={'flex justify-center mb-3'}>
                     <Button title="Create Order" variant="primary" onClick={() => processOrder('createOrder')}
-                        disabled={!state.billNumber || !state.storeId || (state.addressOption === 'google' && !state.address) || !state.phoneNumber || !state.category || 
-                        !state.orderAmount || activity.getPriceQuote || (state.addressOption === 'manual' && !/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation))} loading={activity.createOrder} />
+                        disabled={!state.billNumber || !state.storeId || (state.addressOption === 'google' && !state.address) || !state.phoneNumber || !state.category ||
+                            !state.orderAmount || activity.getPriceQuote || (state.addressOption === 'manual' && !/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation))} loading={activity.createOrder} />
                 </div>
             </div>
         </div>

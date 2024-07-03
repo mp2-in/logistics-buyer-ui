@@ -18,6 +18,7 @@ interface State extends Attributes {
     cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean) => void) => void
     getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, category: string, callback: () => void) => void
     addOutlet: (token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean) => void) => void
+    saveInStorage: (keyName: string, value: string) => void
 }
 
 const initialState: Attributes = { orders: [], activity: {}, pickupStores: [], orderPriceQuote: [] };
@@ -212,4 +213,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 callback(false)
             })
     },
+    saveInStorage: async(keyName, value) => {
+        localStorage.setItem(keyName, value);
+    }
 }))
