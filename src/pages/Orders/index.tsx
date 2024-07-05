@@ -42,10 +42,11 @@ export default () => {
     const [state, dispatch] = useReducer(reducer, initialValue)
 
     const { token, accountId, clearAuth, setToast } = useAppConfigStore(state => ({ token: state.token, accountId: state.accountId, clearAuth: state.clearAuth, setToast: state.setToast }))
-    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, getPriceQuote, addOutlet, saveInStorage, orderPriceQuote } = useOrdersStore(state => ({
+
+    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, orderPriceQuote } = useOrdersStore(state => ({
         orders: state.orders, getOrders: state.getOrders, googlePlacesApi: state.googlePlacesApi, activity: state.activity, getPriceQuote: state.getPriceQuote,
         getPickupList: state.getPickupList, pickupStores: state.pickupStores, createOrder: state.createOrder, cancelOrder: state.cancelOrder,
-        orderPriceQuote: state.orderPriceQuote, addOutlet: state.addOutlet, saveInStorage: state.saveInStorage
+        orderPriceQuote: state.orderPriceQuote, addOutlet: state.addOutlet, saveInStorage: state.saveInStorage, googlePlaceDetailsApi: state.googlePlaceDetailsApi
     }))
 
     const navigate = useNavigate()
@@ -78,7 +79,9 @@ export default () => {
         }} orders={orders} activity={activity} filterDate={state.orderFilterDate} changeDate={val => dispatch({type: 'update', payload: {orderFilterDate: val}})}/>
         <AddOrder open={state.addOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { addOrderDisplay: false } })} onPlacesSearch={(searchText, callback) => {
             googlePlacesApi(searchText, callback)
-        }} getPickupList={() => token ? getPickupList(token) : null} activity={activity}
+        }} onPlaceChoose={(placeId, callback) => {
+            googlePlaceDetailsApi(placeId, callback)
+        }}  getPickupList={() => token ? getPickupList(token) : null} activity={activity}
             pickupStores={pickupStores} createOrder={(billNumber, storeId, amount, category, drop) => {
                 createOrder(token || '', billNumber, storeId, drop, amount, category, undefined, (success) => {
                     if (success) {
@@ -122,6 +125,8 @@ export default () => {
                     setToast('Error creating outlet', 'error')
                 }
             })
-        }} />
+        }} onPlaceChoose={(placeId, callback) => {
+            googlePlaceDetailsApi(placeId, callback)
+        }}/>
     </div>
 }       

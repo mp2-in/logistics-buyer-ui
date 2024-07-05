@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { produce } from 'immer'
-import { Api, GooglePlacesApi } from '@lib/utils'
-import { LocationAddress, Order, PickupStore, Place, PriceQuote } from '@lib/interfaces'
+import { Api, GooglePlacesApi, PlaceDetailsApi } from '@lib/utils'
+import { LocationAddress, Order, PickupStore, PlaceAutoComplete, PlaceDetails, PriceQuote } from '@lib/interfaces'
 
 interface Attributes {
     orders: Order[],
@@ -13,7 +13,8 @@ interface Attributes {
 interface State extends Attributes {
     getOrders: (token: string, forDate: string) => void,
     getPickupList: (token: string) => void,
-    googlePlacesApi: (searchText: string, callback: (data: Place[]) => void) => void
+    googlePlacesApi: (searchText: string, callback: (data: PlaceAutoComplete[]) => void) => void
+    googlePlaceDetailsApi: (placeId: string, callback: (data: PlaceDetails) => void) => void
     createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, category: string, lspId: string | undefined, callback: (success: boolean) => void) => void
     cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean) => void) => void
     getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, category: string, callback: () => void) => void
@@ -62,12 +63,22 @@ export const useOrdersStore = create<State>()((set, get) => ({
     googlePlacesApi: async (searchText, callback) => {
         GooglePlacesApi(searchText)
             .then(res => {
-                console.log(res.places)
-                callback(res.places)
+                callback(res.suggestions)
             })
             .catch(() => {
                 set(produce((state: State) => {
-                    state.activity.getOrders = false
+                    state.activity.googlePlacesApi = false
+                }))
+            })
+    },
+    googlePlaceDetailsApi: async (placeId, callback) => {
+        PlaceDetailsApi(placeId)
+            .then(res => {
+                callback(res)
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.activity.googlePlacesApi = false
                 }))
             })
     },

@@ -88,6 +88,5 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, orders, acti
         <CancelOrder open={showCancelOrder} onClose={() => setCancelOrderDisplay(false)} onCancel={reason => onCancelOrder(cancelOrderId, reason, () => {
             setCancelOrderDisplay(false)
         })} loading={activity.cancelOrder} />
-        {/* <p>{import.meta.env.VITE_PLACES_KEY}</p> */}
     </div>
 }

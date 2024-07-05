@@ -23,7 +23,7 @@ export interface Order {
     tracking_url: string
 }
 
-export interface Place {
+export interface PlaceDetails {
     id: string,
     shortFormattedAddress: string,
     location: {
@@ -37,6 +37,15 @@ export interface Place {
         longText: string,
         types: string[]
     }[]
+}
+
+export interface PlaceAutoComplete {
+    placePrediction: {
+        placeId: string,
+        text: {
+            text: string
+        }
+    }
 }
 
 export interface PickupStore {

@@ -14,7 +14,7 @@ interface Props {
     readOnly?: boolean,
     required?: boolean,
     onChangeCallback?: (a?: string | number) => void,
-    autoCompleteOptions?: { name: string, address: string, value: string }[]
+    autoCompleteOptions?: { label: string, value: string }[]
 }
 
 const Input = ({ label, value, onChange, placeholder, readOnly, required, autoCompleteOptions, onSelect, onChangeCallback}: Props) => {
@@ -81,9 +81,7 @@ const Input = ({ label, value, onChange, placeholder, readOnly, required, autoCo
                             optionsDisplay(false)
                         }} key={eachOption.value}>
                             <img src={locPin}/>
-                            <p>{eachOption.name}</p>
-                            <p>-</p>
-                            <p>{eachOption.address}</p>
+                            <p>{eachOption.label}</p>
                         </div>)}
                     </div>
                 </CSSTransition> : null}

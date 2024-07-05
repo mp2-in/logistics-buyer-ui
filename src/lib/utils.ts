@@ -3,6 +3,7 @@ import axios from "axios";
 import { useAppConfigStore } from 'stores/appConfig'
 
 const apiHost = import.meta.env.VITE_ENV === 'PROD' ? "https://ondc-logistics.mp2.in" : "https://preprod.logistics-buyer.mp2.in"
+const googleApiKey = 'AIzaSyCjJ17_wImrwzxtfqmZ8hq168NXx19qoo4'
 
 export const Api = (url: string, options: { method: 'post' | 'put' | 'delete' | 'get', data?: any, headers?: { [k: string]: string } }, withCredentials?: boolean) => {
   return new Promise<any>((resolve, reject) => {
@@ -34,14 +35,38 @@ export const GooglePlacesApi = (searchText: string) => {
   return new Promise<any>((resolve, reject) => {
     axios
       .request({
-        url: 'https://places.googleapis.com/v1/places:searchText',
+        url: 'https://places.googleapis.com/v1/places:autocomplete',
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
-          'X-Goog-Api-Key': 'AIzaSyCjJ17_wImrwzxtfqmZ8hq168NXx19qoo4',
-          'X-Goog-FieldMask': 'places.displayName,places.shortFormattedAddress,places.id,places.location,places.addressComponents'
+          'X-Goog-Api-Key': googleApiKey,
         },
-        data: { textQuery: searchText, locationRestriction: { rectangle: { low: { latitude: 11.812442, longitude: 77.232848 }, high: { latitude: 14.252600, longitude: 77.562438 } } } }
+        data: { input: searchText, locationRestriction: { rectangle: { low: { latitude: 11.812442, longitude: 77.232848 }, high: { latitude: 14.252600, longitude: 77.562438 } } } }
+      })
+      .then((respJson) => {
+        if (respJson.status === 200) {
+          resolve(respJson.data);
+        } else {
+          throw new Error();
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+export const PlaceDetailsApi = (placeId: string) => {
+  return new Promise<any>((resolve, reject) => {
+    axios
+      .request({
+        url: `https://places.googleapis.com/v1/places/${placeId}`,
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': googleApiKey,
+          'X-Goog-FieldMask': 'displayName,shortFormattedAddress,id,location,addressComponents'
+        }
       })
       .then((respJson) => {
         if (respJson.status === 200) {

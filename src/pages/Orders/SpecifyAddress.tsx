@@ -1,5 +1,5 @@
 import { getStates } from "@lib/utils"
-import { Place } from "@lib/interfaces"
+import { PlaceAutoComplete, PlaceDetails } from "@lib/interfaces"
 
 import Input from "@components/Input"
 import PlacesSearchInput from "@components/PlacesSearchInput"
@@ -8,11 +8,14 @@ import Select from "@components/Select"
 
 
 interface Payload {
-    placesResponse: { id: string, name: string, address: string, latitude: number, longitude: number, addrComponents: { longText: string, types: string[] }[] }[]
+    placesResponse: { placeId: string, address: string }[]
     address: string
     placeId: string,
+    latitude?: number
+    longitude?: number
     name: string,
     phoneNumber: string,
+    addrComponents: { longText: string, types: string[] }[]
     storeId: string,
     addressOption: 'google' | 'manual'
     addrLine1: string
@@ -23,9 +26,9 @@ interface Payload {
     geoLocation: string
 }
 
-export default ({ onUpdate, onPlacesSearch, payload }: {
-    onUpdate: (a: Partial<Payload>) => void, payload: Payload, onPlacesSearch: (searchText: string,
-        callback: (data: Place[]) => void) => void
+export default ({ onUpdate, onPlacesSearch,onPlaceChoose, payload }: {
+    onUpdate: (a: Partial<Payload>) => void, payload: Payload, onPlacesSearch: (searchText: string, callback: (data: PlaceAutoComplete[]) => void) => void,
+    onPlaceChoose: (placeId: string, callback: (data: PlaceDetails) => void) => void
 }) => {
 
     return <div className={`flex flex-col items-start`}>
@@ -39,23 +42,22 @@ export default ({ onUpdate, onPlacesSearch, payload }: {
                         onUpdate({
                             placesResponse: data.map(e => {
                                 return {
-                                    id: e.id,
-                                    name: e.displayName.text,
-                                    address: e.shortFormattedAddress,
-                                    latitude: e.location.latitude,
-                                    longitude: e.location.longitude,
-                                    addrComponents: e.addressComponents
+                                    placeId: e.placePrediction.placeId,
+                                    address: e.placePrediction.text.text,
                                 }
                             })
                         })
                     })
                 }
-            }} autoCompleteOptions={payload.placesResponse.filter(e => e.name && e.address && e.id).map(e => ({ name: e.name.toString(), address: e.address.toString(), value: e.id.toString() }))}
+            }} autoCompleteOptions={payload.placesResponse.map(e => ({  label: e.address.toString(), value: e.placeId.toString() }))}
                 value={payload.address} onSelect={(v) => {
-                    const chosenPlace = payload.placesResponse.find(e => e.id === v)
+                    const chosenPlace = payload.placesResponse.find(e => e.placeId === v)
                     if (chosenPlace) {
-                        onUpdate({ placeId: v, address: chosenPlace.address, name: payload.name || chosenPlace.name })
+                        onUpdate({ placeId: v, address: chosenPlace.address})
                     }
+                    onPlaceChoose(v, (placeDetails) => {
+                        onUpdate({ placeId: v, latitude: placeDetails.location.latitude, longitude: placeDetails.location.longitude, addrComponents: placeDetails.addressComponents})
+                    })
                 }} />
         </div> : <div className={'flex flex-col items-start *:mb-3'}>
             <Input label="Address Line 1" value={payload.addrLine1} onChange={val => onUpdate({ addrLine1: val })} />
