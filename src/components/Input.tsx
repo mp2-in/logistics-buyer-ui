@@ -1,7 +1,4 @@
 import { useEffect, createRef, useState } from "react"
-import cn from 'classnames'
-import { CSSTransition } from 'react-transition-group';
-import styles from './Input.module.scss'
 
 interface Props {
     label?: string,
@@ -23,7 +20,7 @@ interface Props {
     error?: boolean
 }
 
-const Input = ({ label, type, value, onChange, size, placeholder, readOnly, onBlur, required, validation, max, onChangeCallback, autoCompleteOptions, error, minDate, maxDate, onSelect}: Props) => {
+const Input = ({ label, type, value, onChange, size, placeholder, readOnly, onBlur, required, validation, max, onChangeCallback, autoCompleteOptions, error, minDate, maxDate, onSelect }: Props) => {
 
     let selectContainerRef = createRef<HTMLInputElement>();
     const [showOptions, optionsDisplay] = useState(false)
@@ -68,44 +65,33 @@ const Input = ({ label, type, value, onChange, size, placeholder, readOnly, onBl
         }
     }
 
-    return <div className={cn({ [styles.outerContainer]: true, [styles.noLabel]: !label })}>
-        <div className={cn({ [styles.container]: true, [styles.small]: size === 'small', [styles.large]: size === 'large', [styles.extraLarge]: size === 'extraLarge', [styles.readOnly]: readOnly })}>
-                        <input className={styles.input}
-                            placeholder={placeholder}
-                            type={getType()}
-                            readOnly={readOnly}
-                            onBlur={() => onBlur && onBlur()}
-                            min={minDate}
-                            max={maxDate}
-                            value={value}
-                            onChange={e => {
-                                if (onChange && (!validation || (validation && validation.test(e.target.value)) || !e.target.value) && (!max || (max && parseInt(e.target.value) <= max) || !e.target.value)) {
-                                    onChange(e.target.value)
-                                }
-                            }} onClick={() => !readOnly ? optionsDisplay(true) : null} />
-            {label ? <p className={cn({ [styles.label]: true, [styles.required]: required, [styles.error]: error })}>{label}</p> : null}
+    return <div className={`relative inline-flex flex-col justify-end ${label ? 'h-[2.875rem]' : 'h-[2.1875rem]'}`}>
+        <div className={`flex flex-col border border-gray-300 rounded relative h-[2.1875rem] justify-center py-0 px-[0.5rem] bg-white group focus-within:border-blue-500
+                                    ${size === 'small' ? `w-[12.25rem]` : size === 'medium' || !size ? 'w-[25rem]' : size === 'large' ? 'w-[31.25rem]' : 'w-[38.75rem]'} ${readOnly ? 'opacity-60' : ''}`}>
+            <input className={`outline-none border-none font-sans text-base`}
+                placeholder={placeholder}
+                type={getType()}
+                readOnly={readOnly}
+                onBlur={() => onBlur && onBlur()}
+                min={minDate}
+                max={maxDate}
+                value={value}
+                onChange={e => {
+                    if (onChange && (!validation || (validation && validation.test(e.target.value)) || !e.target.value) && (!max || (max && parseInt(e.target.value) <= max) || !e.target.value)) {
+                        onChange(e.target.value)
+                    }
+                }} onClick={() => !readOnly ? optionsDisplay(true) : null} />
+            {label ? <p className={`absolute group-focus-within:text-blue-500 bg-white left-[0.625rem] -top-[0.625rem] text-sm font-medium px-1 text-blue-950 ${required ? "after:content-['*'] after:font-bold after:text-sm after:ml-1" : ''} ${error ? `text-red-600` : ''} `}>{label}</p> : null}
             {showOptions && autoCompleteOptions && autoCompleteOptions.length > 0 ?
-                <CSSTransition
-                    in={showOptions}
-                    nodeRef={selectContainerRef}
-                    timeout={30}
-                    classNames={{
-                        enterActive: styles.optionEnterActive,
-                        enterDone: styles.optionEnterDone,
-                        exitActive: styles.optionExitActive,
-                        exitDone: styles.optionExitDone
-                    }}
-                    unmountOnExit
-                >
-                    <div ref={selectContainerRef} className={cn({ [styles.optionsList]: true, [styles.large]: size === 'large', [styles.extraLarge]: size === 'extraLarge', [styles.readOnly]: readOnly })}>
-                        {autoCompleteOptions.map(eachOption => <p onClick={() => {
-                            if (onSelect) {
-                                onSelect(eachOption.label,eachOption.value)
-                            }
-                            optionsDisplay(false)
-                        }}>{eachOption.label}</p>)}
-                    </div>
-                </CSSTransition> : null}
+                <div ref={selectContainerRef} className={`absolute border border-gray-300 top-[2.1rem] left-0 z-10 rounded overflow-auto bg-white max-h-[10rem] 
+                ${size === 'small' ? `w-[12.25rem]` : size === 'medium' || !size ? 'w-[25rem]' : size === 'large' ? 'w-[31.25rem]' : 'w-[38.75rem]'}`}>
+                    {autoCompleteOptions.map(eachOption => <p className="hover:bg-gray-300 cursor-pointer px-2 py-1" onClick={() => {
+                        if (onSelect) {
+                            onSelect(eachOption.label, eachOption.value)
+                        }
+                        optionsDisplay(false)
+                    }}>{eachOption.label}</p>)}
+                </div> : null}
         </div>
     </div>
 }

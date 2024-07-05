@@ -11,7 +11,7 @@ interface Attributes {
 }
 
 interface State extends Attributes {
-    getOrders: (token: string) => void,
+    getOrders: (token: string, forDate: string) => void,
     getPickupList: (token: string) => void,
     googlePlacesApi: (searchText: string, callback: (data: Place[]) => void) => void
     createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, category: string, lspId: string | undefined, callback: (success: boolean) => void) => void
@@ -25,11 +25,11 @@ const initialState: Attributes = { orders: [], activity: {}, pickupStores: [], o
 
 export const useOrdersStore = create<State>()((set, get) => ({
     ...initialState,
-    getOrders: async (token) => {
+    getOrders: async (token, forDate) => {
         set(produce((state: State) => {
             state.activity.getOrders = true
         }))
-        Api('/webui/orders', { method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {} })
+        Api('/webui/orders', { method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {date: forDate} })
             .then(res => {
                 set(produce((state: State) => {
                     state.orders = res

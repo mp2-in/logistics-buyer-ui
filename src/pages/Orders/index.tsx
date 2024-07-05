@@ -11,6 +11,7 @@ import AccountDetails from "./AccountDetails";
 import ShowPriceQuotes from "./ShowPriceQuotes";
 import AddOutlet from "./AddOutlet";
 import { LocationAddress } from "@lib/interfaces";
+import dayjs from "dayjs";
 
 
 interface State {
@@ -23,10 +24,11 @@ interface State {
     drop?: LocationAddress,
     orderAmount?: string,
     category?: string
+    orderFilterDate: string
 }
 
 export default () => {
-    const initialValue: State = { addOrderDisplay: false, accountDetailsDisplay: false, priceQuotesDisplay: false, addOutletDisplay: false }
+    const initialValue: State = { addOrderDisplay: false, accountDetailsDisplay: false, priceQuotesDisplay: false, addOutletDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD') }
 
     const reducer = (state: State, action: { type: 'reset' } | { type: 'update', payload: Partial<State> }) => {
         switch (action.type) {
@@ -50,15 +52,21 @@ export default () => {
 
     useEffect(() => {
         if (token) {
-            getOrders(token)
+            getOrders(token, state.orderFilterDate)
         } else {
             navigate('/login')
         }
     }, [])
 
+    useEffect(() => {
+        if (token) {
+            getOrders(token, state.orderFilterDate)
+        } 
+    }, [state.orderFilterDate])
+
     return <div>
         <TopBar accountId={accountId || ''} showAccountDetails={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: true } })} />
-        <OrderList onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })} onRefresh={() => token ? getOrders(token) : null} onCancelOrder={(orderId, reason, callback) => {
+        <OrderList onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })} onRefresh={() => token ? getOrders(token, state.orderFilterDate) : null} onCancelOrder={(orderId, reason, callback) => {
             cancelOrder(token || '', orderId, reason, (success) => {
                 if (success) {
                     setToast('Order cancelled.', 'success')
@@ -67,7 +75,7 @@ export default () => {
                     setToast('Error cancelling order', 'error')
                 }
             })
-        }} orders={orders} activity={activity} />
+        }} orders={orders} activity={activity} filterDate={state.orderFilterDate} changeDate={val => dispatch({type: 'update', payload: {orderFilterDate: val}})}/>
         <AddOrder open={state.addOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { addOrderDisplay: false } })} onPlacesSearch={(searchText, callback) => {
             googlePlacesApi(searchText, callback)
         }} getPickupList={() => token ? getPickupList(token) : null} activity={activity}
@@ -75,7 +83,7 @@ export default () => {
                 createOrder(token || '', billNumber, storeId, drop, amount, category, undefined, (success) => {
                     if (success) {
                         dispatch({ type: 'update', payload: { addOrderDisplay: false } })
-                        getOrders(token || '')
+                        getOrders(token || '', state.orderFilterDate)
                         setToast('Order created successfully', 'success')
                     } else {
                         setToast('Error creating order', 'error')
@@ -94,7 +102,7 @@ export default () => {
                     createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, state.category, chosenLsp, (success) => {
                         if (success) {
                             dispatch({ type: 'update', payload: { addOrderDisplay: false, priceQuotesDisplay: false } })
-                            getOrders(token || '')
+                            getOrders(token || '', state.orderFilterDate)
                             setToast('Order created successfully', 'success')
                         } else {
                             setToast('Error creating order', 'error')

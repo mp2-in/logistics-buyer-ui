@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import cn from 'classnames'
 
 import Input from '@components/Input'
 import Button from '@components/Button'
 
 import { useAppConfigStore } from 'stores/appConfig'
 
-import styles from './Login.module.scss'
 
 export default () => {
     const [username, setUsername] = useState('')
@@ -18,21 +16,23 @@ export default () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if(loggedIn) {
+        if (loggedIn) {
             navigate('/u/orders')
         }
     }, [loggedIn])
 
-    return <div className={styles.container}>
+    return <div className={'flex flex-col items-center border border-gray-200 rounded-lg m-64 p-14'}>
         <Input label='Username' required value={username || ''} onChange={val => {
             setUsername(val)
             errMsgDisplay(false)
         }} />
-        <Input label='Password' type='password' required value={password || ''} onChange={val => {
-            setPassword(val)
-            errMsgDisplay(false)
-        }} />
-        <div className={cn({ [styles.errMsgContainer]: true, [styles.visible]: showErrMsg })}>
+        <div className='my-7'>
+            <Input label='Password' type='password' required value={password || ''} onChange={val => {
+                setPassword(val)
+                errMsgDisplay(false)
+            }} />
+        </div>
+        <div className={`${showErrMsg ? 'visible' : 'invisible'} font-bold text-red-500 mb-2 text-lg`}>
             <p>Invalid credentials !</p>
         </div>
         <Button title='Sign In' variant='primary' disabled={!username || !password} onClick={() => {

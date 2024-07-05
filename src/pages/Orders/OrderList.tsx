@@ -16,14 +16,13 @@ import styles from './OrderList.module.scss'
 import Input from '@components/Input';
 
 
-export default ({ onAddOrder, onRefresh, onCancelOrder, orders, activity }: {
+export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, orders, activity, filterDate }: {
     onAddOrder: () => void, onRefresh: () => void, onCancelOrder: (orderId: string, reason: string, callback: () => void) => void,
-    orders: Order[], activity: { [k: string]: boolean }
+    orders: Order[], activity: { [k: string]: boolean }, filterDate: string, changeDate: (date: string) => void
 }) => {
     const [clickedId, setClickedId] = useState('')
     const [cancelOrderId, setCancelOrderId] = useState('')
     const [showCancelOrder, setCancelOrderDisplay] = useState(false)
-    const [filterDate, setFilterDate] = useState(dayjs().format('YYYY-MM-DD'))
 
     let actionBtnContainerRef = createRef<HTMLInputElement>();
 
@@ -48,7 +47,7 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, orders, activity }: {
         <div className={styles.btnContainer}>
             <div className={styles.dateRefresh}>
                 <Button title="Refresh" icon={<img src={refreshIcon} />} variant="primary" iconPosition="left" onClick={onRefresh} />
-                <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => setFilterDate(val)}/>
+                <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => changeDate(val)}/>
             </div>
             <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" iconPosition="left" onClick={onAddOrder} />
         </div>

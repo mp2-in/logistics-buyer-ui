@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { useAppConfigStore } from 'stores/appConfig'
 
-const apiHost = "https://preprod.logistics-buyer.mp2.in"
+const apiHost = import.meta.env.VITE_ENV === 'PROD' ? "https://ondc-logistics.mp2.in" : "https://preprod.logistics-buyer.mp2.in"
 
 export const Api = (url: string, options: { method: 'post' | 'put' | 'delete' | 'get', data?: any, headers?: { [k: string]: string } }, withCredentials?: boolean) => {
   return new Promise<any>((resolve, reject) => {
@@ -56,7 +56,7 @@ export const GooglePlacesApi = (searchText: string) => {
   });
 };
 
-export const formatAddress = (address: string, components: { longText: string, types: string[]}[]) => {
+export const formatAddress = (address: string, components: { longText: string, types: string[] }[]) => {
   const addressSplit = address.split(/\s*,\s*/)
   let addrLine1: string[] = []
   let addrLine2: string[] = []
@@ -69,30 +69,30 @@ export const formatAddress = (address: string, components: { longText: string, t
   for (let i = 0; i < addressSplit.length; i++) {
     if (!line1Complete && [...addrLine1, addressSplit[i]].join(',').length < address.length / 2) {
       addrLine1.push(addressSplit[i])
-    } else if(!line1Complete) {
+    } else if (!line1Complete) {
       line1Complete = true
     }
 
-    if(line1Complete) {
+    if (line1Complete) {
       addrLine2.push(addressSplit[i])
     }
   }
 
-  for(let i=0;i<components.length;i++) {
-    if(components[i].types.includes('locality')) {
+  for (let i = 0; i < components.length; i++) {
+    if (components[i].types.includes('locality')) {
       city = components[i].longText
     }
 
-    if(components[i].types.includes('postal_code')) {
+    if (components[i].types.includes('postal_code')) {
       pincode = components[i].longText
     }
 
-    if(components[i].types.includes('administrative_area_level_1')) {
+    if (components[i].types.includes('administrative_area_level_1')) {
       state = components[i].longText
     }
   }
 
-  return {line1: addrLine1.join(', '), line2: addrLine2.join(', '), city, pincode, state}
+  return { line1: addrLine1.join(', '), line2: addrLine2.join(', '), city, pincode, state }
 }
 
 export const getStates = () => {
