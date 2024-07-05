@@ -58,6 +58,7 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, orders, acti
             <p>Status</p>
             <p>Price</p>
             <p>Distance</p>
+            <p>Track</p>
             <p></p>
         </div>
         <div className={styles.body}>
@@ -69,7 +70,8 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, orders, acti
                     <p>{e.state}</p>
                     <p>{e.price ? `₹ ${e.price}` : 0}</p>
                     <p>{e.distance ? `${e.distance}m` : 0}</p>
-                    <div>
+                    {e.tracking_url?<a href={e.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer'>Track</a>:<p className='text-gray-500'>Track</p>}
+                    <div className='flex justify-center'>
                         <img src={moreIcon} onClick={() => setClickedId(e.id)} />
                     </div>
                     <div className={cn({ [styles.actionBtns]: true, [styles.visible]: clickedId === e.id })} ref={actionBtnContainerRef}>
