@@ -41,7 +41,7 @@ export const GooglePlacesApi = (searchText: string) => {
           'Content-Type': 'application/json',
           'X-Goog-Api-Key': googleApiKey,
         },
-        data: { input: searchText, locationRestriction: { rectangle: { low: { latitude: 11.812442, longitude: 77.232848 }, high: { latitude: 14.252600, longitude: 77.562438 } } } }
+        data: { input: searchText, locationRestriction: { rectangle: { low: { latitude: 12.857606, longitude: 77.471582 }, high: { latitude: 13.050327, longitude: 77.665216 } } } }
       })
       .then((respJson) => {
         if (respJson.status === 200) {
