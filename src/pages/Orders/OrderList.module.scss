@@ -42,7 +42,6 @@
             font-weight: 600;
             font-size: 18px;
 
-
             &:nth-child(1) {
                 flex: 2;
             }
@@ -72,7 +71,7 @@
             }
 
             &:nth-child(8) {
-                flex: 1;
+                flex: 2;
             }
         }
     }
@@ -128,7 +127,7 @@
                 }
     
                 &:nth-child(8) {
-                    flex: 1;
+                    flex: 2;
                 }
 
                 &:nth-child(7) {
@@ -163,15 +162,6 @@
                     &.visible {
                         display: block;
                     }
-                }
-            }
-
-
-            img {
-                width: 30px;
-
-                &:hover {
-                    background-color: #f2f2f2;
                 }
             }
         }

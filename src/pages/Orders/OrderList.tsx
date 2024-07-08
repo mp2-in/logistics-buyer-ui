@@ -1,10 +1,10 @@
 import dayjs from 'dayjs'
-import cn from 'classnames';
-import { createRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Button from "@components/Button";
-import moreIcon from '@assets/more.png'
 import addIcon from "@assets/add.png"
+import cancelIcon from "@assets/cancel.png"
+import retryIcon from "@assets/retry.png"
 import refreshIcon from "@assets/refresh.png"
 import ActivityIndicator from '@components/ActivityIndicator';
 
@@ -20,34 +20,26 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDeta
     onAddOrder: () => void, onRefresh: () => void, onCancelOrder: (orderId: string, reason: string, callback: () => void) => void,
     orders: Order[], activity: { [k: string]: boolean }, filterDate: string, changeDate: (date: string) => void, getOrderDetails: (orderId: string) => void
 }) => {
-    const [clickedId, setClickedId] = useState('')
     const [cancelOrderId, setCancelOrderId] = useState('')
     const [showCancelOrder, setCancelOrderDisplay] = useState(false)
 
-    let actionBtnContainerRef = createRef<HTMLInputElement>();
-
-    const handleClickOutside = (event: MouseEvent) => {
-        if (
-            actionBtnContainerRef.current &&
-            !actionBtnContainerRef.current.contains(event.target as Node)
-        ) {
-            setClickedId('');
-        }
-    };
+    const cancellable = (orderState: string) => {
+        return ['UnFulfilled', 'Searching-for-Agent', 'Agent-assigned'].includes(orderState)
+    }
 
     useEffect(() => {
-        document.addEventListener("click", handleClickOutside, true);
-        return () => {
-            document.removeEventListener("click", handleClickOutside, true);
-        };
-    });
+        const interval = setInterval(() => {
+            onRefresh()
+        }, 90000);
+        return () => clearInterval(interval);
+      }, [filterDate])
 
 
     return <div className={styles.container}>
         <div className={styles.btnContainer}>
             <div className={styles.dateRefresh}>
                 <Button title="Refresh" icon={<img src={refreshIcon} />} variant="primary" iconPosition="left" onClick={onRefresh} />
-                <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => changeDate(val)}/>
+                <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => changeDate(val)} />
             </div>
             <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" iconPosition="left" onClick={onAddOrder} />
         </div>
@@ -70,19 +62,16 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDeta
                     <p>{eachOrder.state}</p>
                     <p>{eachOrder.price ? `₹ ${eachOrder.price}` : 0}</p>
                     <p>{eachOrder.distance ? `${eachOrder.distance}m` : 0}</p>
-                    {eachOrder.tracking_url?<a href={eachOrder.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer'>Track</a>:<p className='text-gray-500'>Track</p>}
-                    <div className='flex justify-center'>
-                        <img src={moreIcon} onClick={e => {
-                            setClickedId(eachOrder.id)
+                    {eachOrder.tracking_url ? <a href={eachOrder.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer'>Track</a> : <p className='text-gray-500'>Track</p>}
+                    <div className='flex justify-around *:w-6'>
+                        <img src={cancelIcon} onClick={e => {
+                            if (cancellable(eachOrder.state)) {
+                                setCancelOrderDisplay(true)
+                                setCancelOrderId(eachOrder.id)
+                            }
                             e.stopPropagation()
-                        }} />
-                    </div>
-                    <div className={cn({ [styles.actionBtns]: true, [styles.visible]: clickedId === eachOrder.id })} ref={actionBtnContainerRef}>
-                        <p onClick={() => {
-                            setCancelOrderDisplay(true)
-                            setCancelOrderId(eachOrder.id)
-                        }}>Cancel Order</p>
-                        <p>Retry Fulfillment</p>
+                        }} title='Cancel Order' className={`${cancellable(eachOrder.state) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
+                        <img src={retryIcon} title='Retry Fulfillment' onClick={e => e.stopPropagation()} />
                     </div>
                 </div>
             })}
