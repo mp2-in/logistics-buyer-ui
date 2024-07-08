@@ -29,7 +29,7 @@ interface State {
     orderFilterDate: string
 }
 
-const initialValue: State = { addOrderDisplay: false, accountDetailsDisplay: false, priceQuotesDisplay: false, orderInfoDisplay: false, addOutletDisplay: false, orderFilterDate: dayjs('2024-07-05').format('YYYY-MM-DD') }
+const initialValue: State = { addOrderDisplay: false, accountDetailsDisplay: false, priceQuotesDisplay: false, orderInfoDisplay: false, addOutletDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD') }
 
 
 const reducer = (state: State, action: { type: 'reset' } | { type: 'update', payload: Partial<State> }) => {
