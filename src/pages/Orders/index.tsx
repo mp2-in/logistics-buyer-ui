@@ -82,8 +82,12 @@ export default () => {
                 }
             })
         }} orders={orders} activity={activity} filterDate={state.orderFilterDate} changeDate={val => dispatch({ type: 'update', payload: { orderFilterDate: val } })}
-            getOrderDetails={orderId => getOrderDetails(token || '', orderId, () => {
-                dispatch({ type: 'update', payload: { orderInfoDisplay: true } })
+            getOrderDetails={orderId => getOrderDetails(token || '', orderId, (success, message) => {
+                if(success) {
+                    dispatch({ type: 'update', payload: { orderInfoDisplay: true } })
+                } else {
+                    setToast(message || 'Error fetching order details', 'error')
+                }
             })} />
         <AddOrder open={state.addOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { addOrderDisplay: false } })} onPlacesSearch={(searchText, callback) => {
             googlePlacesApi(searchText, callback)

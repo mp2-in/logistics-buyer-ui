@@ -62,29 +62,32 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDeta
             <p></p>
         </div>
         <div className={styles.body}>
-            {orders.map(e => {
-                return <div key={e.id} onClick={() => getOrderDetails(e.id)}>
-                    <p>{e.created_at ? dayjs(e.created_at).format('DD MMM, hh:mm A') : '--'}</p>
-                    <p>{e.client_order_id}</p>
-                    <p>{e.lsp.name}</p>
-                    <p>{e.state}</p>
-                    <p>{e.price ? `₹ ${e.price}` : 0}</p>
-                    <p>{e.distance ? `${e.distance}m` : 0}</p>
-                    {e.tracking_url?<a href={e.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer'>Track</a>:<p className='text-gray-500'>Track</p>}
+            {orders.map(eachOrder => {
+                return <div key={eachOrder.id} onClick={() => getOrderDetails(eachOrder.id)}>
+                    <p>{eachOrder.created_at ? dayjs(eachOrder.created_at).format('DD MMM, hh:mm A') : '--'}</p>
+                    <p>{eachOrder.client_order_id}</p>
+                    <p>{eachOrder.lsp.name}</p>
+                    <p>{eachOrder.state}</p>
+                    <p>{eachOrder.price ? `₹ ${eachOrder.price}` : 0}</p>
+                    <p>{eachOrder.distance ? `${eachOrder.distance}m` : 0}</p>
+                    {eachOrder.tracking_url?<a href={eachOrder.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer'>Track</a>:<p className='text-gray-500'>Track</p>}
                     <div className='flex justify-center'>
-                        <img src={moreIcon} onClick={() => setClickedId(e.id)} />
+                        <img src={moreIcon} onClick={e => {
+                            setClickedId(eachOrder.id)
+                            e.stopPropagation()
+                        }} />
                     </div>
-                    <div className={cn({ [styles.actionBtns]: true, [styles.visible]: clickedId === e.id })} ref={actionBtnContainerRef}>
+                    <div className={cn({ [styles.actionBtns]: true, [styles.visible]: clickedId === eachOrder.id })} ref={actionBtnContainerRef}>
                         <p onClick={() => {
                             setCancelOrderDisplay(true)
-                            setCancelOrderId(e.id)
+                            setCancelOrderId(eachOrder.id)
                         }}>Cancel Order</p>
                         <p>Retry Fulfillment</p>
                     </div>
                 </div>
             })}
         </div>
-        {activity.getOrders ? <ActivityIndicator /> : null}
+        {activity.getOrders || activity.getOrderDetails ? <ActivityIndicator /> : null}
         <CancelOrder open={showCancelOrder} onClose={() => setCancelOrderDisplay(false)} onCancel={reason => onCancelOrder(cancelOrderId, reason, () => {
             setCancelOrderDisplay(false)
         })} loading={activity.cancelOrder} />

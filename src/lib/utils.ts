@@ -126,3 +126,12 @@ export const getStates = () => {
     'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttarakhand', 'Uttar Pradesh', 'West Bengal', 'Andaman and Nicobar Islands',
     'Chandigarh', 'Dadra and Nagar Haveli', 'Daman and Diu', 'Delhi', 'Lakshadweep', 'Puducherry']
 }
+
+
+export const cancellationIdReasonMapping:{[k: string]: string} = {
+  "002": 'One or more items in the Order not available',
+  "005": 'Merchant rejected the order',
+  "006": 'Order not shipped as per buyer app SLA',
+  "010": 'Buyer wants to modify details',
+  "012": 'Buyer does not want product any more',
+}

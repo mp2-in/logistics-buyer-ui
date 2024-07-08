@@ -20,6 +20,8 @@ export interface Order {
     pickedup_at: string,
     delivered_at: string,
     cancelled_at: string
+    rto_initiated_at: string
+    rto_delivered_at: string
     tracking_url: string
     cancellation: {
         reason_id: string
