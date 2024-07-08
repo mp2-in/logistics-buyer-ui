@@ -8,7 +8,7 @@ import Select from "@components/Select"
 
 
 interface Payload {
-    placesResponse: { placeId: string, address: string }[]
+    placesResponse: { placeId: string, address: string, offset: number }[]
     address: string
     placeId: string,
     latitude?: number
@@ -39,17 +39,19 @@ export default ({ onUpdate, onPlacesSearch,onPlaceChoose, payload }: {
                 onUpdate({ address: val })
                 if (val.length > 2) {
                     onPlacesSearch(val, (data) => {
+                        console.log(data)
                         onUpdate({
                             placesResponse: data.map(e => {
                                 return {
                                     placeId: e.placePrediction.placeId,
                                     address: e.placePrediction.text.text,
+                                    offset: e.placePrediction.text.matches.length>0?e.placePrediction.text.matches[0].endOffset:0
                                 }
                             })
                         })
                     })
                 }
-            }} autoCompleteOptions={payload.placesResponse.map(e => ({  label: e.address.toString(), value: e.placeId.toString() }))}
+            }} autoCompleteOptions={payload.placesResponse.map(e => ({  label: e.address.toString(), value: e.placeId.toString(), offset: e.offset }))}
                 value={payload.address} onSelect={(v) => {
                     const chosenPlace = payload.placesResponse.find(e => e.placeId === v)
                     if (chosenPlace) {

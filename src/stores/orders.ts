@@ -7,7 +7,8 @@ interface Attributes {
     orders: Order[],
     activity: { [k: string]: boolean },
     pickupStores: PickupStore[],
-    orderPriceQuote: PriceQuote[]
+    orderPriceQuote: PriceQuote[],
+    orderInfo?: Order
 }
 
 interface State extends Attributes {
@@ -20,6 +21,7 @@ interface State extends Attributes {
     getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, category: string, callback: () => void) => void
     addOutlet: (token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean) => void) => void
     saveInStorage: (keyName: string, value: string) => void
+    getOrderDetails: (token: string, orderId: string, callback: () => void) => void
 }
 
 const initialState: Attributes = { orders: [], activity: {}, pickupStores: [], orderPriceQuote: [] };
@@ -226,5 +228,31 @@ export const useOrdersStore = create<State>()((set, get) => ({
     },
     saveInStorage: async(keyName, value) => {
         localStorage.setItem(keyName, value);
-    }
+    },
+    getOrderDetails: async (token, orderId, callback) => {
+        set(produce((state: State) => {
+            state.activity.getOrderDetails = true
+        }))
+        Api('/webui/order/info', {
+            method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {
+                order: {
+                    id: orderId
+                }
+            }
+        })
+            .then(res => {
+                set(produce((state: State) => {
+                    if(res.status === 1) {
+                        state.orderInfo = res.order
+                    }
+                    state.activity.getOrderDetails = false
+                }))
+                callback()
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.activity.getOrderDetails = false
+                }))
+            })
+    },
 }))

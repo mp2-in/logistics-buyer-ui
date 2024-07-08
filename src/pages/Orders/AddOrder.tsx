@@ -15,7 +15,7 @@ import { formatAddress } from "@lib/utils"
 import SpecifyAddress from "./SpecifyAddress"
 
 interface State {
-    placesResponse: { placeId: string, address: string }[]
+    placesResponse: { placeId: string, address: string, offset: number }[]
     billNumber: string,
     address: string
     placeId: string,

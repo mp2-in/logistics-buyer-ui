@@ -21,6 +21,10 @@ export interface Order {
     delivered_at: string,
     cancelled_at: string
     tracking_url: string
+    cancellation: {
+        reason_id: string
+        cancelled_by: string
+    }
 }
 
 export interface PlaceDetails {
@@ -43,7 +47,10 @@ export interface PlaceAutoComplete {
     placePrediction: {
         placeId: string,
         text: {
-            text: string
+            text: string,
+            matches: {
+                endOffset: number
+            }[]
         }
     }
 }

@@ -12,6 +12,7 @@ import ShowPriceQuotes from "./ShowPriceQuotes";
 import AddOutlet from "./AddOutlet";
 import { LocationAddress } from "@lib/interfaces";
 import dayjs from "dayjs";
+import OrderInfo from "./OrderInfo";
 
 
 interface State {
@@ -19,6 +20,7 @@ interface State {
     accountDetailsDisplay: boolean,
     priceQuotesDisplay: boolean,
     addOutletDisplay: boolean,
+    orderInfoDisplay: boolean
     billNumber?: string,
     storeId?: string
     drop?: LocationAddress,
@@ -27,27 +29,30 @@ interface State {
     orderFilterDate: string
 }
 
-export default () => {
-    const initialValue: State = { addOrderDisplay: false, accountDetailsDisplay: false, priceQuotesDisplay: false, addOutletDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD') }
+const initialValue: State = { addOrderDisplay: false, accountDetailsDisplay: false, priceQuotesDisplay: false, orderInfoDisplay: false, addOutletDisplay: false, orderFilterDate: dayjs('2024-07-05').format('YYYY-MM-DD') }
 
-    const reducer = (state: State, action: { type: 'reset' } | { type: 'update', payload: Partial<State> }) => {
-        switch (action.type) {
-            case "update":
-                return { ...state, ...action.payload }
-            case "reset":
-                return initialValue
-        }
+
+const reducer = (state: State, action: { type: 'reset' } | { type: 'update', payload: Partial<State> }) => {
+    switch (action.type) {
+        case "update":
+            return { ...state, ...action.payload }
+        case "reset":
+            return initialValue
     }
+}
+
+export default () => {
 
     const [state, dispatch] = useReducer(reducer, initialValue)
 
     const { token, accountId, clearAuth, setToast } = useAppConfigStore(state => ({ token: state.token, accountId: state.accountId, clearAuth: state.clearAuth, setToast: state.setToast }))
 
-    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, orderPriceQuote } = useOrdersStore(state => ({
-        orders: state.orders, getOrders: state.getOrders, googlePlacesApi: state.googlePlacesApi, activity: state.activity, getPriceQuote: state.getPriceQuote,
-        getPickupList: state.getPickupList, pickupStores: state.pickupStores, createOrder: state.createOrder, cancelOrder: state.cancelOrder,
-        orderPriceQuote: state.orderPriceQuote, addOutlet: state.addOutlet, saveInStorage: state.saveInStorage, googlePlaceDetailsApi: state.googlePlaceDetailsApi
-    }))
+    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder,
+        getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, getOrderDetails, orderPriceQuote, orderInfo } = useOrdersStore(state => ({
+            orders: state.orders, getOrders: state.getOrders, googlePlacesApi: state.googlePlacesApi, activity: state.activity, getPriceQuote: state.getPriceQuote,
+            getPickupList: state.getPickupList, pickupStores: state.pickupStores, createOrder: state.createOrder, cancelOrder: state.cancelOrder, getOrderDetails: state.getOrderDetails,
+            orderPriceQuote: state.orderPriceQuote, addOutlet: state.addOutlet, saveInStorage: state.saveInStorage, googlePlaceDetailsApi: state.googlePlaceDetailsApi, orderInfo: state.orderInfo
+        }))
 
     const navigate = useNavigate()
 
@@ -62,7 +67,7 @@ export default () => {
     useEffect(() => {
         if (token) {
             getOrders(token, state.orderFilterDate)
-        } 
+        }
     }, [state.orderFilterDate])
 
     return <div>
@@ -76,12 +81,15 @@ export default () => {
                     setToast('Error cancelling order', 'error')
                 }
             })
-        }} orders={orders} activity={activity} filterDate={state.orderFilterDate} changeDate={val => dispatch({type: 'update', payload: {orderFilterDate: val}})}/>
+        }} orders={orders} activity={activity} filterDate={state.orderFilterDate} changeDate={val => dispatch({ type: 'update', payload: { orderFilterDate: val } })}
+            getOrderDetails={orderId => getOrderDetails(token || '', orderId, () => {
+                dispatch({ type: 'update', payload: { orderInfoDisplay: true } })
+            })} />
         <AddOrder open={state.addOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { addOrderDisplay: false } })} onPlacesSearch={(searchText, callback) => {
             googlePlacesApi(searchText, callback)
         }} onPlaceChoose={(placeId, callback) => {
             googlePlaceDetailsApi(placeId, callback)
-        }}  getPickupList={() => token ? getPickupList(token) : null} activity={activity}
+        }} getPickupList={() => token ? getPickupList(token) : null} activity={activity}
             pickupStores={pickupStores} createOrder={(billNumber, storeId, amount, category, drop) => {
                 createOrder(token || '', billNumber, storeId, drop, amount, category, undefined, (success) => {
                     if (success) {
@@ -93,15 +101,15 @@ export default () => {
                     }
                 })
             }} checkPrice={(billNumber, storeId, orderAmount, category, drop) => {
-                getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), category,  () => {
+                getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), category, () => {
                     dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, category, drop } })
                 })
-            }} showNewOutletForm={() => dispatch({ type: 'update', payload: { addOutletDisplay: true } })} saveInStorage={(keyName, value) => saveInStorage(keyName, value)}/>
+            }} showNewOutletForm={() => dispatch({ type: 'update', payload: { addOutletDisplay: true } })} saveInStorage={(keyName, value) => saveInStorage(keyName, value)} />
         <AccountDetails open={state.accountDetailsDisplay} onClose={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: false } })} accountId={accountId || ''}
             onLogout={() => clearAuth()} />
         <ShowPriceQuotes open={state.priceQuotesDisplay} onClose={() => dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })}
             priceQuotes={orderPriceQuote} createOrder={(chosenLsp) => {
-                if(state.billNumber && state.storeId && state.orderAmount && state.drop && state.category) {
+                if (state.billNumber && state.storeId && state.orderAmount && state.drop && state.category) {
                     createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, state.category, chosenLsp, (success) => {
                         if (success) {
                             dispatch({ type: 'update', payload: { addOrderDisplay: false, priceQuotesDisplay: false } })
@@ -112,7 +120,7 @@ export default () => {
                         }
                     })
                 }
-            }} loading={activity.createOrder}/>
+            }} loading={activity.createOrder} />
         <AddOutlet open={state.addOutletDisplay} onClose={() => dispatch({ type: 'update', payload: { addOutletDisplay: false } })} onPlacesSearch={(searchText, callback) => {
             googlePlacesApi(searchText, callback)
         }} activity={activity} addOutlet={(storeId, address, placesId) => {
@@ -127,6 +135,7 @@ export default () => {
             })
         }} onPlaceChoose={(placeId, callback) => {
             googlePlaceDetailsApi(placeId, callback)
-        }}/>
+        }} />
+        <OrderInfo open={state.orderInfoDisplay} onClose={() => dispatch({ type: 'update', payload: { orderInfoDisplay: false } })} orderInfo={orderInfo} />
     </div>
 }       

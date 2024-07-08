@@ -16,9 +16,9 @@ import styles from './OrderList.module.scss'
 import Input from '@components/Input';
 
 
-export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, orders, activity, filterDate }: {
+export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDetails, orders, activity, filterDate }: {
     onAddOrder: () => void, onRefresh: () => void, onCancelOrder: (orderId: string, reason: string, callback: () => void) => void,
-    orders: Order[], activity: { [k: string]: boolean }, filterDate: string, changeDate: (date: string) => void
+    orders: Order[], activity: { [k: string]: boolean }, filterDate: string, changeDate: (date: string) => void, getOrderDetails: (orderId: string) => void
 }) => {
     const [clickedId, setClickedId] = useState('')
     const [cancelOrderId, setCancelOrderId] = useState('')
@@ -63,7 +63,7 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, orders, acti
         </div>
         <div className={styles.body}>
             {orders.map(e => {
-                return <div key={e.id}>
+                return <div key={e.id} onClick={() => getOrderDetails(e.id)}>
                     <p>{e.created_at ? dayjs(e.created_at).format('DD MMM, hh:mm A') : '--'}</p>
                     <p>{e.client_order_id}</p>
                     <p>{e.lsp.name}</p>
