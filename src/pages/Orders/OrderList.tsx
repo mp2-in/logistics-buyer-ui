@@ -24,7 +24,7 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDeta
     const [showCancelOrder, setCancelOrderDisplay] = useState(false)
 
     const cancellable = (orderState: string) => {
-        return ['UnFulfilled', 'Searching-for-Agent', 'Agent-assigned'].includes(orderState)
+        return ['UnFulfilled', 'Searching-for-Agent', 'Pending'].includes(orderState)
     }
 
     useEffect(() => {
