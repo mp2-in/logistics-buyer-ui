@@ -155,7 +155,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                     </div>
                     <Button title="Check Price" onClick={() => processOrder('checkPrice')} disabled={!state.storeId || (state.addressOption === 'google' && !state.address) ||
                         !state.phoneNumber || !state.category || !state.orderAmount || activity.createOrder || (state.addressOption === 'manual' && !/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation))}
-                        loading={activity.getPriceQuote} />
+                        loading={activity.getPriceQuote} variant="info"/>
                 </div>
                 <div className={'flex justify-center mb-3'}>
                     <Button title="Create Order" variant="primary" onClick={() => processOrder('createOrder')}

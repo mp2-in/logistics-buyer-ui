@@ -1,54 +1,44 @@
-import cn from "classnames";
-import styles from "./Button.module.scss";
-
 interface Props {
   title: string,
   onClick?: () => void,
   disabled?: boolean,
-  variant?: 'primary' | 'default',
+  variant: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | 'light',
   loading?: boolean
   icon?: React.ReactNode
-  iconPosition?: 'left' | 'right'
-  size?: 'small' | 'medium' | 'large'
 }
 
-const Button = (props: Props) => {
-  const { title, onClick, disabled, variant, loading, icon, iconPosition } = props;
+
+export default (props: Props) => {
+  const { title, onClick, disabled, loading, icon, variant } = props;
+
+  const bgColors = {
+      primary: 'bg-blue-500',
+      secondary: 'bg-gray-500',
+      success: 'bg-green-700',
+      warning: 'bg-yellow-500',
+      danger: 'bg-red-600',
+      info: 'bg-sky-400',
+      light: 'bg-white',
+  }
+
   return (
-    <div
-      className={cn({
-        [styles.buttonContainer]: true,
-        [styles.primary]: variant === "primary",
-        [styles.disabled]: disabled || loading,
-        [styles.default]: !variant || variant !== 'primary'
-      })}
-      style={{
-        height: props.size === 'small' ? '20px' : props.size === 'medium' ? '30px' : '40px',
-        padding: props.size === 'small' ? '0 10px' : props.size === 'medium' ? '0 20px' : '0 30px'
-      }}
-      onClick={() => {
-        return !(disabled || loading) && onClick ? onClick() : null;
-      }}
-    >
-      <div className={styles.title}>
-        {icon && iconPosition === 'left' ? icon : null}
-        <span style={{
-          fontSize: props.size === 'small' ? '12px' : props.size === 'medium' ? '14px' : '16px'
-        }}>{title}</span>
-        {icon && iconPosition === 'right' ? icon : null}
+      <div className={`inline-flex items-center py-2 px-7 rounded-md justify-between text-center relative 
+       ${bgColors[variant]} ${loading || disabled ? 'opacity-45' : 'cursor-pointer active:opacity-65'} ${variant === 'light'?'border border-slate-400':''}`}
+          onClick={() => {
+              return !(disabled || loading) && onClick ? onClick() : null;
+          }}
+      >
+          <div className={`flex justify-between items-center`}>
+              {icon ? <div className="w-6 mr-2">{icon}</div> : null}
+              <span className={`select-none ${variant === 'light'?'text-slate-600':'text-white'}`}>{title}</span>
+          </div>
+          {loading ? (
+              <div className={`w-full h-full absolute left-0 flex items-center justify-center`}>
+                  <div
+                      className={`border-[3px] rounded-full border-t-[3px] ${variant === 'light'?'border-t-slate-600':'border-t-white'} border-transparent w-[28px] h-[28px] animate-spin absolute`}
+                  />
+              </div>
+          ) : null}
       </div>
-      {loading ? (
-        <div className={styles.loaderContainer}>
-          <div
-            className={cn({
-              [styles.loader]: true,
-              [styles.default]: !variant || variant !== 'primary'
-            })}
-          />
-        </div>
-      ) : null}
-    </div>
   );
 };
-
-export default Button;

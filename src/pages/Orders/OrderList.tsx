@@ -1,7 +1,6 @@
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react';
 
-import Button from "@components/Button";
 import addIcon from "@assets/add.png"
 import cancelIcon from "@assets/cancel.png"
 import retryIcon from "@assets/retry.png"
@@ -12,8 +11,8 @@ import { Order } from '@lib/interfaces'
 
 import CancelOrder from './CancelOrder';
 
-import styles from './OrderList.module.scss'
 import Input from '@components/Input';
+import Button from '@components/Button';
 
 
 export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDetails, orders, activity, filterDate }: {
@@ -32,38 +31,39 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDeta
             onRefresh()
         }, 90000);
         return () => clearInterval(interval);
-      }, [filterDate])
+    }, [filterDate])
 
-
-    return <div className={styles.container}>
-        <div className={styles.btnContainer}>
-            <div className={styles.dateRefresh}>
-                <Button title="Refresh" icon={<img src={refreshIcon} />} variant="primary" iconPosition="left" onClick={onRefresh} />
+    return <div className={`absolute left-0 right-0 top-16 bottom-3 px-5 py-3 overflow-hidden`}>
+        <div className={`flex items-end justify-between p-4`}>
+            <div className={'flex items-end *:mr-4'}>
+                <Button title="Refresh" icon={<img src={refreshIcon} />} variant="primary" onClick={onRefresh} />
                 <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => changeDate(val)} />
             </div>
-            <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" iconPosition="left" onClick={onAddOrder} />
+            <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" onClick={onAddOrder} />
         </div>
-        <div className={styles.header}>
-            <p>Date</p>
-            <p>Order Id</p>
-            <p>LSP</p>
-            <p>Status</p>
-            <p>Price</p>
-            <p>Distance</p>
-            <p>Track</p>
-            <p></p>
+        <div className={`flex items-center py-2 px-3 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-semibold *:text-lg`}>
+            <p className={`flex-[3]`}>Date</p>
+            <p className={`flex-[5]`}>Order Id</p>
+            <p className={`flex-[5]`}>LSP</p>
+            <p className={`flex-[4]`}>Status</p>
+            <p className={`flex-[2]`}>Price</p>
+            <p className={`flex-[2]`}>Distance</p>
+            <p className={`flex-[2]`}>Track</p>
+            <p className={`flex-[2]`}></p>
         </div>
-        <div className={styles.body}>
+        <div className={`absolute flex items-center flex-col left-5 right-5 bottom-2 top-[134px] overflow-auto`}>
             {orders.map(eachOrder => {
-                return <div key={eachOrder.id} onClick={() => getOrderDetails(eachOrder.id)}>
-                    <p>{eachOrder.created_at ? dayjs(eachOrder.created_at).format('DD MMM, hh:mm A') : '--'}</p>
-                    <p>{eachOrder.client_order_id}</p>
-                    <p>{eachOrder.lsp.name}</p>
-                    <p>{eachOrder.state}</p>
-                    <p>{eachOrder.price ? `₹ ${eachOrder.price}` : 0}</p>
-                    <p>{eachOrder.distance ? `${eachOrder.distance}m` : 0}</p>
-                    {eachOrder.tracking_url ? <a href={eachOrder.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer' onClick={e => e.stopPropagation()}>Track</a> : <p className='text-gray-500'>Track</p>}
-                    <div className='flex justify-around *:w-6'>
+                return <div key={eachOrder.id} onClick={() => getOrderDetails(eachOrder.id)} className={`flex items-center w-full py-1 px-2 border-b border-l border-r text-sm relative cursor-pointer *:text-center`}>
+                    <p className={`flex-[3]`}>{eachOrder.created_at ? dayjs(eachOrder.created_at).format('DD MMM, hh:mm A') : '--'}</p>
+                    <p className={`flex-[5]`}>{eachOrder.client_order_id}</p>
+                    <p className={`flex-[5]`}>{eachOrder.lsp.name}</p>
+                    <p className={`flex-[4]`}>{eachOrder.state}</p>
+                    <p className={`flex-[2]`}>{eachOrder.price ? `₹ ${eachOrder.price}` : 0}</p>
+                    <p className={`flex-[2]`}>{eachOrder.distance ? `${eachOrder.distance}m` : 0}</p>
+                    <div className={`flex-[2]`}>
+                        {eachOrder.tracking_url ? <a href={eachOrder.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer' onClick={e => e.stopPropagation()}>Track</a> : <p className='text-gray-500'>Track</p>}
+                    </div>
+                    <div className='flex justify-around *:w-6 flex-[2]'>
                         <img src={cancelIcon} onClick={e => {
                             if (cancellable(eachOrder.state)) {
                                 setCancelOrderDisplay(true)
