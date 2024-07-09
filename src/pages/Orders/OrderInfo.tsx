@@ -7,9 +7,9 @@ import { cancellationIdReasonMapping } from "@lib/utils"
 
 
 const ShowValue = ({ label, value, isDate, large }: { label: string, value: string | number | undefined, isDate?: boolean, large?: boolean }) => {
-    return <div className={`relative border border-gray-100 my-3 py-[4px] px-3 ${large?`w-[500px]`:'w-[260px]'} rounded-md`}>
+    return <div className={`relative border border-gray-100 my-3 py-[4px] px-3 ${large?`w-[500px]`:'w-[260px]'} rounded-md overflow-`}>
         <p className="absolute -top-2 px-2 bg-white text-xs left-3 text-gray-500">{label}</p>
-        <p className="font-semibold">{value === undefined || value === '' ? '--' : isDate ? dayjs(value).format('DD MMM, hh:mm A') : value}</p>
+        <input className="font-semibold outline-none border-none w-full" readOnly value={value === undefined || value === '' ? '--' : isDate ? dayjs(value).format('DD MMM, hh:mm A') : value} />
     </div>
 }
 

@@ -62,7 +62,7 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDeta
                     <p>{eachOrder.state}</p>
                     <p>{eachOrder.price ? `₹ ${eachOrder.price}` : 0}</p>
                     <p>{eachOrder.distance ? `${eachOrder.distance}m` : 0}</p>
-                    {eachOrder.tracking_url ? <a href={eachOrder.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer'>Track</a> : <p className='text-gray-500'>Track</p>}
+                    {eachOrder.tracking_url ? <a href={eachOrder.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer' onClick={e => e.stopPropagation()}>Track</a> : <p className='text-gray-500'>Track</p>}
                     <div className='flex justify-around *:w-6'>
                         <img src={cancelIcon} onClick={e => {
                             if (cancellable(eachOrder.state)) {
