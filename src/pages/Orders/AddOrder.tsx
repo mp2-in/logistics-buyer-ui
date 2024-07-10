@@ -5,7 +5,6 @@ import closeIcon from '@assets/close.png'
 
 import Select from "@components/Select"
 import Input from "@components/Input"
-import Switch from "@components/Switch"
 import Button from "@components/Button"
 
 import { PlaceAutoComplete, PlaceDetails, PickupStore, LocationAddress } from '@lib/interfaces'
@@ -39,7 +38,7 @@ interface State {
 
 const initialValue: State = {
     placesResponse: [], billNumber: '', address: '', placeId: '', name: '', phoneNumber: '', orderAmount: '', pincode: '', addrComponents: [],
-    rto: false, storeId: '', category: 'Grocery', addressOption: 'google', addrLine1: '', addrLine2: '', city: '', state: '', geoLocation: ''
+    rto: false, storeId: '', category: 'F&B', addressOption: 'google', addrLine1: '', addrLine2: '', city: '', state: '', geoLocation: ''
 }
 
 const reducer = (state: State, action: { type: 'reset', payload: Partial<State> } | { type: 'update', payload: Partial<State> }) => {
@@ -127,7 +126,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                     <Select label="Outlet" options={pickupStores.map(e => ({ label: e.address.name, value: e.storeId }))} onChange={val => {
                         dispatch({ type: 'update', payload: { storeId: val } })
                         saveInStorage('outlet', val)
-                    }} value={state.storeId} />
+                    }} value={state.storeId} hideSearch/>
                     <p className='text-blue-500 font-semibold text-lg underline cursor-pointer ml-6 mb-1' onClick={() => showNewOutletForm()}>Add Outlet</p>
                 </div>
                 <div>
@@ -145,14 +144,10 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 <div className={'flex items-center'}>
                     <Select label="Category" options={[{ label: 'Food', value: 'F&B' }, { label: 'Grocery', value: 'Grocery' }]} onChange={val => dispatch({ type: 'update', payload: ({ category: val }) })} value={state.category} />
                     <div className="ml-3">
-                        <Input label="Value" size="small" value={state.orderAmount} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { orderAmount: val } })} />
+                        <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { orderAmount: val } })} />
                     </div>
                 </div>
-                <div className="flex items-center justify-between my-5">
-                    <div className="flex items-center">
-                        <p className="mr-3">RTO Required: </p>
-                        <Switch on={state.rto} onClick={() => dispatch({ type: 'update', payload: { rto: !state.rto } })} />
-                    </div>
+                <div className="flex items-center flex-row-reverse justify-between my-5">
                     <Button title="Check Price" onClick={() => processOrder('checkPrice')} disabled={!state.storeId || (state.addressOption === 'google' && !state.address) ||
                         !state.phoneNumber || !state.category || !state.orderAmount || activity.createOrder || (state.addressOption === 'manual' && !/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation))}
                         loading={activity.getPriceQuote} variant="info"/>

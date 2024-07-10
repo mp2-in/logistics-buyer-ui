@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 
 import addIcon from "@assets/add.png"
 import cancelIcon from "@assets/cancel.png"
-import retryIcon from "@assets/retry.png"
+import trackIcon from "@assets/track.png"
+import moreIcon from "@assets/more.png"
 import refreshIcon from "@assets/refresh.png"
 import ActivityIndicator from '@components/ActivityIndicator';
 
@@ -46,32 +47,34 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDeta
             <p className={`flex-[5]`}>Order Id</p>
             <p className={`flex-[5]`}>LSP</p>
             <p className={`flex-[4]`}>Status</p>
-            <p className={`flex-[2]`}>Price</p>
+            <p className={`flex-[2]`}>Rider</p>
             <p className={`flex-[2]`}>Distance</p>
-            <p className={`flex-[2]`}>Track</p>
-            <p className={`flex-[2]`}></p>
+            <p className={`flex-[2]`}>Actions</p>
         </div>
         <div className={`absolute flex items-center flex-col left-5 right-5 bottom-2 top-[134px] overflow-auto`}>
             {orders.map(eachOrder => {
-                return <div key={eachOrder.id} onClick={() => getOrderDetails(eachOrder.id)} className={`flex items-center w-full py-1 px-2 border-b border-l border-r text-sm relative cursor-pointer *:text-center`}>
+                return <div key={eachOrder.id} className={`flex items-center w-full py-1 px-2 border-b border-l border-r text-sm relative *:text-center`}>
                     <p className={`flex-[3]`}>{eachOrder.created_at ? dayjs(eachOrder.created_at).format('DD MMM, hh:mm A') : '--'}</p>
                     <p className={`flex-[5]`}>{eachOrder.client_order_id}</p>
                     <p className={`flex-[5]`}>{eachOrder.lsp.name}</p>
                     <p className={`flex-[4]`}>{eachOrder.state}</p>
-                    <p className={`flex-[2]`}>{eachOrder.price ? `₹ ${eachOrder.price}` : 0}</p>
+                    <p className={`flex-[2]`}>{eachOrder.rider.name}</p>
                     <p className={`flex-[2]`}>{eachOrder.distance ? `${eachOrder.distance}m` : 0}</p>
-                    <div className={`flex-[2]`}>
-                        {eachOrder.tracking_url ? <a href={eachOrder.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer' onClick={e => e.stopPropagation()}>Track</a> : <p className='text-gray-500'>Track</p>}
-                    </div>
-                    <div className='flex justify-around *:w-6 flex-[2]'>
+                    <div className={`flex-[2] flex justify-evenly items-center`}>
+                        {eachOrder.tracking_url ? <a href={eachOrder.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer' onClick={e => e.stopPropagation()}>
+                            <img src={trackIcon} title='Track Shipment' className='w-6' />
+                        </a> : <img src={trackIcon} title='Track Shipment' className='w-6 opacity-40' />}
                         <img src={cancelIcon} onClick={e => {
                             if (cancellable(eachOrder.state)) {
                                 setCancelOrderDisplay(true)
                                 setCancelOrderId(eachOrder.id)
                             }
                             e.stopPropagation()
-                        }} title='Cancel Order' className={`${cancellable(eachOrder.state) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
-                        <img src={retryIcon} title='Retry Fulfillment' onClick={e => e.stopPropagation()} />
+                        }} title='Cancel Order' className={`w-6 ${cancellable(eachOrder.state) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
+                        <img src={moreIcon} onClick={e => {
+                            getOrderDetails(eachOrder.id)
+                            e.stopPropagation()
+                        }} title='Order Details' className={'cursor-pointer w-6'} />
                     </div>
                 </div>
             })}

@@ -71,7 +71,7 @@ export default ({ onUpdate, onPlacesSearch,onPlaceChoose, payload }: {
             </div>
             <div className={'flex items-center'}>
                 <div className="mr-3">
-                    <Select label="State" value={payload.state} onChange={val => onUpdate({ state: val })} options={getStates().map(e => ({ label: e, value: e }))} />
+                    <Select label="State" value={payload.state} onChange={val => onUpdate({ state: val })} options={getStates().map(e => ({ label: e, value: e }))} hideSearch/>
                 </div>
                 <Input label="Pincode" value={payload.pincode} onChange={val => /^[0-9]{0,6}$/.test(val) && onUpdate({ pincode: val })} size='small' />
             </div>
