@@ -93,7 +93,7 @@ export default () => {
             googlePlacesApi(searchText, callback)
         }} onPlaceChoose={(placeId, callback) => {
             googlePlaceDetailsApi(placeId, callback)
-        }} getPickupList={() => token ? getPickupList(token) : null} activity={activity}
+        }} getPickupList={callback => token ? getPickupList(token, callback) : null} activity={activity}
             pickupStores={pickupStores} createOrder={(billNumber, storeId, amount, category, drop) => {
                 createOrder(token || '', billNumber, storeId, drop, amount, category, undefined, (success) => {
                     if (success) {
@@ -131,7 +131,7 @@ export default () => {
             addOutlet(token || '', storeId, address, placesId, (success) => {
                 if (success) {
                     dispatch({ type: 'update', payload: { addOutletDisplay: false } })
-                    getPickupList(token || '')
+                    getPickupList(token || '', () => null)
                     setToast('Outlet created successfully', 'success')
                 } else {
                     setToast('Error creating outlet', 'error')

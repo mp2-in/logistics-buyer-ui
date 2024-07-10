@@ -1,9 +1,8 @@
-import { getStates } from "@lib/utils"
+import { formatAddress, getStates } from "@lib/utils"
 import { PlaceAutoComplete, PlaceDetails } from "@lib/interfaces"
 
 import Input from "@components/Input"
 import PlacesSearchInput from "@components/PlacesSearchInput"
-import Tab from "@components/Tab"
 import Select from "@components/Select"
 
 
@@ -17,7 +16,6 @@ interface Payload {
     phoneNumber: string,
     addrComponents: { longText: string, types: string[] }[]
     storeId: string,
-    addressOption: 'google' | 'manual'
     addrLine1: string
     addrLine2: string
     city: string
@@ -26,16 +24,15 @@ interface Payload {
     geoLocation: string
 }
 
-export default ({ onUpdate, onPlacesSearch,onPlaceChoose, payload }: {
+export default ({ onUpdate, onPlacesSearch, onPlaceChoose, payload, module, storeLocation }: {
     onUpdate: (a: Partial<Payload>) => void, payload: Payload, onPlacesSearch: (searchText: string, callback: (data: PlaceAutoComplete[]) => void) => void,
-    onPlaceChoose: (placeId: string, callback: (data: PlaceDetails) => void) => void
+    onPlaceChoose: (placeId: string, callback: (data: PlaceDetails) => void) => void,
+    module?: string, storeLocation?: string
 }) => {
 
     return <div className={`flex flex-col items-start`}>
-        <Tab options={['Google Places', 'Manual']} onSelect={val => onUpdate({ addressOption: val === 'Google Places' ? 'google' : 'manual' })}
-            selected={payload.addressOption === 'google' ? 'Google Places' : 'Manual'} />
-        {payload.addressOption === 'google' ? <div>
-            <PlacesSearchInput label="Address" onChange={val => {
+        <div className={'flex flex-col items-start *:my-1'}>
+            <PlacesSearchInput label="Search Address" onChange={val => {
                 onUpdate({ address: val })
                 if (val.length > 2) {
                     onPlacesSearch(val, (data) => {
@@ -45,41 +42,45 @@ export default ({ onUpdate, onPlacesSearch,onPlaceChoose, payload }: {
                                 return {
                                     placeId: e.placePrediction.placeId,
                                     address: e.placePrediction.text.text,
-                                    offset: e.placePrediction.text.matches.length>0?e.placePrediction.text.matches[0].endOffset:0
+                                    offset: e.placePrediction.text.matches.length > 0 ? e.placePrediction.text.matches[0].endOffset : 0
                                 }
                             })
                         })
                     })
                 }
-            }} autoCompleteOptions={payload.placesResponse.map(e => ({  label: e.address.toString(), value: e.placeId.toString(), offset: e.offset }))}
+            }} autoCompleteOptions={payload.placesResponse.map(e => ({ label: e.address.toString(), value: e.placeId.toString(), offset: e.offset }))}
                 value={payload.address} onSelect={(v) => {
                     const chosenPlace = payload.placesResponse.find(e => e.placeId === v)
                     if (chosenPlace) {
-                        onUpdate({ placeId: v, address: chosenPlace.address})
+                        onUpdate({ placeId: v, address: chosenPlace.address })
                     }
                     onPlaceChoose(v, (placeDetails) => {
-                        onUpdate({ placeId: v, latitude: placeDetails.location.latitude, longitude: placeDetails.location.longitude, addrComponents: placeDetails.addressComponents})
+                        if(chosenPlace) {
+                            const formattedAddress = formatAddress(chosenPlace.address, placeDetails.addressComponents)
+                            onUpdate({ placeId: v, latitude: placeDetails.location.latitude, longitude: placeDetails.location.longitude, geoLocation: `${placeDetails.location.latitude}, ${placeDetails.location.longitude}`,
+                                addrComponents: placeDetails.addressComponents, addrLine1: formattedAddress.line1, addrLine2: formattedAddress.line2, pincode: formattedAddress.pincode })
+                        }
                     })
                 }} />
-        </div> : <div className={'flex flex-col items-start *:mb-3'}>
             <Input label="Address Line 1" value={payload.addrLine1} onChange={val => onUpdate({ addrLine1: val })} />
             <div className="flex items-center">
                 <Input label="Address Line 2" value={payload.addrLine2} onChange={val => onUpdate({ addrLine2: val })} />
                 <div className="ml-3">
-                    <Input label="City" value={payload.city} onChange={val => onUpdate({ city: val })} size='small' />
+                    <Input label="Pincode" value={payload.pincode} onChange={val => /^[0-9]{0,6}$/.test(val) && onUpdate({ pincode: val })} size='small' />
                 </div>
             </div>
             <div className={'flex items-center'}>
                 <div className="mr-3">
-                    <Select label="State" value={payload.state} onChange={val => onUpdate({ state: val })} options={getStates().map(e => ({ label: e, value: e }))} hideSearch/>
+                    <Select label="State" value={payload.state} onChange={val => onUpdate({ state: val })} options={getStates().map(e => ({ label: e, value: e }))} hideSearch readonly={module==='addOrder'} />
                 </div>
-                <Input label="Pincode" value={payload.pincode} onChange={val => /^[0-9]{0,6}$/.test(val) && onUpdate({ pincode: val })} size='small' />
+                <Input label="City" value={payload.city} onChange={val => onUpdate({ city: val })} size='small' readOnly={module==='addOrder'} />
             </div>
             <div className={'flex items-center'}>
                 <Input label="Geolocation" value={payload.geoLocation} onChange={val => onUpdate({ geoLocation: val })} />
-                {/^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) ? <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://maps.google.com/?q=${payload.geoLocation}`} target="_blank">Maps Link</a> :
+                {/^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) && storeLocation ? <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://www.google.com/maps/dir/?api=1&origin=${storeLocation}&destination=${payload.geoLocation}`} target="_blank">Maps Link</a> :
+                    /^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation)?<a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://maps.google.com/?q=${payload.geoLocation}`} target="_blank">Maps Link</a>:
                     <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://maps.google.com`} target="_blank">Maps Link</a>}
             </div>
-        </div>}
+        </div>
     </div>
 }

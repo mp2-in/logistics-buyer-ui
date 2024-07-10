@@ -74,7 +74,7 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDeta
                         <img src={moreIcon} onClick={e => {
                             getOrderDetails(eachOrder.id)
                             e.stopPropagation()
-                        }} title='Order Details' className={'cursor-pointer w-6'} />
+                        }} title='Order Details' className={'cursor-pointer w-6 hover:shadow-md'} />
                     </div>
                 </div>
             })}
