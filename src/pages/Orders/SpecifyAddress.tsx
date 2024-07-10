@@ -14,7 +14,6 @@ interface Payload {
     longitude?: number
     name: string,
     phoneNumber: string,
-    addrComponents: { longText: string, types: string[] }[]
     storeId: string,
     addrLine1: string
     addrLine2: string
@@ -58,7 +57,7 @@ export default ({ onUpdate, onPlacesSearch, onPlaceChoose, payload, module, stor
                         if(chosenPlace) {
                             const formattedAddress = formatAddress(chosenPlace.address, placeDetails.addressComponents)
                             onUpdate({ placeId: v, latitude: placeDetails.location.latitude, longitude: placeDetails.location.longitude, geoLocation: `${placeDetails.location.latitude}, ${placeDetails.location.longitude}`,
-                                addrComponents: placeDetails.addressComponents, addrLine1: formattedAddress.line1, addrLine2: formattedAddress.line2, pincode: formattedAddress.pincode })
+                                 addrLine1: formattedAddress.line1, addrLine2: formattedAddress.line2, pincode: formattedAddress.pincode })
                         }
                     })
                 }} />

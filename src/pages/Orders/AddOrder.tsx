@@ -10,7 +10,6 @@ import Button from "@components/Button"
 import { PlaceAutoComplete, PlaceDetails, PickupStore, LocationAddress } from '@lib/interfaces'
 
 import styles from './AddOrder.module.scss'
-import { formatAddress } from "@lib/utils"
 import SpecifyAddress from "./SpecifyAddress"
 
 interface State {
@@ -23,7 +22,6 @@ interface State {
     orderAmount: string,
     latitude?: number
     longitude?: number
-    addrComponents: { longText: string, types: string[] }[]
     rto: boolean,
     storeId: string,
     category: string
@@ -36,7 +34,7 @@ interface State {
 }
 
 const initialValue: State = {
-    placesResponse: [], billNumber: '', address: '', placeId: '', name: '', phoneNumber: '', orderAmount: '', pincode: '', addrComponents: [],
+    placesResponse: [], billNumber: '', address: '', placeId: '', name: '', phoneNumber: '', orderAmount: '', pincode: '',
     rto: false, storeId: '', category: 'F&B', addrLine1: '', addrLine2: '', city: '', state: '', geoLocation: ''
 }
 
