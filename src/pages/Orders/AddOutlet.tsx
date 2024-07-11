@@ -113,7 +113,7 @@ export default ({ open, onClose, onPlacesSearch, addOutlet, onPlaceChoose, activ
                         <Input label="Name" value={state.name} onChange={val => dispatch({ type: 'update', payload: { name: val } })} />
                     </div>
                 </div>
-                <SpecifyAddress onPlacesSearch={onPlacesSearch} onUpdate={payload => dispatch({ type: 'update', payload })} payload={state} onPlaceChoose={onPlaceChoose} />
+                <SpecifyAddress onPlacesSearch={onPlacesSearch} onUpdate={payload => dispatch({ type: 'update', payload })} payload={state} onPlaceChoose={onPlaceChoose} module="addOutlet"/>
             </div>
             <div className={`mt-[30px] mb-[20px]`}>
                 <Button title="Add Outlet" variant="primary" onClick={() => onAddOutlet()}

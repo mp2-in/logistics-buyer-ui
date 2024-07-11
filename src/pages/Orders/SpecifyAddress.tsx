@@ -56,8 +56,13 @@ export default ({ onUpdate, onPlacesSearch, onPlaceChoose, payload, module, stor
                     onPlaceChoose(v, (placeDetails) => {
                         if(chosenPlace) {
                             const formattedAddress = formatAddress(chosenPlace.address, placeDetails.addressComponents)
-                            onUpdate({ placeId: v, latitude: placeDetails.location.latitude, longitude: placeDetails.location.longitude, geoLocation: `${placeDetails.location.latitude}, ${placeDetails.location.longitude}`,
-                                 addrLine1: formattedAddress.line1, addrLine2: formattedAddress.line2, pincode: formattedAddress.pincode })
+                            let data:Partial<Payload> = { placeId: v, latitude: placeDetails.location.latitude, longitude: placeDetails.location.longitude, geoLocation: `${placeDetails.location.latitude}, ${placeDetails.location.longitude}`,
+                            addrLine1: formattedAddress.line1, addrLine2: formattedAddress.line2, pincode: formattedAddress.pincode }
+                            if(module === 'addOutlet') {
+                                data.state = formattedAddress.state
+                                data.city = formattedAddress.city
+                            }
+                            onUpdate(data)
                         }
                     })
                 }} />
