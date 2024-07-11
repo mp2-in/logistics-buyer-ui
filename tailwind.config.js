@@ -7,6 +7,11 @@ export default {
   theme: {
     fontFamily: {
       sans: ['"Nunito Sans"', 'sans-serif']
+    },
+    extend: {
+      boxShadow: {
+        '3xl': '0 1px 3px #666'
+      }
     }
   },
   plugins: [],

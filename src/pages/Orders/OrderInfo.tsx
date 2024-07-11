@@ -7,7 +7,7 @@ import { cancellationIdReasonMapping } from "@lib/utils"
 
 
 const ShowValue = ({ label, value, isDate, large }: { label: string, value: string | number | undefined, isDate?: boolean, large?: boolean }) => {
-    return <div className={`relative border border-gray-100 my-3 py-[4px] px-3 ${large?`w-[500px]`:'w-[260px]'} rounded-md overflow-`}>
+    return <div className={`relative border border-gray-100 my-3 py-[4px] px-3 ${large?`w-[500px]`:'w-[260px]'} rounded-md`}>
         <p className="absolute -top-2 px-2 bg-white text-xs left-3 text-gray-500">{label}</p>
         <input className="font-semibold outline-none border-none w-full" readOnly value={value === undefined || value === '' ? '--' : isDate ? dayjs(value).format('DD MMM, hh:mm A') : value} />
     </div>
@@ -15,7 +15,7 @@ const ShowValue = ({ label, value, isDate, large }: { label: string, value: stri
 
 export default ({ open, onClose, orderInfo }: { open: boolean, onClose: () => void, orderInfo: Order | undefined }) => {
     return <Modal open={open} onClose={onClose}>
-        <div className={'h-[700px] w-[600px] bg-white p-3 rounded-md'} onClick={e => e.stopPropagation()}>
+        <div className={'h-[700px] w-[600px] bg-white p-3 rounded-md'} onMouseDown={e => e.stopPropagation()}>
             <div className={'flex justify-between'}>
                 <p className="font-semibold text-lg">Order Info</p>
                 <img src={closeIcon} onClick={onClose} className={'w-6 h-6 cursor-pointer'} />

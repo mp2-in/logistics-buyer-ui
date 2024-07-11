@@ -67,19 +67,19 @@ export default ({ onUpdate, onPlacesSearch, onPlaceChoose, payload, module, stor
                     })
                 }} />
             <Input label="Address Line 1" value={payload.addrLine1} onChange={val => onUpdate({ addrLine1: val })} />
-            <div className="flex items-center">
+            <div className="md:flex md:items-center">
                 <Input label="Address Line 2" value={payload.addrLine2} onChange={val => onUpdate({ addrLine2: val })} />
                 <div className="ml-3">
                     <Input label="Pincode" value={payload.pincode} onChange={val => /^[0-9]{0,6}$/.test(val) && onUpdate({ pincode: val })} size='small' />
                 </div>
             </div>
-            <div className={'flex items-center'}>
+            <div className={'md:flex md:items-center'}>
                 <div className="mr-3">
-                    <Select label="State" value={payload.state} onChange={val => onUpdate({ state: val })} options={getStates().map(e => ({ label: e, value: e }))} hideSearch readonly={module==='addOrder'} />
+                    <Select label="State" value={payload.state} onChange={val => onUpdate({ state: val })} options={getStates().map(e => ({ label: e, value: e }))} hideSearch readOnly={module==='addOrder'} />
                 </div>
                 <Input label="City" value={payload.city} onChange={val => onUpdate({ city: val })} size='small' readOnly={module==='addOrder'} />
             </div>
-            <div className={'flex items-center'}>
+            <div className={'md:flex md:items-center'}>
                 <Input label="Geolocation" value={payload.geoLocation} onChange={val => onUpdate({ geoLocation: val })} />
                 {/^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) && storeLocation ? <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://www.google.com/maps/dir/?api=1&origin=${storeLocation}&destination=${payload.geoLocation}`} target="_blank">Maps Link</a> :
                     /^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation)?<a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://maps.google.com/?q=${payload.geoLocation}`} target="_blank">Maps Link</a>:

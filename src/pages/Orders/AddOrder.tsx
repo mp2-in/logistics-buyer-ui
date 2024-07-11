@@ -9,7 +9,6 @@ import Button from "@components/Button"
 
 import { PlaceAutoComplete, PlaceDetails, PickupStore, LocationAddress } from '@lib/interfaces'
 
-import styles from './AddOrder.module.scss'
 import SpecifyAddress from "./SpecifyAddress"
 
 interface State {
@@ -71,7 +70,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
 
     const storeGeolocation = () => {
         const store = pickupStores.find(e => e.storeId === state.storeId)
-        if(store) {
+        if (store) {
             return `${store.latitude},${store.longitude}`
         }
     }
@@ -87,11 +86,11 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
     }, [open])
 
     const processOrder = (action: 'checkPrice' | 'createOrder') => {
-        if((state.latitude && state.longitude) || /^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation)){
+        if ((state.latitude && state.longitude) || /^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation)) {
             let latitude = state.latitude
             let longitude = state.longitude
 
-            if(!latitude || !longitude) {
+            if (!latitude || !longitude) {
                 let match = /^([0-9.]+)\s*,\s*([0-9.]+)$/.exec(state.geoLocation)
                 if (match) {
                     latitude = parseFloat(match[1])
@@ -99,8 +98,8 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 }
             }
 
-            if(latitude && longitude) {
-                let drop : {
+            if (latitude && longitude) {
+                let drop: {
                     lat: number,
                     lng: number,
                     address: {
@@ -136,13 +135,13 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
     }
 
     return <Modal open={open} onClose={onClose} loading={activity.getPickupList}>
-        <div className={styles.container} onClick={e => e.stopPropagation()}>
-            <div className={styles.header}>
-                <p>Add Order</p>
-                <img src={closeIcon} onClick={onClose} />
+        <div className={`bg-white rounded flex flex-col items-center py-3 px-5 md:h-[730px] w-[650px] h-[600px] relative`} onMouseDown={e => e.stopPropagation()}>
+            <div className={`flex justify-between w-full items-center mb-3`}>
+                <p className="text-xl font-semibold">Add Order</p>
+                <img src={closeIcon} onClick={onClose} className="w-6 cursor-pointer" />
             </div>
-            <div>
-                <div className={"flex items-end mb-[1.25rem]"}>
+            <div className="absolute right-1 left-1 top-[50px] bottom-1 overflow-auto px-3">
+                <div className={"md:flex md:items-end mb-[20px]"}>
                     <Select label="Outlet" options={pickupStores.map(e => ({ label: e.address.name, value: e.storeId }))} onChange={val => {
                         const storeDetails = pickupStores.find(e => e.storeId === val)
                         dispatch({ type: 'update', payload: { storeId: val, city: storeDetails?.address.city, state: storeDetails?.address.state } })
@@ -154,27 +153,25 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                     <Input label="Bill Number" value={state.billNumber} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} />
                 </div>
                 <p className={'text-lg font-bold my-3 mx-1'}>Drop</p>
-                <div className={'flex items-center'}>
+                <div className={'md:flex md:items-center'}>
                     <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { phoneNumber: val } })} />
                     <div className="ml-3">
                         <Input label="Name" value={state.name} onChange={val => dispatch({ type: 'update', payload: { name: val } })} />
                     </div>
                 </div>
-                <SpecifyAddress onPlacesSearch={onPlacesSearch} onUpdate={payload => dispatch({ type: 'update', payload })} payload={state} onPlaceChoose={onPlaceChoose} 
-                module="addOrder" storeLocation={storeGeolocation()}/>
+                <SpecifyAddress onPlacesSearch={onPlacesSearch} onUpdate={payload => dispatch({ type: 'update', payload })} payload={state} onPlaceChoose={onPlaceChoose}
+                    module="addOrder" storeLocation={storeGeolocation()} />
                 <p className={'text-lg font-bold my-3 mx-1'}>Order  Details</p>
-                <div className={'flex items-center'}>
+                <div className={'md:flex md:items-center'}>
                     <Select label="Category" options={[{ label: 'Food', value: 'F&B' }, { label: 'Grocery', value: 'Grocery' }]} onChange={val => dispatch({ type: 'update', payload: ({ category: val }) })} value={state.category} />
                     <div className="ml-3">
                         <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { orderAmount: val } })} />
                     </div>
                 </div>
-                <div className="flex items-center flex-row-reverse justify-between my-5">
-                    <Button title="Check Price" onClick={() => processOrder('checkPrice')} disabled={!state.billNumber || !state.storeId || 
-                    (!/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation) && (!state.latitude || !state.longitude)) || !state.phoneNumber || !state.category || !state.orderAmount || activity.getPriceQuote} 
-                    loading={activity.getPriceQuote} variant="info" />
-                </div>
-                <div className={'flex justify-center mb-3'}>
+                <div className="flex justify-end mt-5 *:ml-3 mb-5 md:mb-0">
+                    <Button title="Check Price" onClick={() => processOrder('checkPrice')} disabled={!state.billNumber || !state.storeId ||
+                        (!/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation) && (!state.latitude || !state.longitude)) || !state.phoneNumber || !state.category || !state.orderAmount || activity.getPriceQuote}
+                        loading={activity.getPriceQuote} variant="info" />
                     <Button title="Create Order" variant="primary" onClick={() => processOrder('createOrder')}
                         disabled={!state.billNumber || !state.storeId || (!/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation) && (!state.latitude || !state.longitude)) || !state.phoneNumber || !state.category ||
                             !state.orderAmount || activity.getPriceQuote} loading={activity.createOrder} />

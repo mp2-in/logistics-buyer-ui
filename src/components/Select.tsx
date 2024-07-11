@@ -1,7 +1,4 @@
-import cn from 'classnames'
-import styles from './Select.module.scss'
 import React, { useEffect, useState } from "react";
-import { CSSTransition } from 'react-transition-group';
 import downLogo from '@assets/select_down.png'
 import close from '@assets/close.png'
 
@@ -11,13 +8,13 @@ interface Props<T> {
     onChange?: (a: T) => void,
     size?: "xs" | "small" | "medium" | "large" | "extraLarge"
     required?: boolean,
-    readonly?: boolean,
+    readOnly?: boolean,
     options?: { label: string, value: T }[]
     hideSearch?: boolean,
     defaultLabel?: string
 }
 
-export default <T extends unknown>({ label, value, onChange, size, options, required, readonly, hideSearch, defaultLabel='--Select--' }: Props<T>) => {
+export default <T extends unknown>({ label, value, onChange, size, options, required, readOnly, hideSearch, defaultLabel = '--Select--' }: Props<T>) => {
     const [optionDisplay, setOptionDisplay] = useState(false);
     let selectContainerRef = React.createRef<HTMLInputElement>();
 
@@ -48,32 +45,20 @@ export default <T extends unknown>({ label, value, onChange, size, options, requ
 
     const [searchFilter, setSearchFilter] = useState('')
 
-    return <div className={cn({ [styles['outer-container']]: true, [styles['no-label']]: !label })}>
-        <div className={cn({ [styles['container']]: true, [styles['xs']]: size === 'xs', [styles['small']]: size === 'small', [styles['large']]: size === 'large', [styles['extra-large']]: size === 'extraLarge', [styles['readonly']]: readonly })} >
-            <div onClick={() => !readonly && options?.length ? setOptionDisplay(true) : null} className={styles['value']}>
-                <p className={styles['value']}>{getValueLabel()}</p>
-                <img src={downLogo} style={{
-                    width: '20px',
-                }} />
+    return <div className={`relative inline-flex flex-col justify-end ${label ? 'h-[30px] md:h-[46px]' : 'md:h-[35px]'}`}>
+        <div className={`flex flex-col border border-gray-300 rounded relative h-[35px] justify-center py-0 px-[8px] bg-white group focus-within:border-blue-500
+                                    ${size === 'small' ? `w-[150px] md:w-[196px]` : size === 'medium' || !size ? 'w-[300px] md:w-[400px]' : size === 'large' ? 'w-[500px]' : 'w-[620px]'} ${readOnly ? 'opacity-60' : ''}`} >
+            <div onClick={() => !readOnly && options?.length ? setOptionDisplay(true) : null} className={`flex justify-between items-center`}>
+                <input readOnly value={getValueLabel()} className="w-full outline-none border-none"/>
+                <img src={downLogo} className='ml-5 w-6'/>
             </div>
-            {label ? <p className={cn({ [styles['label']]: true, [styles['required']]: required, [styles['focus']]: optionDisplay })}>{label}</p> : null}
-            {!readonly && optionDisplay && options?.length ? <CSSTransition
-                in={optionDisplay}
-                nodeRef={selectContainerRef}
-                timeout={30}
-                classNames={{
-                    enterActive: styles['option-enter-active'],
-                    enterDone: styles['option-enter-done'],
-                    exitActive: styles['option-exit-active'],
-                    exitDone: styles['option-exit-done']
-                }}
-                unmountOnExit
-            >
-                <div ref={selectContainerRef} className={styles['options']}>
-                    {options.length >= 6 && !hideSearch ?
-                        <div className={styles['input-search']}>
-                            <input placeholder='Search' value={searchFilter} onChange={e => setSearchFilter(e.target.value)} />
-                            <img src={close} onClick={() => setSearchFilter('')} />
+            {label ? <p className={`absolute group-focus-within:text-blue-500 bg-white left-[10px] -top-[8px] text-xs leading-3 font-medium px-1 text-blue-950 ${required ? "after:content-['*'] after:font-bold after:text-sm after:ml-1" : ''}`}>{label}</p> : null}
+            {!readOnly && optionDisplay && options?.length ?
+                <div ref={selectContainerRef} className={`absolute top-[33px] z-10 left-2 right-2 bg-white shadow-3xl rounded max-h-[250px] overflow-auto flex flex-col`}>
+                    {options.length >= 6 ?
+                        <div className={'flex flex-row items-center mx-2'}>
+                            <input placeholder='Search' value={searchFilter} onChange={e => setSearchFilter(e.target.value)} className="outline-none border bg-white rounded my-2 mx-3 px-2"/>
+                            <img src={close} onClick={() => setSearchFilter('')} className="w-6 cursor-pointer"/>
                         </div> : null}
                     {options?.filter(e => !searchFilter || e.label.toUpperCase().replace(/\s|_/g, "").indexOf(searchFilter.toUpperCase().replace(/\s|_/g, "")) > -1).map(eachOption => {
                         return <div onClick={() => {
@@ -82,12 +67,11 @@ export default <T extends unknown>({ label, value, onChange, size, options, requ
                                 onChange(eachOption.value)
                             }
                             setOptionDisplay(false)
-                        }} className={cn({ [styles['option']]: true, [styles['selected']]: value === eachOption.value })} key={eachOption.label}>
-                            <p>{eachOption.label}</p>
+                        }} key={eachOption.label} className="px-3 py-1 hover:bg-slate-200 cursor-pointer hover:font-semibold text-nowrap">
+                            <p className="text-sm">{eachOption.label}</p>
                         </div>
                     })}
-                </div>
-            </CSSTransition> : null}
+                </div> : null}
         </div>
     </div>
 }

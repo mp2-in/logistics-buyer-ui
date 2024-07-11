@@ -13,7 +13,7 @@ export default ({ open, onClose, onCancel, loading }: { open: boolean, onClose: 
     const [cancellationReason, setCancellationReason] = useState('005')
 
     return <Modal open={open} onClose={onClose}>
-        <div className={styles.container} onClick={e => e.stopPropagation()}>
+        <div className={styles.container} onMouseDown={e => e.stopPropagation()}>
             <div className={styles.header}>
                 <p>Cancel Order</p>
                 <img src={closeIcon} onClick={onClose} />

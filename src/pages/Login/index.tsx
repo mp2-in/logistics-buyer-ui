@@ -22,7 +22,7 @@ export default () => {
     }, [loggedIn])
 
     return <div className={'flex flex-col items-center border border-gray-200 rounded-lg my-44 mx-4 py-10 md:m-64 md:p-14'}>
-        <Input label='Username' required value={username || ''} onChange={val => {
+        <Input label='Username' value={username || ''} onChange={val => {
             setUsername(val)
             errMsgDisplay(false)
         }} />

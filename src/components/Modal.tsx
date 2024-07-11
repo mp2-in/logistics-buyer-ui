@@ -17,7 +17,7 @@ interface Props {
 const Modal = (props: Props) => {
   const { open, onClose } = props;
   return open ? (
-    <div className={styles.modalContainer} onClick={() => onClose()}>
+    <div className={styles.modalContainer} onMouseDown={() => onClose()}>
         {props.children}
         {props.loading?<ActivityIndicator />:null}
     </div>

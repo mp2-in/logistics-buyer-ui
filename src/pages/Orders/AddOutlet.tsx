@@ -98,7 +98,7 @@ export default ({ open, onClose, onPlacesSearch, addOutlet, onPlaceChoose, activ
     }
 
     return <Modal open={open} onClose={onClose} loading={activity.getPickupList}>
-        <div className={`bg-white rounded flex flex-col items-center py-[10px] px-[20px]`} onClick={e => e.stopPropagation()}>
+        <div className={`bg-white rounded flex flex-col items-center py-[10px] px-[20px]`} onMouseDown={e => e.stopPropagation()}>
             <div className={`flex justify-between w-full items-center mb-[10px]`}>
                 <p className="text-[20px] font-semibold">Add Outlet</p>
                 <img className={`w-[25px] cursor-pointer`} src={closeIcon} onClick={onClose} />

@@ -82,7 +82,8 @@ export const PlaceDetailsApi = (placeId: string) => {
 };
 
 export const formatAddress = (address: string, components: { longText: string, types: string[] }[]) => {
-  const addressSplit = address.split(/\s*,\s*/)
+  const modifiedAddress = address.replace(/,\s*india/i,'').replace(/,\s*karnataka/i,'')
+  const addressSplit = modifiedAddress.split(/\s*,\s*/)
   let addrLine1: string[] = []
   let addrLine2: string[] = []
   let city = ''
@@ -92,7 +93,7 @@ export const formatAddress = (address: string, components: { longText: string, t
   let line1Complete = false
 
   for (let i = 0; i < addressSplit.length; i++) {
-    if (!line1Complete && [...addrLine1, addressSplit[i]].join(',').length < address.length / 2) {
+    if (!line1Complete && [...addrLine1, addressSplit[i]].join(',').length < modifiedAddress.length / 2) {
       addrLine1.push(addressSplit[i])
     } else if (!line1Complete) {
       line1Complete = true

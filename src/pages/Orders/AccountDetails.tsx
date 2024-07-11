@@ -12,7 +12,7 @@ export default ({ open, onClose, onLogout, accountId }: {
 }) => {
 
     return <Modal open={open} onClose={onClose}>
-        <div className={styles.container} onClick={e => e.stopPropagation()}>
+        <div className={styles.container} onMouseDown={e => e.stopPropagation()}>
             <div className={styles.header}>
                 <img src={closeIcon} onClick={onClose} />
             </div>

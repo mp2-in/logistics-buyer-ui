@@ -61,7 +61,7 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDeta
                     <p className={`flex-[5] hidden md:block`}>{eachOrder.lsp.name}</p>
                     <p className={`flex-[6] md:flex[4]`}>{eachOrder.state}</p>
                     <p className={`flex-[2] hidden md:block`}>{eachOrder.rider.name}</p>
-                    <p className={`flex-[2] hidden md:block`}>{eachOrder.distance ? `${eachOrder.distance}m` : 0}</p>
+                    <p className={`flex-[2] hidden md:block`}>{eachOrder.distance ? `${eachOrder.distance} km` : 0}</p>
                     <div className={`flex-[3] md:flex[2] flex justify-between items-center md:justify-evenly`}>
                         {eachOrder.tracking_url ? <a href={eachOrder.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer' onClick={e => e.stopPropagation()}>
                             <img src={trackIcon} title='Track Shipment' className='w-6' />
