@@ -22,14 +22,14 @@ export default (props: Props) => {
   }
 
   return (
-      <div className={`inline-flex items-center py-2 px-7 rounded-md justify-between text-center relative 
+      <div className={`inline-flex items-center md:py-2 py-1 px-7 rounded-md justify-between text-center relative 
        ${bgColors[variant]} ${loading || disabled ? 'opacity-45' : 'cursor-pointer active:opacity-65'} ${variant === 'light'?'border border-slate-400':''}`}
           onClick={() => {
               return !(disabled || loading) && onClick ? onClick() : null;
           }}
       >
           <div className={`flex justify-between items-center`}>
-              {icon ? <div className="w-6 mr-2">{icon}</div> : null}
+              {icon ? <div className="w-6 mr-2 hidden md:block">{icon}</div> : null}
               <span className={`select-none ${variant === 'light'?'text-slate-600':'text-white'}`}>{title}</span>
           </div>
           {loading ? (

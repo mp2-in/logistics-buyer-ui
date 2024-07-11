@@ -65,10 +65,10 @@ const Input = ({ label, type, value, onChange, size, placeholder, readOnly, onBl
         }
     }
 
-    return <div className={`relative inline-flex flex-col justify-end ${label ? 'h-[2.875rem]' : 'h-[2.1875rem]'}`}>
-        <div className={`flex flex-col border border-gray-300 rounded relative h-[2.1875rem] justify-center py-0 px-[0.5rem] bg-white group focus-within:border-blue-500
-                                    ${size === 'small' ? `w-[12.25rem]` : size === 'medium' || !size ? 'w-[25rem]' : size === 'large' ? 'w-[31.25rem]' : 'w-[38.75rem]'} ${readOnly ? 'opacity-60' : ''}`}>
-            <input className={`outline-none border-none font-sans text-base`}
+    return <div className={`relative inline-flex flex-col justify-end ${label ? 'h-[30px] md:h-[46px]' : 'md:h-[35px]'}`}>
+        <div className={`flex flex-col border border-gray-300 rounded relative h-[35px] justify-center py-0 px-[8px] bg-white group focus-within:border-blue-500
+                                    ${size === 'small' ? `w-[150px] md:w-[196px]` : size === 'medium' || !size ? 'w-[300px] md:w-[400px]' : size === 'large' ? 'w-[500px]' : 'w-[620px]'} ${readOnly ? 'opacity-60' : ''}`}>
+            <input className={`outline-none border-none font-sans text-sm`}
                 placeholder={placeholder}
                 type={getType()}
                 readOnly={readOnly}
@@ -81,10 +81,10 @@ const Input = ({ label, type, value, onChange, size, placeholder, readOnly, onBl
                         onChange(e.target.value)
                     }
                 }} onClick={() => !readOnly ? optionsDisplay(true) : null} />
-            {label ? <p className={`absolute group-focus-within:text-blue-500 bg-white left-[0.625rem] -top-[0.625rem] text-sm font-medium px-1 text-blue-950 ${required ? "after:content-['*'] after:font-bold after:text-sm after:ml-1" : ''} ${error ? `text-red-600` : ''} `}>{label}</p> : null}
+            {label ? <p className={`absolute group-focus-within:text-blue-500 bg-white left-[10px] -top-[8px] text-xs leading-3 font-medium px-1 text-blue-950 ${required ? "after:content-['*'] after:font-bold after:text-sm after:ml-1" : ''} ${error ? `text-red-600` : ''} `}>{label}</p> : null}
             {showOptions && autoCompleteOptions && autoCompleteOptions.length > 0 ?
-                <div ref={selectContainerRef} className={`absolute border border-gray-300 top-[2.1rem] left-0 z-10 rounded overflow-auto bg-white max-h-[10rem] 
-                ${size === 'small' ? `w-[12.25rem]` : size === 'medium' || !size ? 'w-[25rem]' : size === 'large' ? 'w-[31.25rem]' : 'w-[38.75rem]'}`}>
+                <div ref={selectContainerRef} className={`absolute border border-gray-300 top-[34px] left-0 z-10 rounded overflow-auto bg-white max-h-[160px] 
+                ${size === 'small' ? `w-[196px]` : size === 'medium' || !size ? 'w-[400px]' : size === 'large' ? 'w-[500px]' : 'w-[620px]'}`}>
                     {autoCompleteOptions.map(eachOption => <p className="hover:bg-gray-300 cursor-pointer px-2 py-1" onClick={() => {
                         if (onSelect) {
                             onSelect(eachOption.label, eachOption.value)
