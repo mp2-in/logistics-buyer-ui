@@ -37,9 +37,7 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDeta
     return <div className={`absolute left-0 right-0 top-16 bottom-3 px-5 py-3 overflow-hidden`}>
         <div className={`flex items-end justify-between p-4`}>
             <div className={'flex items-end *:mr-4'}>
-                <Button title="Refresh" icon={<img src={refreshIcon} />} variant="primary" onClick={() => {
-                    throw new TypeError('Error message');
-                }} />
+                <Button title="Refresh" icon={<img src={refreshIcon} />} variant="primary" onClick={onRefresh} />
                 <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => changeDate(val)} />
             </div>
             <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" onClick={onAddOrder} />
