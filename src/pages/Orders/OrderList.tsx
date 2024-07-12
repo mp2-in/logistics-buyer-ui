@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import addIcon from "@assets/add.png"
 import cancelIcon from "@assets/cancel.png"
@@ -10,18 +10,14 @@ import ActivityIndicator from '@components/ActivityIndicator';
 
 import { Order } from '@lib/interfaces'
 
-import CancelOrder from './CancelOrder';
-
 import Input from '@components/Input';
 import Button from '@components/Button';
 
 
-export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDetails, orders, activity, filterDate }: {
-    onAddOrder: () => void, onRefresh: () => void, onCancelOrder: (orderId: string, reason: string, callback: () => void) => void,
+export default ({ onAddOrder, onRefresh, changeDate, getOrderDetails, onCancelOrder, orders, activity, filterDate }: {
+    onAddOrder: () => void, onRefresh: () => void, onCancelOrder: (orderId: string) => void,
     orders: Order[], activity: { [k: string]: boolean }, filterDate: string, changeDate: (date: string) => void, getOrderDetails: (orderId: string) => void
 }) => {
-    const [cancelOrderId, setCancelOrderId] = useState('')
-    const [showCancelOrder, setCancelOrderDisplay] = useState(false)
 
     const cancellable = (orderState: string) => {
         return ['UnFulfilled', 'Searching-for-Agent', 'Pending'].includes(orderState)
@@ -68,8 +64,7 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDeta
                         </a> : <img src={trackIcon} title='Track Shipment' className='w-6 opacity-40' />}
                         <img src={cancelIcon} onClick={e => {
                             if (cancellable(eachOrder.state)) {
-                                setCancelOrderDisplay(true)
-                                setCancelOrderId(eachOrder.id)
+                                onCancelOrder(eachOrder.id)
                             }
                             e.stopPropagation()
                         }} title='Cancel Order' className={`w-5 ${cancellable(eachOrder.state) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
@@ -82,8 +77,5 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDeta
             })}
         </div>
         {activity.getOrders || activity.getOrderDetails ? <ActivityIndicator /> : null}
-        <CancelOrder open={showCancelOrder} onClose={() => setCancelOrderDisplay(false)} onCancel={reason => onCancelOrder(cancelOrderId, reason, () => {
-            setCancelOrderDisplay(false)
-        })} loading={activity.cancelOrder} />
     </div>
 }

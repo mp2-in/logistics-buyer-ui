@@ -13,23 +13,29 @@ import AddOutlet from "./AddOutlet";
 import { LocationAddress } from "@lib/interfaces";
 import dayjs from "dayjs";
 import OrderInfo from "./OrderInfo";
+import CancelOrder from "./CancelOrder";
 
 
 interface State {
-    addOrderDisplay: boolean,
-    accountDetailsDisplay: boolean,
-    priceQuotesDisplay: boolean,
-    addOutletDisplay: boolean,
+    addOrderDisplay: boolean
+    accountDetailsDisplay: boolean
+    priceQuotesDisplay: boolean
+    addOutletDisplay: boolean
     orderInfoDisplay: boolean
-    billNumber?: string,
+    cancelOrderDisplay: boolean
+    billNumber?: string
     storeId?: string
-    drop?: LocationAddress,
-    orderAmount?: string,
+    drop?: LocationAddress
+    orderAmount?: string
     category?: string
     orderFilterDate: string
+    toBeCancelledOrder?: string
 }
 
-const initialValue: State = { addOrderDisplay: false, accountDetailsDisplay: false, priceQuotesDisplay: false, orderInfoDisplay: false, addOutletDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD') }
+const initialValue: State = {
+    addOrderDisplay: false, accountDetailsDisplay: false, priceQuotesDisplay: false,
+    orderInfoDisplay: false, addOutletDisplay: false, cancelOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD')
+}
 
 
 const reducer = (state: State, action: { type: 'reset' } | { type: 'update', payload: Partial<State> }) => {
@@ -72,18 +78,12 @@ export default () => {
 
     return <div>
         <TopBar accountId={accountId || ''} showAccountDetails={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: true } })} />
-        <OrderList onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })} onRefresh={() => token ? getOrders(token, state.orderFilterDate) : null} onCancelOrder={(orderId, reason, callback) => {
-            cancelOrder(token || '', orderId, reason, (success) => {
-                if (success) {
-                    setToast('Order cancelled.', 'success')
-                    callback()
-                } else {
-                    setToast('Error cancelling order', 'error')
-                }
-            })
-        }} orders={orders} activity={activity} filterDate={state.orderFilterDate} changeDate={val => dispatch({ type: 'update', payload: { orderFilterDate: val } })}
+        <OrderList onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })} onRefresh={() => token ? getOrders(token, state.orderFilterDate) : null}
+            onCancelOrder={orderId => {
+                dispatch({ type: 'update', payload: { toBeCancelledOrder: orderId, cancelOrderDisplay: true } })
+            }} orders={orders} activity={activity} filterDate={state.orderFilterDate} changeDate={val => dispatch({ type: 'update', payload: { orderFilterDate: val } })}
             getOrderDetails={orderId => getOrderDetails(token || '', orderId, (success, message) => {
-                if(success) {
+                if (success) {
                     dispatch({ type: 'update', payload: { orderInfoDisplay: true } })
                 } else {
                     setToast(message || 'Error fetching order details', 'error')
@@ -140,6 +140,20 @@ export default () => {
         }} onPlaceChoose={(placeId, callback) => {
             googlePlaceDetailsApi(placeId, callback)
         }} />
-        <OrderInfo open={state.orderInfoDisplay} onClose={() => dispatch({ type: 'update', payload: { orderInfoDisplay: false } })} orderInfo={orderInfo} />
+        <OrderInfo open={state.orderInfoDisplay} onClose={() => dispatch({ type: 'update', payload: { orderInfoDisplay: false } })} orderInfo={orderInfo}
+            onCancelOrder={orderId => {
+                dispatch({ type: 'update', payload: { toBeCancelledOrder: orderId, cancelOrderDisplay: true } })
+            }} />
+        <CancelOrder open={state.cancelOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { cancelOrderDisplay: false } })}
+            onCancel={reason => {
+                cancelOrder(token || '', state.toBeCancelledOrder || '', reason, (success) => {
+                    if (success) {
+                        setToast('Order cancelled.', 'success')
+                        dispatch({ type: 'update', payload: { cancelOrderDisplay: false } })
+                    } else {
+                        setToast('Error cancelling order', 'error')
+                    }
+                })
+            }} loading={activity.cancelOrder} />
     </div>
 }       
