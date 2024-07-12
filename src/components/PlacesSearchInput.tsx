@@ -57,7 +57,7 @@ const Input = ({ label, value, onChange, placeholder, readOnly, required, autoCo
                 }} onClick={() => !readOnly ? optionsDisplay(true) : null} />
             {label ? <p className={`absolute group-focus-within:text-blue-500 bg-white left-[10px] -top-[8px] text-xs leading-3 font-medium px-1 text-blue-950 ${required ? "after:content-['*'] after:font-bold after:text-sm after:ml-1" : ''}`}>{label}</p> : null}
             {showOptions && autoCompleteOptions && autoCompleteOptions.length > 0 ?
-                <div ref={selectContainerRef} className={`absolute border border-gray-300 top-[34px] left-0 z-10 rounded overflow-auto bg-white max-h-[160px] w-[100px] md:w-[600px]`}>
+                <div ref={selectContainerRef} className={`absolute border border-gray-300 top-[34px] left-0 z-10 rounded overflow-auto bg-white max-h-[160px] w-[300px] md:w-[600px]`}>
                     {autoCompleteOptions.map(eachOption => <div onClick={() => {
                         if (onSelect) {
                             onSelect(eachOption.value)
