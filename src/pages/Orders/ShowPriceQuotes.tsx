@@ -35,9 +35,9 @@ export default ({ open, onClose, priceQuotes, createOrder, loading }: { open: bo
                             </div>
                             <p className="flex-[5]">{e.logistics_seller}</p>
                             <p className="flex-[5]">{e.pickup_eta} min</p>
-                            <p className="flex-[5]">{e.sla} min</p>
-                            <p className="flex-[5]">{e.price_forward ? `₹ ${e.price_forward}` : 0}</p>
-                            <p className="flex-[5]">{e.price_rto ? `₹ ${e.price_rto}` : 0}</p>
+                            <p className="flex-[5]">{e.sla.toFixed(2)} min</p>
+                            <p className="flex-[5]">{e.price_forward ? `₹ ${e.price_forward.toFixed(2)}` : 0}</p>
+                            <p className="flex-[5]">{e.price_rto ? `₹ ${e.price_rto.toFixed(2)}` : 0}</p>
                         </div>
                     })}
                 </div>

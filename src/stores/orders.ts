@@ -16,9 +16,9 @@ interface State extends Attributes {
     getPickupList: (token: string, callback: (storeList?: PickupStore[]) => void) => void,
     googlePlacesApi: (searchText: string, callback: (data: PlaceAutoComplete[]) => void) => void
     googlePlaceDetailsApi: (placeId: string, callback: (data: PlaceDetails) => void) => void
-    createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, category: string, lspId: string | undefined, callback: (success: boolean) => void) => void
+    createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, category: string, lspId: string | undefined, quoteId: string | undefined, callback: (success: boolean) => void) => void
     cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean) => void) => void
-    getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, category: string, callback: () => void) => void
+    getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, category: string, callback: (quoteId: string) => void) => void
     addOutlet: (token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean) => void) => void
     saveInStorage: (keyName: string, value: string) => void
     getOrderDetails: (token: string, orderId: string, callback: (success: boolean, message?: string) => void) => void
@@ -32,7 +32,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
         set(produce((state: State) => {
             state.activity.getOrders = true
         }))
-        Api('/webui/orders', { method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {date: forDate} })
+        Api('/webui/orders', { method: 'post', headers: { 'Content-Type': 'application/json', token }, data: { date: forDate } })
             .then(res => {
                 set(produce((state: State) => {
                     state.orders = res
@@ -85,12 +85,12 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 }))
             })
     },
-    createOrder: async (token, billNumber, storeId, drop, amount, category, lspId, callback) => {
+    createOrder: async (token, billNumber, storeId, drop, amount, category, lspId, quoteId, callback) => {
         set(produce((state: State) => {
             state.activity.createOrder = true
         }))
 
-        let data: { [k: string]: string | number | string[] | LocationAddress | { [j: string]: string }, select_criteria: { mode: string, lsp_id?: string } } = {
+        let data: { [k: string]: string | number | string[] | LocationAddress | { [j: string]: string }, select_criteria: { mode: string, lsp_id?: string, quote_id?: string } } = {
             client_order_id: billNumber,
             pickup: {
                 code: "1234",
@@ -108,11 +108,12 @@ export const useOrdersStore = create<State>()((set, get) => ({
         }
 
         if (lspId) {
-            data.select_criteria.mode = 'preferred_lsp'
+            data.select_criteria.mode = 'selected_lsp'
             data.select_criteria.lsp_id = lspId
+            data.select_criteria.quote_id = quoteId
         }
 
-        Api('/webui/order/createasync', {
+        Api(`/webui/order/${lspId ? 'create' : 'createasync'}`, {
             method: 'post', headers: { 'Content-Type': 'application/json', token }, data
         })
             .then(res => {
@@ -190,7 +191,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                         state.activity.getPriceQuote = false
                         state.orderPriceQuote = res.quotes
                     }))
-                    callback()
+                    callback(res.quote_id)
                 })
                 .catch(() => {
                     set(produce((state: State) => {
@@ -227,7 +228,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 callback(false)
             })
     },
-    saveInStorage: async(keyName, value) => {
+    saveInStorage: async (keyName, value) => {
         localStorage.setItem(keyName, value);
     },
     getOrderDetails: async (token, orderId, callback) => {
@@ -243,7 +244,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
         })
             .then(res => {
                 set(produce((state: State) => {
-                    if(res.status === 1) {
+                    if (res.status === 1) {
                         state.orderInfo = res.order
                         callback(true)
                     } else {

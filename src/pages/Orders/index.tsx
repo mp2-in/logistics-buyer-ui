@@ -30,6 +30,7 @@ interface State {
     category?: string
     orderFilterDate: string
     toBeCancelledOrder?: string
+    quoteId?: string
 }
 
 const initialValue: State = {
@@ -95,7 +96,7 @@ export default () => {
             googlePlaceDetailsApi(placeId, callback)
         }} getPickupList={callback => token ? getPickupList(token, callback) : null} activity={activity}
             pickupStores={pickupStores} createOrder={(billNumber, storeId, amount, category, drop) => {
-                createOrder(token || '', billNumber, storeId, drop, amount, category, undefined, (success) => {
+                createOrder(token || '', billNumber, storeId, drop, amount, category, undefined, undefined, (success) => {
                     if (success) {
                         dispatch({ type: 'update', payload: { addOrderDisplay: false } })
                         getOrders(token || '', state.orderFilterDate)
@@ -105,8 +106,8 @@ export default () => {
                     }
                 })
             }} checkPrice={(billNumber, storeId, orderAmount, category, drop) => {
-                getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), category, () => {
-                    dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, category, drop } })
+                getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), category, (quoteId) => {
+                    dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, category, drop, quoteId } })
                 })
             }} showNewOutletForm={() => dispatch({ type: 'update', payload: { addOutletDisplay: true } })} saveInStorage={(keyName, value) => saveInStorage(keyName, value)} />
         <AccountDetails open={state.accountDetailsDisplay} onClose={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: false } })} accountId={accountId || ''}
@@ -114,7 +115,7 @@ export default () => {
         <ShowPriceQuotes open={state.priceQuotesDisplay} onClose={() => dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })}
             priceQuotes={orderPriceQuote} createOrder={(chosenLsp) => {
                 if (state.billNumber && state.storeId && state.orderAmount && state.drop && state.category) {
-                    createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, state.category, chosenLsp, (success) => {
+                    createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, state.category, chosenLsp, state.quoteId, (success) => {
                         if (success) {
                             dispatch({ type: 'update', payload: { addOrderDisplay: false, priceQuotesDisplay: false } })
                             getOrders(token || '', state.orderFilterDate)
