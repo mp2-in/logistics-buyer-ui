@@ -16,12 +16,12 @@ const ShowValue = ({ label, value, isDate, large }: { label: string, value: stri
 
 export default ({ open, onClose, orderInfo, onCancelOrder }: { open: boolean, onClose: () => void, orderInfo: Order | undefined, onCancelOrder: (orderId: string) => void }) => {
     return <Modal open={open} onClose={onClose}>
-        <div className={'md:h-[700px] md:w-[600px] w-[350px] h-[500px] bg-white p-3 rounded-md relative'} onMouseDown={e => e.stopPropagation()}>
+        <div className={'md:h-[700px] md:w-[600px] w-[350px] h-[600px] bg-white p-3 rounded-md relative'} onMouseDown={e => e.stopPropagation()}>
             <div className={'flex justify-between'}>
                 <p className="font-semibold text-lg">Order Info</p>
                 <img src={closeIcon} onClick={onClose} className={'w-6 h-6 cursor-pointer absolute top-1 right-1'} />
             </div>
-            <div className="p-4 md:h-[640px] overflow-auto h-[440px]">
+            <div className="p-4 md:h-[640px] overflow-auto h-[540px]">
                 <div className="md:flex justify-between">
                     <ShowValue label="ID" value={orderInfo?.id} />
                     <ShowValue label="Client Order Id" value={orderInfo?.client_order_id} />

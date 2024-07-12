@@ -40,34 +40,40 @@ export default ({ onAddOrder, onRefresh, changeDate, getOrderDetails, onCancelOr
                 <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => changeDate(val)} />
             </div>
         </div>
-        <div className={`flex items-center py-2 px-3 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-semibold *:text-md`}>
-            <p className={`flex-[4] md:flex[3]`}>Date</p>
+        <div className={`flex items-center py-2 px-1 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-semibold *:text-md`}>
+            <p className={`flex-[3]`}>Date</p>
             <p className={`flex-[5] hidden md:block`}>Order Id</p>
             <p className={`flex-[5] hidden md:block`}>LSP</p>
-            <p className={`flex-[6] md:flex[4]`}>Status</p>
-            <p className={`flex-[2] hidden md:block`}>Rider</p>
-            <p className={`flex-[2] hidden md:block`}>Distance</p>
-            <p className={`flex-[3] md:flex[2]`}>Actions</p>
+            <p className={`flex-[7] md:flex[2]`}>Status</p>
+            <p className={`flex-[4]`}>Rider</p>
+            <p className={`flex-[3] hidden md:block`}>Distance</p>
+            <p className={`flex-[3] hidden md:block`}>Price</p>
+            <p className={`flex-[2] hidden md:block`}>Actions</p>
+            <p className={`flex-[2] md:hidden`}></p>
         </div>
         <div className={`absolute flex items-center flex-col left-2 right-2 bottom-2 top-[145px] overflow-auto md:left-5 md:right-5 md:top-[123px]`}>
             {orders.map(eachOrder => {
                 return <div key={eachOrder.id} className={`flex items-center w-full py-1 px-1 border-b border-l border-r text-xs relative *:text-center md:text-sm`}>
-                    <p className={`flex-[4] md:flex[3]`}>{eachOrder.created_at ? dayjs(eachOrder.created_at).format('hh:mm A') : '--'}</p>
+                    <p className={`flex-[3]`}>{eachOrder.created_at ? dayjs(eachOrder.created_at).format('hh:mm A') : '--'}</p>
                     <p className={`flex-[5] hidden md:block`}>{eachOrder.client_order_id}</p>
                     <p className={`flex-[5] hidden md:block`}>{eachOrder.lsp.name}</p>
-                    <p className={`flex-[6] md:flex[4]`}>{eachOrder.state}</p>
-                    <p className={`flex-[2] hidden md:block`}>{eachOrder.rider.name}</p>
-                    <p className={`flex-[2] hidden md:block`}>{eachOrder.distance ? `${eachOrder.distance} km` : 0}</p>
-                    <div className={`flex-[3] md:flex[2] flex justify-between items-center md:justify-evenly`}>
-                        {eachOrder.tracking_url ? <a href={eachOrder.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer' onClick={e => e.stopPropagation()}>
+                    <p className={`flex-[7] md:flex[2]`}>{eachOrder.state}</p>
+                    {eachOrder.rider.phone ? <a className={`flex-[4] underline cursor-pointer font-semibold text-blue-400`} href={`tel:${eachOrder.rider.phone}`}>{eachOrder.rider.name}</a> :
+                        <p className={`flex-[4]`}>{eachOrder.rider.name}</p>}
+                    <p className={`flex-[3] hidden md:block`}>{eachOrder.distance ? `${eachOrder.distance} km` : 0}</p>
+                    <p className={`flex-[3] hidden md:block`}>{eachOrder.price ? `₹ ${eachOrder.price}` : 0}</p>
+                    <div className={`flex-[2] flex justify-around items-center md:justify-evenly`}>
+                        {eachOrder.tracking_url ? <a href={eachOrder.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-6' onClick={e => e.stopPropagation()}>
                             <img src={trackIcon} title='Track Shipment' className='w-6' />
-                        </a> : <img src={trackIcon} title='Track Shipment' className='w-6 opacity-40' />}
+                        </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-6'>
+                            <img src={trackIcon} title='Track Shipment' className='w-6 opacity-40' />
+                        </a>}
                         <img src={cancelIcon} onClick={e => {
                             if (cancellable(eachOrder.state)) {
                                 onCancelOrder(eachOrder.id)
                             }
                             e.stopPropagation()
-                        }} title='Cancel Order' className={`w-5 ${cancellable(eachOrder.state) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
+                        }} title='Cancel Order' className={`w-5 hidden md:block ${cancellable(eachOrder.state) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
                         <img src={moreIcon} onClick={e => {
                             getOrderDetails(eachOrder.id)
                             e.stopPropagation()
