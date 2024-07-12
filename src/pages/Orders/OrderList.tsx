@@ -56,7 +56,7 @@ export default ({ onAddOrder, onRefresh, onCancelOrder, changeDate, getOrderDeta
         <div className={`absolute flex items-center flex-col left-2 right-2 bottom-2 top-[145px] overflow-auto md:left-5 md:right-5 md:top-[123px]`}>
             {orders.map(eachOrder => {
                 return <div key={eachOrder.id} className={`flex items-center w-full py-1 px-1 border-b border-l border-r text-xs relative *:text-center md:text-sm`}>
-                    <p className={`flex-[4] md:flex[3]`}>{eachOrder.created_at ? dayjs(eachOrder.created_at).format('DD MMM, hh:mm A') : '--'}</p>
+                    <p className={`flex-[4] md:flex[3]`}>{eachOrder.created_at ? dayjs(eachOrder.created_at).format('hh:mm A') : '--'}</p>
                     <p className={`flex-[5] hidden md:block`}>{eachOrder.client_order_id}</p>
                     <p className={`flex-[5] hidden md:block`}>{eachOrder.lsp.name}</p>
                     <p className={`flex-[6] md:flex[4]`}>{eachOrder.state}</p>

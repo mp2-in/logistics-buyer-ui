@@ -14,7 +14,7 @@ export default ({ open, onClose, priceQuotes, createOrder, loading }: { open: bo
     const [chosenLsp, setChosenLsp] = useState('')
 
     return <Modal open={open} onClose={onClose} >
-        <div className={styles.container} onClick={e => e.stopPropagation()}>
+        <div className={styles.container} onMouseDown={e => e.stopPropagation()}>
             <div className={styles.title}>
                 <p>Price Quotes</p>
                 <img src={closeIcon} onClick={onClose} />

@@ -4,6 +4,7 @@ import { PlaceAutoComplete, PlaceDetails } from "@lib/interfaces"
 import Input from "@components/Input"
 import PlacesSearchInput from "@components/PlacesSearchInput"
 import Select from "@components/Select"
+import trackIcon from '@assets/track.png'
 
 
 interface Payload {
@@ -30,7 +31,7 @@ export default ({ onUpdate, onPlacesSearch, onPlaceChoose, payload, module, stor
 }) => {
 
     return <div className={`flex flex-col items-start`}>
-        <div className={'flex flex-col items-start *:my-1'}>
+        <div className={'flex flex-col items-start md:*:my-1 *:my-2'}>
             <PlacesSearchInput label="Search Address" onChange={val => {
                 onUpdate({ address: val })
                 if (val.length > 2) {
@@ -54,11 +55,13 @@ export default ({ onUpdate, onPlacesSearch, onPlaceChoose, payload, module, stor
                         onUpdate({ placeId: v, address: chosenPlace.address })
                     }
                     onPlaceChoose(v, (placeDetails) => {
-                        if(chosenPlace) {
+                        if (chosenPlace) {
                             const formattedAddress = formatAddress(chosenPlace.address, placeDetails.addressComponents)
-                            let data:Partial<Payload> = { placeId: v, latitude: placeDetails.location.latitude, longitude: placeDetails.location.longitude, geoLocation: `${placeDetails.location.latitude}, ${placeDetails.location.longitude}`,
-                            addrLine1: formattedAddress.line1, addrLine2: formattedAddress.line2, pincode: formattedAddress.pincode }
-                            if(module === 'addOutlet') {
+                            let data: Partial<Payload> = {
+                                placeId: v, latitude: placeDetails.location.latitude, longitude: placeDetails.location.longitude, geoLocation: `${placeDetails.location.latitude}, ${placeDetails.location.longitude}`,
+                                addrLine1: formattedAddress.line1, addrLine2: formattedAddress.line2, pincode: formattedAddress.pincode
+                            }
+                            if (module === 'addOutlet') {
                                 data.state = formattedAddress.state
                                 data.city = formattedAddress.city
                             }
@@ -69,21 +72,29 @@ export default ({ onUpdate, onPlacesSearch, onPlaceChoose, payload, module, stor
             <Input label="Address Line 1" value={payload.addrLine1} onChange={val => onUpdate({ addrLine1: val })} />
             <div className="md:flex md:items-center">
                 <Input label="Address Line 2" value={payload.addrLine2} onChange={val => onUpdate({ addrLine2: val })} />
-                <div className="ml-3">
+                <div className="md:ml-3 mt-3 md:mt-0">
                     <Input label="Pincode" value={payload.pincode} onChange={val => /^[0-9]{0,6}$/.test(val) && onUpdate({ pincode: val })} size='small' />
                 </div>
             </div>
             <div className={'md:flex md:items-center'}>
-                <div className="mr-3">
-                    <Select label="State" value={payload.state} onChange={val => onUpdate({ state: val })} options={getStates().map(e => ({ label: e, value: e }))} hideSearch readOnly={module==='addOrder'} />
+                <div className="md:mr-3 mb-3 md:mb-0">
+                    <Select label="State" value={payload.state} onChange={val => onUpdate({ state: val })} options={getStates().map(e => ({ label: e, value: e }))} hideSearch readOnly={module === 'addOrder'} />
                 </div>
-                <Input label="City" value={payload.city} onChange={val => onUpdate({ city: val })} size='small' readOnly={module==='addOrder'} />
+                <Input label="City" value={payload.city} onChange={val => onUpdate({ city: val })} size='small' readOnly={module === 'addOrder'} />
             </div>
-            <div className={'md:flex md:items-center'}>
+            <div className={'flex items-center'}>
                 <Input label="Geolocation" value={payload.geoLocation} onChange={val => onUpdate({ geoLocation: val })} />
-                {/^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) && storeLocation ? <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://www.google.com/maps/dir/?api=1&origin=${storeLocation}&destination=${payload.geoLocation}`} target="_blank">Maps Link</a> :
-                    /^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation)?<a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://maps.google.com/?q=${payload.geoLocation}`} target="_blank">Maps Link</a>:
-                    <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://maps.google.com`} target="_blank">Maps Link</a>}
+                <div className="hidden md:block">
+                    {/^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) && storeLocation ? <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://www.google.com/maps/dir/?api=1&origin=${storeLocation}&destination=${payload.geoLocation}`} target="_blank">Maps Link</a> :
+                        /^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) ? <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://maps.google.com/?q=${payload.geoLocation}`} target="_blank">Maps Link</a> :
+                            <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://maps.google.com`} target="_blank">Maps Link</a>}
+                </div>
+                <div className="md:hidden w-6 ml-2">
+                    {/^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) && storeLocation ?
+                        <a href={`https://www.google.com/maps/dir/?api=1&origin=${storeLocation}&destination=${payload.geoLocation}`} target="_blank"><img src={trackIcon} /></a> :
+                        /^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) ? <a href={`https://maps.google.com/?q=${payload.geoLocation}`} target="_blank"><img src={trackIcon} /></a> :
+                            <a href={`https://maps.google.com`} target="_blank"><img src={trackIcon} /></a>}
+                </div>
             </div>
         </div>
     </div>

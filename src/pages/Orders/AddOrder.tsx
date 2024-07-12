@@ -135,27 +135,27 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
     }
 
     return <Modal open={open} onClose={onClose} loading={activity.getPickupList}>
-        <div className={`bg-white rounded flex flex-col items-center py-3 px-5 md:h-[730px] w-[650px] h-[600px] relative`} onMouseDown={e => e.stopPropagation()}>
+        <div className={`bg-white rounded flex flex-col items-center py-3 px-5 md:h-[730px] w-[370px] h-[600px] relative md:w-[650px]`} onMouseDown={e => e.stopPropagation()}>
             <div className={`flex justify-between w-full items-center mb-3`}>
                 <p className="text-xl font-semibold">Add Order</p>
-                <img src={closeIcon} onClick={onClose} className="w-6 cursor-pointer" />
+                <img src={closeIcon} onClick={onClose} className="w-6 cursor-pointer absolute right-1 top-1" />
             </div>
-            <div className="absolute right-1 left-1 top-[50px] bottom-1 overflow-auto px-3">
+            <div className="absolute right-1 left-1 top-[50px] bottom-[60px] overflow-auto px-3 py-2">
                 <div className={"md:flex md:items-end mb-[20px]"}>
                     <Select label="Outlet" options={pickupStores.map(e => ({ label: e.address.name, value: e.storeId }))} onChange={val => {
                         const storeDetails = pickupStores.find(e => e.storeId === val)
                         dispatch({ type: 'update', payload: { storeId: val, city: storeDetails?.address.city, state: storeDetails?.address.state } })
                         saveInStorage('outlet', val)
                     }} value={state.storeId} hideSearch />
-                    <p className='text-blue-500 font-semibold text-lg underline cursor-pointer ml-6 mb-1' onClick={() => showNewOutletForm()}>Add Outlet</p>
+                    <p className='text-blue-500 font-semibold md:text-lg underline cursor-pointer md:ml-6 mb-1 text-right text-sm mt-2' onClick={() => showNewOutletForm()}>Add Outlet</p>
                 </div>
                 <div>
                     <Input label="Bill Number" value={state.billNumber} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} />
                 </div>
                 <p className={'text-lg font-bold my-3 mx-1'}>Drop</p>
-                <div className={'md:flex md:items-center'}>
+                <div className={'md:flex md:items-center *:mb-3 md:*:mb-0'}>
                     <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { phoneNumber: val } })} />
-                    <div className="ml-3">
+                    <div className="md:ml-3">
                         <Input label="Name" value={state.name} onChange={val => dispatch({ type: 'update', payload: { name: val } })} />
                     </div>
                 </div>
@@ -164,18 +164,18 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 <p className={'text-lg font-bold my-3 mx-1'}>Order  Details</p>
                 <div className={'md:flex md:items-center'}>
                     <Select label="Category" options={[{ label: 'Food', value: 'F&B' }, { label: 'Grocery', value: 'Grocery' }]} onChange={val => dispatch({ type: 'update', payload: ({ category: val }) })} value={state.category} />
-                    <div className="ml-3">
+                    <div className="md:ml-3 mt-4 md:mt-0">
                         <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { orderAmount: val } })} />
                     </div>
                 </div>
-                <div className="flex justify-end mt-5 *:ml-3 mb-5 md:mb-0">
-                    <Button title="Check Price" onClick={() => processOrder('checkPrice')} disabled={!state.billNumber || !state.storeId ||
-                        (!/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation) && (!state.latitude || !state.longitude)) || !state.phoneNumber || !state.category || !state.orderAmount || activity.getPriceQuote}
-                        loading={activity.getPriceQuote} variant="info" />
-                    <Button title="Create Order" variant="primary" onClick={() => processOrder('createOrder')}
-                        disabled={!state.billNumber || !state.storeId || (!/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation) && (!state.latitude || !state.longitude)) || !state.phoneNumber || !state.category ||
-                            !state.orderAmount || activity.getPriceQuote} loading={activity.createOrder} />
-                </div>
+            </div>
+            <div className="absolute flex justify-end mt-5 *:ml-3 mb-2 md:mb-0 md:bottom-5 bottom-2">
+                <Button title="Check Price" onClick={() => processOrder('checkPrice')} disabled={!state.billNumber || !state.storeId ||
+                    (!/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation) && (!state.latitude || !state.longitude)) || !state.phoneNumber || !state.category || !state.orderAmount || activity.getPriceQuote}
+                    loading={activity.getPriceQuote} variant="info" />
+                <Button title="Create Order" variant="primary" onClick={() => processOrder('createOrder')}
+                    disabled={!state.billNumber || !state.storeId || (!/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation) && (!state.latitude || !state.longitude)) || !state.phoneNumber || !state.category ||
+                        !state.orderAmount || activity.getPriceQuote} loading={activity.createOrder} />
             </div>
         </div>
     </Modal>
