@@ -14,7 +14,7 @@ interface Props<T> {
     defaultLabel?: string
 }
 
-export default <T extends unknown>({ label, value, onChange, size, options, required, readOnly, hideSearch, defaultLabel = '--Select--' }: Props<T>) => {
+export default <T extends unknown>({ label, value, onChange, size, options, required, readOnly, defaultLabel = '--Select--' }: Props<T>) => {
     const [optionDisplay, setOptionDisplay] = useState(false);
     let selectContainerRef = React.createRef<HTMLInputElement>();
 
