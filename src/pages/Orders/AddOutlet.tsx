@@ -98,18 +98,18 @@ export default ({ open, onClose, onPlacesSearch, addOutlet, onPlaceChoose, activ
     }
 
     return <Modal open={open} onClose={onClose} loading={activity.getPickupList}>
-        <div className={`bg-white rounded flex flex-col items-center py-[10px] px-[20px]`} onMouseDown={e => e.stopPropagation()}>
-            <div className={`flex justify-between w-full items-center mb-[10px]`}>
+        <div className={`bg-white rounded flex flex-col items-center py-3 px-5 w-[370px] relative md:w-[650px]`} onMouseDown={e => e.stopPropagation()}>
+            <div className={`mb-[10px]`}>
                 <p className="text-[20px] font-semibold">Add Outlet</p>
-                <img className={`w-[25px] cursor-pointer`} src={closeIcon} onClick={onClose} />
+                <img className={`w-[25px] cursor-pointer absolute top-1 right-1`} src={closeIcon} onClick={onClose} />
             </div>
-            <div className="*:mb-2">
+            <div className="md:*:mb-2 *:mb-4">
                 <div>
                     <Input label="Store Id" value={state.storeId} onChange={val => dispatch({ type: 'update', payload: { storeId: val } })} />
                 </div>
-                <div className={`flex items-center`}>
+                <div className={`md:flex items-center`}>
                     <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { phoneNumber: val } })} />
-                    <div className="ml-3">
+                    <div className="md:ml-3 mt-4 md:mt-0">
                         <Input label="Name" value={state.name} onChange={val => dispatch({ type: 'update', payload: { name: val } })} />
                     </div>
                 </div>
