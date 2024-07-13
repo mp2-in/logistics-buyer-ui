@@ -54,16 +54,14 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
 }) => {
     const [state, dispatch] = useReducer(reducer, initialValue)
 
-    const retrieveSavedOutlet = (stores?: PickupStore[]) => {
-        let outlet = localStorage.getItem('outlet')
+    const retrieveSavedOutlet = () => {
+        let outlet = localStorage.getItem('storeDetails')
         let payload: Partial<State> = {}
         if (outlet) {
-            payload.storeId = outlet
-        }
-        const storeDetails = (stores || pickupStores).find(e => e.storeId === outlet)
-        if (storeDetails) {
-            payload.city = storeDetails.address.city
-            payload.state = storeDetails.address.state
+            let storeDetails = JSON.parse(outlet)
+            payload.storeId = storeDetails.storeId
+            payload.city = storeDetails.city
+            payload.state = storeDetails.state
         }
         dispatch({ type: 'reset', payload })
     }
@@ -77,8 +75,8 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
 
     useEffect(() => {
         if (open && pickupStores.length === 0) {
-            getPickupList((stores) => {
-                retrieveSavedOutlet(stores)
+            getPickupList(() => {
+                retrieveSavedOutlet()
             })
         } else {
             retrieveSavedOutlet()
@@ -145,7 +143,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                     <Select label="Outlet" options={pickupStores.map(e => ({ label: e.address.name, value: e.storeId }))} onChange={val => {
                         const storeDetails = pickupStores.find(e => e.storeId === val)
                         dispatch({ type: 'update', payload: { storeId: val, city: storeDetails?.address.city, state: storeDetails?.address.state } })
-                        saveInStorage('outlet', val)
+                        saveInStorage('storeDetails', JSON.stringify({ storeId: val, city: storeDetails?.address.city || '', state: storeDetails?.address.state || '' } ))
                     }} value={state.storeId} hideSearch />
                     <p className='text-blue-500 font-semibold md:text-lg underline cursor-pointer md:ml-6 mb-1 text-right text-sm mt-2' onClick={() => showNewOutletForm()}>Add Outlet</p>
                 </div>

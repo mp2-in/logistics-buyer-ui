@@ -78,7 +78,8 @@ export default ({ onUpdate, onPlacesSearch, onPlaceChoose, payload, module, stor
             </div>
             <div className={'md:flex md:items-center'}>
                 <div className="md:mr-3 mb-3 md:mb-0">
-                    <Select label="State" value={payload.state} onChange={val => onUpdate({ state: val })} options={getStates().map(e => ({ label: e, value: e }))} hideSearch readOnly={module === 'addOrder'} />
+                    {module === 'addOrder'?<Input label="State" value={payload.state} readOnly/>:
+                    <Select label="State" value={payload.state} onChange={val => onUpdate({ state: val })} options={getStates().map(e => ({ label: e, value: e }))} hideSearch  />}
                 </div>
                 <Input label="City" value={payload.city} onChange={val => onUpdate({ city: val })} size='small' readOnly={module === 'addOrder'} />
             </div>
