@@ -14,7 +14,6 @@ import { LocationAddress } from "@lib/interfaces";
 import dayjs from "dayjs";
 import OrderInfo from "./OrderInfo";
 import CancelOrder from "./CancelOrder";
-import Button from "@components/Button";
 
 
 interface State {
