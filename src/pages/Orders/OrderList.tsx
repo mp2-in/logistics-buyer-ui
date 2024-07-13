@@ -62,7 +62,7 @@ export default ({ onAddOrder, onRefresh, changeDate, getOrderDetails, onCancelOr
                         <p className={`flex-[4]`}>{eachOrder.rider.name}</p>}
                     <p className={`flex-[3] hidden md:block`}>{eachOrder.distance ? `${eachOrder.distance} km` : 0}</p>
                     <p className={`flex-[3] hidden md:block`}>{eachOrder.price ? `₹ ${eachOrder.price}` : 0}</p>
-                    <div className={`flex-[2] flex justify-around items-center md:justify-evenly`}>
+                    <div className={`flex-[2] flex justify-between items-center md:justify-evenly`}>
                         {eachOrder.tracking_url ? <a href={eachOrder.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-6' onClick={e => e.stopPropagation()}>
                             <img src={trackIcon} title='Track Shipment' className='w-6' />
                         </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-6'>
