@@ -62,7 +62,8 @@ export const useAppConfigStore = create<State>()((set) => ({
         callback()
     },
     clearAuth: async () => {
-        localStorage.clear()
+        localStorage.removeItem('token')
+        localStorage.removeItem('accountId')
 
         set(produce((state: State) => {
             state.token = undefined
