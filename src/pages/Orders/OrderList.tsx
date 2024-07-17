@@ -51,13 +51,13 @@ export default ({ onAddOrder, onRefresh, changeDate, getOrderDetails, onCancelOr
             <p className={`flex-[2] hidden md:block`}>Actions</p>
             <p className={`flex-[2] md:hidden`}></p>
         </div>
-        <div className={`absolute flex items-center flex-col left-2 right-2 bottom-2 top-[145px] overflow-auto md:left-5 md:right-5 md:top-[123px]`}>
+        <div className={`absolute flex items-center flex-col left-2 right-2 bottom-2 top-[148px] overflow-auto md:left-5 md:right-5 md:top-[123px]`}>
             {orders.map(eachOrder => {
                 return <div key={eachOrder.id} className={`flex items-center w-full py-1 px-1 border-b border-l border-r text-xs relative *:text-center md:text-sm`}>
                     <p className={`flex-[3]`}>{eachOrder.created_at ? dayjs(eachOrder.created_at).format('hh:mm A') : '--'}</p>
-                    <p className={`flex-[5] hidden md:block`}>{eachOrder.client_order_id}</p>
-                    <p className={`flex-[5] hidden md:block`}>{eachOrder.lsp.name}</p>
-                    <p className={`flex-[7] md:flex[2]`}>{eachOrder.state}</p>
+                    <input className={`flex-[5] hidden md:block border-none outline-none`} readOnly value={eachOrder.client_order_id} />
+                    <input className={`flex-[5] hidden md:block border-none outline-none`} readOnly value={eachOrder.lsp.name} />
+                    <input className={`flex-[7] md:flex[2] border-none outline-none`} readOnly value={eachOrder.state} />
                     {eachOrder.rider.phone ? <a className={`flex-[4] underline cursor-pointer font-semibold text-blue-400`} href={`tel:${eachOrder.rider.phone}`}>{eachOrder.rider.name}</a> :
                         <p className={`flex-[4]`}>{eachOrder.rider.name}</p>}
                     <p className={`flex-[3] hidden md:block`}>{eachOrder.distance ? `${eachOrder.distance} km` : 0}</p>

@@ -14,7 +14,7 @@ interface Props<T> {
     defaultLabel?: string
 }
 
-export default <T extends unknown>({ label, value, onChange, size, options, required, readOnly, defaultLabel = '--Select--' }: Props<T>) => {
+export default <T extends unknown>({ label, value, onChange, size, options, required, readOnly, hideSearch, defaultLabel = '--Select--' }: Props<T>) => {
     const [optionDisplay, setOptionDisplay] = useState(false);
     let selectContainerRef = React.createRef<HTMLInputElement>();
 
@@ -55,7 +55,7 @@ export default <T extends unknown>({ label, value, onChange, size, options, requ
             {label ? <p className={`absolute group-focus-within:text-blue-500 bg-white left-[10px] -top-[8px] text-xs leading-3 font-medium px-1 text-blue-950 ${required ? "after:content-['*'] after:font-bold after:text-sm after:ml-1" : ''}`}>{label}</p> : null}
             {!readOnly && optionDisplay && options?.length ?
                 <div ref={selectContainerRef} className={`absolute top-[33px] z-10 left-2 right-2 bg-white shadow-3xl rounded max-h-[250px] overflow-auto flex flex-col`}>
-                    {options.length >= 6 ?
+                    {options.length >= 6 && !hideSearch ?
                         <div className={'flex flex-row items-center mx-2'}>
                             <input placeholder='Search' value={searchFilter} onChange={e => setSearchFilter(e.target.value)} className="outline-none border bg-white rounded my-2 mx-3 px-2"/>
                             <img src={close} onClick={() => setSearchFilter('')} className="w-6 cursor-pointer"/>
