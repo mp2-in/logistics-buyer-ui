@@ -142,7 +142,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
             </div>
             <div className="absolute right-1 left-1 top-[50px] bottom-[60px] overflow-auto px-3 py-2">
                 <div className={"md:flex md:items-end mb-[20px]"}>
-                    <Select label="Outlet" options={pickupStores.map(e => ({ label: `${e.address.name} (${e.phone}) - ${e.pincode}`, value: e.storeId }))} onChange={val => {
+                    <Select label="Outlet" options={[...pickupStores].sort((a,b) => a.address.name<b.address.name?-1:1).map(e => ({ label: `${e.address.name} (${e.phone}) - ${e.pincode}`, value: e.storeId }))} onChange={val => {
                         const storeDetails = pickupStores.find(e => e.storeId === val)
                         dispatch({ type: 'update', payload: { storeId: val, city: storeDetails?.address.city, state: storeDetails?.address.state } })
                         saveInStorage('storeDetails', JSON.stringify({ storeId: val, city: storeDetails?.address.city || '', state: storeDetails?.address.state || '' } ))

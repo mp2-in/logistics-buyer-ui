@@ -19,7 +19,7 @@ export default ({ label, value, onChange, size, options, required, readOnly }: P
                 "after:content-['*'] after:font-bold after:text-sm after:ml-1" : ''}`}>{label}</p> : null}
             <select className="bg-white border-none outline-none" value={value} onChange={e => onChange && onChange(e.target.value)}>
                 {options?.map(e => {
-                    return <option value={e.value}>{e.label}</option>
+                    return <option value={e.value} key={e.value}>{e.label}</option>
                 })}
             </select>
         </div>
