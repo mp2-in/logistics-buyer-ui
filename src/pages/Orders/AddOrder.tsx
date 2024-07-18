@@ -2,6 +2,7 @@ import { useEffect, useReducer } from "react"
 
 import Modal from "@components/Modal"
 import closeIcon from '@assets/close.png'
+import addIcon from '@assets/add.png'
 
 import Select from "@components/Select"
 import Input from "@components/Input"
@@ -10,6 +11,7 @@ import Button from "@components/Button"
 import { PlaceAutoComplete, PlaceDetails, PickupStore, LocationAddress } from '@lib/interfaces'
 
 import SpecifyAddress from "./SpecifyAddress"
+import DefaultSelect from "@components/DefaultSelect"
 
 interface State {
     placesResponse: { placeId: string, address: string, offset: number }[]
@@ -140,12 +142,15 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
             </div>
             <div className="absolute right-1 left-1 top-[50px] bottom-[60px] overflow-auto px-3 py-2">
                 <div className={"md:flex md:items-end mb-[20px]"}>
-                    <Select label="Outlet" options={pickupStores.map(e => ({ label: e.address.name, value: e.storeId }))} onChange={val => {
+                    <Select label="Outlet" options={pickupStores.map(e => ({ label: `${e.address.name} (${e.phone}) - ${e.pincode}`, value: e.storeId }))} onChange={val => {
                         const storeDetails = pickupStores.find(e => e.storeId === val)
                         dispatch({ type: 'update', payload: { storeId: val, city: storeDetails?.address.city, state: storeDetails?.address.state } })
                         saveInStorage('storeDetails', JSON.stringify({ storeId: val, city: storeDetails?.address.city || '', state: storeDetails?.address.state || '' } ))
-                    }} value={state.storeId} hideSearch />
-                    <p className='text-blue-500 font-semibold md:text-lg underline cursor-pointer md:ml-6 mb-1 text-right text-sm mt-2' onClick={() => showNewOutletForm()}>Add Outlet</p>
+                    }} value={state.storeId} hideSearch size="large"/>
+                    <div onClick={() => showNewOutletForm()} className="bg-blue-500 md:w-8 rounded-full ml-4 mb-1 cursor-pointer w-6 hidden md:block" title="Add Outlet">
+                        <img src={addIcon}/>
+                    </div>
+                    <p className='text-blue-500 font-semibold md:text-lg underline cursor-pointer md:ml-6 mb-1 text-right text-sm mt-2 md:hidden' onClick={() => showNewOutletForm()}>Add Outlet</p>
                 </div>
                 <div>
                     <Input label="Bill Number" value={state.billNumber} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} />
@@ -161,7 +166,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                     module="addOrder" storeLocation={storeGeolocation()} />
                 <p className={'text-lg font-bold my-3 mx-1'}>Order  Details</p>
                 <div className={'md:flex md:items-center'}>
-                    <Select label="Category" options={[{ label: 'Food', value: 'F&B' }, { label: 'Grocery', value: 'Grocery' }]} onChange={val => dispatch({ type: 'update', payload: ({ category: val }) })} value={state.category} />
+                    <DefaultSelect label="Category" options={[{ label: 'Food', value: 'F&B' }, { label: 'Grocery', value: 'Grocery' }]} onChange={val => dispatch({ type: 'update', payload: ({ category: val }) })} value={state.category}/>
                     <div className="md:ml-3 mt-4 md:mt-0">
                         <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { orderAmount: val } })} />
                     </div>

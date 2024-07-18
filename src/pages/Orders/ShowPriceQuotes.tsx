@@ -29,13 +29,13 @@ export default ({ open, onClose, priceQuotes, createOrder, loading }: { open: bo
                 </div>
                 <div className={'absolute flex top-[43px] bottom-0 left-0 right-0 flex-col overflow-auto items-center flex-grow'}>
                     {priceQuotes.map(e => {
-                        return <div key={e.lsp_id} className="flex items-center w-full py-[5px] md:px-[10px] border-b md:border-l md:border-r text-xs md:text-sm relative *:text-left *:px-[10px] flex-grow">
+                        return <div key={e.lsp_id} className="flex items-center w-full py-[5px] md:px-[10px] border-b md:border-l md:border-r text-xs md:text-sm relative *:text-left *:px-[10px]">
                             <div className="flex-[1]">
                                 <RadioBtn checked={chosenLsp === e.lsp_id} onClick={() => setChosenLsp(e.lsp_id)} />
                             </div>
                             <p className="flex-[5]">{e.logistics_seller}</p>
                             <p className="flex-[5]">{e.pickup_eta} min</p>
-                            <p className="flex-[5]">{e.sla.toFixed(2)} min</p>
+                            <p className="flex-[5]">{e.sla} min</p>
                             <p className="flex-[5]">{e.price_forward ? `₹ ${e.price_forward.toFixed(2)}` : 0}</p>
                             <p className="flex-[5]">{e.price_rto ? `₹ ${e.price_rto.toFixed(2)}` : 0}</p>
                         </div>
