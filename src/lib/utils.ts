@@ -30,8 +30,12 @@ export const Api = (url: string, options: { method: 'post' | 'put' | 'delete' | 
   });
 };
 
-
+// mahesh: ideally, this should also lat, lng as params. For Add Outlet, there should be no location bias.
+// For add drop address, there should be a locationBias with a radius of 15km  with center of pickup's lat,lng such as
+// {"locationBias": {"circle": {"center": {"latitude": store_lat, "longitude": store_lng },"radius": 15000.0}}
 export const GooglePlacesApi = (searchText: string) => {
+  const data = { input: searchText, includedRegionCodes: ["in"] };
+
   return new Promise<any>((resolve, reject) => {
     axios
       .request({
@@ -41,7 +45,8 @@ export const GooglePlacesApi = (searchText: string) => {
           'Content-Type': 'application/json',
           'X-Goog-Api-Key': googleApiKey,
         },
-        data: { input: searchText, locationRestriction: { rectangle: { low: { latitude: 12.857606, longitude: 77.471582 }, high: { latitude: 13.050327, longitude: 77.665216 } } } }
+        // data: { input: searchText, locationRestriction: { rectangle: { low: { latitude: 12.857606, longitude: 77.471582 }, high: { latitude: 13.050327, longitude: 77.665216 } } } },
+        data: data
       })
       .then((respJson) => {
         if (respJson.status === 200) {
