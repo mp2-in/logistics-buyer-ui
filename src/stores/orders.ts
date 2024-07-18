@@ -14,7 +14,7 @@ interface Attributes {
 interface State extends Attributes {
     getOrders: (token: string, forDate: string) => void,
     getPickupList: (token: string, callback: () => void) => void,
-    googlePlacesApi: (searchText: string, callback: (data: PlaceAutoComplete[]) => void) => void
+    googlePlacesApi: (searchText: string, callback: (data: PlaceAutoComplete[]) => void, latitude?: number, longitude?: number) => void
     googlePlaceDetailsApi: (placeId: string, callback: (data: PlaceDetails) => void) => void
     createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, category: string, lspId: string | undefined, quoteId: string | undefined, callback: (success: boolean) => void) => void
     cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean) => void) => void
@@ -63,8 +63,8 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 }))
             })
     },
-    googlePlacesApi: async (searchText, callback) => {
-        GooglePlacesApi(searchText)
+    googlePlacesApi: async (searchText, callback, latitude, longitude) => {
+        GooglePlacesApi(searchText,latitude,longitude)
             .then(res => {
                 callback(res.suggestions)
             })

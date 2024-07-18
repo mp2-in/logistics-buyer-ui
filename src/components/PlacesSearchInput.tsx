@@ -44,7 +44,6 @@ const Input = ({ label, value, onChange, placeholder, readOnly, required, autoCo
         }
     }, [value])
 
-    // console.log(showOptions, autoCompleteOptions, (autoCompleteOptions || []).length)
 
     return <div className={`relative inline-flex flex-col justify-end ${label ? 'h-[30px] md:h-[46px]' : 'md:h-[35px]'}`}>
         <div className={`flex flex-col border border-gray-300 rounded relative h-[35px] justify-center py-0 px-[8px] bg-white group focus-within:border-blue-500 w-[300px] md:w-[600px]`}>
@@ -56,7 +55,7 @@ const Input = ({ label, value, onChange, placeholder, readOnly, required, autoCo
                     if (onChange) {
                         onChange(e.target.value)
                     }
-                }} onFocus={() => !readOnly ? optionsDisplay(true) : null}/>
+                }} onFocus={() => !readOnly ? optionsDisplay(true) : null} onClick={() => !readOnly ? optionsDisplay(true) : null}/>
             {label ? <p className={`absolute group-focus-within:text-blue-500 bg-white left-[10px] -top-[8px] text-xs leading-3 font-medium px-1 text-blue-950 
                 ${required ? "after:content-['*'] after:font-bold after:text-sm after:ml-1" : ''}`}>{label}</p> : null}
             {showOptions && autoCompleteOptions && autoCompleteOptions.length > 0 ?

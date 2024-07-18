@@ -25,9 +25,9 @@ interface Payload {
 }
 
 export default ({ onUpdate, onPlacesSearch, onPlaceChoose, payload, module, storeLocation }: {
-    onUpdate: (a: Partial<Payload>) => void, payload: Payload, onPlacesSearch: (searchText: string, callback: (data: PlaceAutoComplete[]) => void) => void,
+    onUpdate: (a: Partial<Payload>) => void, payload: Payload, onPlacesSearch: (searchText: string, callback: (data: PlaceAutoComplete[]) => void, latitude?:number, longitude?: number) => void,
     onPlaceChoose: (placeId: string, callback: (data: PlaceDetails) => void) => void,
-    module?: string, storeLocation?: string
+    module?: string, storeLocation?: {lat: number, lng: number}
 }) => {
 
     return <div className={`flex flex-col items-start`}>
@@ -46,7 +46,7 @@ export default ({ onUpdate, onPlacesSearch, onPlaceChoose, payload, module, stor
                                 }
                             })
                         })
-                    })
+                    }, storeLocation?.lat, storeLocation?.lng)
                 }
             }} autoCompleteOptions={payload.placesResponse.map(e => ({ label: e.address.toString(), value: e.placeId.toString(), offset: e.offset }))}
                 value={payload.address} onSelect={(v) => {
@@ -86,13 +86,13 @@ export default ({ onUpdate, onPlacesSearch, onPlaceChoose, payload, module, stor
             <div className={'flex items-center'}>
                 <Input label="Geolocation" value={payload.geoLocation} onChange={val => onUpdate({ geoLocation: val })} />
                 <div className="hidden md:block">
-                    {/^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) && storeLocation ? <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://www.google.com/maps/dir/?api=1&origin=${storeLocation}&destination=${payload.geoLocation}`} target="_blank">Maps Link</a> :
+                    {/^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) && storeLocation ? <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://www.google.com/maps/dir/?api=1&origin=${storeLocation.lat},${storeLocation.lng}&destination=${payload.geoLocation}`} target="_blank">Maps Link</a> :
                         /^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) ? <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://maps.google.com/?q=${payload.geoLocation}`} target="_blank">Maps Link</a> :
                             <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://maps.google.com`} target="_blank">Maps Link</a>}
                 </div>
                 <div className="md:hidden w-6 ml-2">
                     {/^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) && storeLocation ?
-                        <a href={`https://www.google.com/maps/dir/?api=1&origin=${storeLocation}&destination=${payload.geoLocation}`} target="_blank"><img src={trackIcon} /></a> :
+                        <a href={`https://www.google.com/maps/dir/?api=1&origin=${storeLocation.lat},${storeLocation.lng}&destination=${payload.geoLocation}`} target="_blank"><img src={trackIcon} /></a> :
                         /^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) ? <a href={`https://maps.google.com/?q=${payload.geoLocation}`} target="_blank"><img src={trackIcon} /></a> :
                             <a href={`https://maps.google.com`} target="_blank"><img src={trackIcon} /></a>}
                 </div>

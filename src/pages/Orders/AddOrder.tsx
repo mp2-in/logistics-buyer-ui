@@ -49,7 +49,7 @@ const reducer = (state: State, action: { type: 'reset', payload: Partial<State> 
 }
 
 export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, checkPrice, showNewOutletForm, saveInStorage, onPlaceChoose, activity, pickupStores }: {
-    open: boolean, onClose: () => void, onPlacesSearch: (searchText: string, callback: (data: PlaceAutoComplete[]) => void) => void, onPlaceChoose: (placeId: string, callback: (data: PlaceDetails) => void) => void,
+    open: boolean, onClose: () => void, onPlacesSearch: (searchText: string, callback: (data: PlaceAutoComplete[]) => void, latitude?: number, longitude?: number) => void, onPlaceChoose: (placeId: string, callback: (data: PlaceDetails) => void) => void,
     getPickupList: (callback: (stores?: PickupStore[]) => void) => void, activity: { [k: string]: boolean }, pickupStores: PickupStore[], createOrder: (billNumber: string, storeId: string, amount: string, category: string, drop: LocationAddress) => void,
     checkPrice: (billNumber: string, storeId: string, amount: string, category: string, drop: LocationAddress) => void, showNewOutletForm: () => void,
     saveInStorage: (keyName: string, value: string) => void
@@ -71,7 +71,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
     const storeGeolocation = () => {
         const store = pickupStores.find(e => e.storeId === state.storeId)
         if (store) {
-            return `${store.latitude},${store.longitude}`
+            return {lat:store.latitude, lng: store.longitude}
         }
     }
 

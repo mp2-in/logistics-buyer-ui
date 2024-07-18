@@ -90,8 +90,8 @@ export default () => {
                     setToast(message || 'Error fetching order details', 'error')
                 }
             })} />
-        <AddOrder open={state.addOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { addOrderDisplay: false } })} onPlacesSearch={(searchText, callback) => {
-            googlePlacesApi(searchText, callback)
+        <AddOrder open={state.addOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { addOrderDisplay: false } })} onPlacesSearch={(searchText, callback, latitude, longitude) => {
+            googlePlacesApi(searchText, callback, latitude, longitude)
         }} onPlaceChoose={(placeId, callback) => {
             googlePlaceDetailsApi(placeId, callback)
         }} getPickupList={callback => token ? getPickupList(token, callback) : null} activity={activity}

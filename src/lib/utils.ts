@@ -33,8 +33,16 @@ export const Api = (url: string, options: { method: 'post' | 'put' | 'delete' | 
 // mahesh: ideally, this should also lat, lng as params. For Add Outlet, there should be no location bias.
 // For add drop address, there should be a locationBias with a radius of 15km  with center of pickup's lat,lng such as
 // {"locationBias": {"circle": {"center": {"latitude": store_lat, "longitude": store_lng },"radius": 15000.0}}
-export const GooglePlacesApi = (searchText: string) => {
-  const data = { input: searchText, includedRegionCodes: ["in"] };
+export const GooglePlacesApi = (searchText: string, latitude?: number, longitude?: number) => {
+  let data = {};
+
+  if(latitude && longitude) {
+    data = { input: searchText, locationBias: {circle: {center: {latitude, longitude}, radius: 20000}} };
+  } else {
+    data = { input: searchText, includedRegionCodes: ["in"] }
+  }
+
+  console.log(data)
 
   return new Promise<any>((resolve, reject) => {
     axios
@@ -45,8 +53,7 @@ export const GooglePlacesApi = (searchText: string) => {
           'Content-Type': 'application/json',
           'X-Goog-Api-Key': googleApiKey,
         },
-        // data: { input: searchText, locationRestriction: { rectangle: { low: { latitude: 12.857606, longitude: 77.471582 }, high: { latitude: 13.050327, longitude: 77.665216 } } } },
-        data: data
+        data
       })
       .then((respJson) => {
         if (respJson.status === 200) {
@@ -87,27 +94,9 @@ export const PlaceDetailsApi = (placeId: string) => {
 };
 
 export const formatAddress = (address: string, components: { longText: string, types: string[] }[]) => {
-  const modifiedAddress = address.replace(/,\s*india/i,'').replace(/,\s*karnataka/i,'')
-  const addressSplit = modifiedAddress.split(/\s*,\s*/)
-  let addrLine1: string[] = []
-  let addrLine2: string[] = []
   let city = ''
   let state = ''
   let pincode = ''
-
-  let line1Complete = false
-
-  for (let i = 0; i < addressSplit.length; i++) {
-    if (!line1Complete && [...addrLine1, addressSplit[i]].join(',').length < modifiedAddress.length / 2) {
-      addrLine1.push(addressSplit[i])
-    } else if (!line1Complete) {
-      line1Complete = true
-    }
-
-    if (line1Complete) {
-      addrLine2.push(addressSplit[i])
-    }
-  }
 
   for (let i = 0; i < components.length; i++) {
     if (components[i].types.includes('locality')) {
@@ -120,6 +109,25 @@ export const formatAddress = (address: string, components: { longText: string, t
 
     if (components[i].types.includes('administrative_area_level_1')) {
       state = components[i].longText
+    }
+  }
+
+  const modifiedAddress = address.replace(/,\s*india/i,'').replace(new RegExp(`,\\s*${state}`, 'i'),'').replace(new RegExp(`,\\s*${city}`, 'i'),'')
+  const addressSplit = modifiedAddress.split(/\s*,\s*/)
+  let addrLine1: string[] = []
+  let addrLine2: string[] = []
+
+  let line1Complete = false
+
+  for (let i = 0; i < addressSplit.length; i++) {
+    if (!line1Complete && [...addrLine1, addressSplit[i]].join(',').length < modifiedAddress.length / 2) {
+      addrLine1.push(addressSplit[i])
+    } else if (!line1Complete) {
+      line1Complete = true
+    }
+
+    if (line1Complete) {
+      addrLine2.push(addressSplit[i])
     }
   }
 
