@@ -20,7 +20,7 @@ export default ({ onAddOrder, onRefresh, changeDate, getOrderDetails, onCancelOr
 }) => {
 
     const cancellable = (orderState: string) => {
-        return ['Pending', 'Accepted', 'UnFulFilled', 'Searching-for-Agent', 'Agent-assigned', 'At-pickup'].includes(orderState)
+        return ['Pending', 'Accepted', 'UnFulFilled', 'Searching-for-Agent', 'Agent-assigned', 'At-pickup', 'UnFulfilled'].includes(orderState)
     }
 
     useEffect(() => {
