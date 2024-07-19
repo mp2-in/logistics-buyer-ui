@@ -48,11 +48,20 @@ const reducer = (state: State, action: { type: 'reset', payload: Partial<State> 
     }
 }
 
-export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, checkPrice, showNewOutletForm, saveInStorage, onPlaceChoose, activity, pickupStores }: {
-    open: boolean, onClose: () => void, onPlacesSearch: (searchText: string, callback: (data: PlaceAutoComplete[]) => void, latitude?: number, longitude?: number) => void, onPlaceChoose: (placeId: string, callback: (data: PlaceDetails) => void) => void,
-    getPickupList: (callback: (stores?: PickupStore[]) => void) => void, activity: { [k: string]: boolean }, pickupStores: PickupStore[], createOrder: (billNumber: string, storeId: string, amount: string, category: string, drop: LocationAddress) => void,
-    checkPrice: (billNumber: string, storeId: string, amount: string, category: string, drop: LocationAddress) => void, showNewOutletForm: () => void,
+export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, checkPrice, showNewOutletForm, saveInStorage, onPlaceChoose, activity, pickupStores, getCustomerInfo }: {
+    open: boolean,
+    onClose: () => void,
+    onPlacesSearch: (searchText: string, callback: (data: PlaceAutoComplete[]) => void,
+    latitude?: number, longitude?: number) => void,
+    onPlaceChoose: (placeId: string, callback: (data: PlaceDetails) => void) => void,
+    getPickupList: (callback: (stores?: PickupStore[]) => void) => void,
+    activity: { [k: string]: boolean },
+    pickupStores: PickupStore[],
+    createOrder: (billNumber: string, storeId: string, amount: string, category: string, drop: LocationAddress) => void,
+    checkPrice: (billNumber: string, storeId: string, amount: string, category: string, drop: LocationAddress) => void,
+    showNewOutletForm: () => void,
     saveInStorage: (keyName: string, value: string) => void
+    getCustomerInfo: (phone: string, callback: (info: LocationAddress) => void) => void
 }) => {
     const [state, dispatch] = useReducer(reducer, initialValue)
 
@@ -134,7 +143,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
         }
     }
 
-    return <Modal open={open} onClose={onClose} loading={activity.getPickupList}>
+    return <Modal open={open} onClose={onClose} loading={activity.getPickupList || activity.getCustomerInfo}>
         <div className={`bg-white rounded flex flex-col items-center py-3 px-5 md:h-[730px] w-[370px] h-[600px] relative md:w-[650px]`} onMouseDown={e => e.stopPropagation()}>
             <div className={`flex justify-between w-full items-center mb-3`}>
                 <p className="text-xl font-semibold">Add Order</p>
@@ -157,7 +166,16 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 </div>
                 <p className={'text-lg font-bold my-3 mx-1'}>Drop</p>
                 <div className={'md:flex md:items-center *:mb-3 md:*:mb-0'}>
-                    <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { phoneNumber: val } })} />
+                    <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => {
+                        if(/^[0-9]*$/.test(val)) {
+                            dispatch({ type: 'update', payload: { phoneNumber: val } })
+                            if(val.length === 10) {
+                                getCustomerInfo(val, (info) => {
+                                    dispatch({ type: 'update', payload: { name: info.address.name, addrLine1: info.address.line1, addrLine2: info.address.line2, pincode: info.pincode, latitude: info.lat, longitude: info.lng, geoLocation: `${info.lat}, ${info.lng}` } })
+                                })
+                            }
+                        }
+                    }} />
                     <div className="md:ml-3">
                         <Input label="Name" value={state.name} onChange={val => dispatch({ type: 'update', payload: { name: val } })} />
                     </div>

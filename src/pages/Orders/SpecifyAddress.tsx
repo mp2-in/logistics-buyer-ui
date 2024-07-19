@@ -36,7 +36,6 @@ export default ({ onUpdate, onPlacesSearch, onPlaceChoose, payload, module, stor
                 onUpdate({ address: val })
                 if (val.length > 2) {
                     onPlacesSearch(val, (data) => {
-                        console.log(data)
                         onUpdate({
                             placesResponse: data.map(e => {
                                 return {

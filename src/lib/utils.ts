@@ -42,8 +42,6 @@ export const GooglePlacesApi = (searchText: string, latitude?: number, longitude
     data = { input: searchText, includedRegionCodes: ["in"] }
   }
 
-  console.log(data)
-
   return new Promise<any>((resolve, reject) => {
     axios
       .request({

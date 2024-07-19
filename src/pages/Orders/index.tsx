@@ -55,10 +55,23 @@ export default () => {
     const { token, accountId, clearAuth, setToast } = useAppConfigStore(state => ({ token: state.token, accountId: state.accountId, clearAuth: state.clearAuth, setToast: state.setToast }))
 
     const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder,
-        getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, getOrderDetails, orderPriceQuote, orderInfo } = useOrdersStore(state => ({
-            orders: state.orders, getOrders: state.getOrders, googlePlacesApi: state.googlePlacesApi, activity: state.activity, getPriceQuote: state.getPriceQuote,
-            getPickupList: state.getPickupList, pickupStores: state.pickupStores, createOrder: state.createOrder, cancelOrder: state.cancelOrder, getOrderDetails: state.getOrderDetails,
-            orderPriceQuote: state.orderPriceQuote, addOutlet: state.addOutlet, saveInStorage: state.saveInStorage, googlePlaceDetailsApi: state.googlePlaceDetailsApi, orderInfo: state.orderInfo
+        getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, getOrderDetails, orderPriceQuote, orderInfo,getCustomerInfo } = useOrdersStore(state => ({
+            orders: state.orders,
+            getOrders: state.getOrders,
+            googlePlacesApi: state.googlePlacesApi,
+            activity: state.activity,
+            getPriceQuote: state.getPriceQuote,
+            getPickupList: state.getPickupList,
+            pickupStores: state.pickupStores,
+            createOrder: state.createOrder,
+            cancelOrder: state.cancelOrder,
+            getOrderDetails: state.getOrderDetails,
+            orderPriceQuote: state.orderPriceQuote,
+            addOutlet: state.addOutlet,
+            saveInStorage: state.saveInStorage,
+            googlePlaceDetailsApi: state.googlePlaceDetailsApi,
+            orderInfo: state.orderInfo,
+            getCustomerInfo: state.getCustomerInfo
         }))
 
     const navigate = useNavigate()
@@ -109,7 +122,8 @@ export default () => {
                 getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), category, (quoteId) => {
                     dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, category, drop, quoteId } })
                 })
-            }} showNewOutletForm={() => dispatch({ type: 'update', payload: { addOutletDisplay: true } })} saveInStorage={(keyName, value) => saveInStorage(keyName, value)} />
+            }} showNewOutletForm={() => dispatch({ type: 'update', payload: { addOutletDisplay: true } })}
+            saveInStorage={(keyName, value) => saveInStorage(keyName, value)} getCustomerInfo={(phone, callback) => getCustomerInfo(token || '', phone, callback)}/>
         <AccountDetails open={state.accountDetailsDisplay} onClose={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: false } })} accountId={accountId || ''}
             onLogout={() => clearAuth()} />
         <ShowPriceQuotes open={state.priceQuotesDisplay} onClose={() => dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })}

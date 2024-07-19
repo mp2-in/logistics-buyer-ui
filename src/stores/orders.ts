@@ -22,6 +22,7 @@ interface State extends Attributes {
     addOutlet: (token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean) => void) => void
     saveInStorage: (keyName: string, value: string) => void
     getOrderDetails: (token: string, orderId: string, callback: (success: boolean, message?: string) => void) => void
+    getCustomerInfo: (token: string, phone: string, callback: (customerInfo: LocationAddress) => void) => void
 }
 
 const initialState: Attributes = { orders: [], activity: {}, pickupStores: [], orderPriceQuote: [] };
@@ -256,6 +257,29 @@ export const useOrdersStore = create<State>()((set, get) => ({
             .catch(() => {
                 set(produce((state: State) => {
                     state.activity.getOrderDetails = false
+                }))
+            })
+    },
+    getCustomerInfo: async (token, phone, callback) => {
+        set(produce((state: State) => {
+            state.activity.getCustomerInfo = true
+        }))
+        Api('/webui/customer/info', {
+            method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {
+                phone_number: phone
+            }
+        })
+            .then(res => {
+                set(produce((state: State) => {
+                    if (res.status === 1) {
+                        callback(res.customer)
+                    }
+                    state.activity.getCustomerInfo = false
+                }))
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.activity.getCustomerInfo = false
                 }))
             })
     },
