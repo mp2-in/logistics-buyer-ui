@@ -82,6 +82,6 @@ export default ({ onAddOrder, onRefresh, changeDate, getOrderDetails, onCancelOr
                 </div>
             })}
         </div>
-        {activity.getOrders || activity.getOrderDetails ? <ActivityIndicator /> : null}
+        {activity.getOrders || activity.getOrderDetails || activity.getWalletDashboardLink ? <ActivityIndicator /> : null}
     </div>
 }

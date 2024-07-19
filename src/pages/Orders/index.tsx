@@ -14,6 +14,7 @@ import { LocationAddress } from "@lib/interfaces";
 import dayjs from "dayjs";
 import OrderInfo from "./OrderInfo";
 import CancelOrder from "./CancelOrder";
+import WalletInfo from "./WalletInfo";
 
 
 interface State {
@@ -23,6 +24,7 @@ interface State {
     addOutletDisplay: boolean
     orderInfoDisplay: boolean
     cancelOrderDisplay: boolean
+    walletInfoDisplay: boolean
     billNumber?: string
     storeId?: string
     drop?: LocationAddress
@@ -31,11 +33,12 @@ interface State {
     orderFilterDate: string
     toBeCancelledOrder?: string
     quoteId?: string
+    walletLink: string
 }
 
 const initialValue: State = {
-    addOrderDisplay: false, accountDetailsDisplay: false, priceQuotesDisplay: false,
-    orderInfoDisplay: false, addOutletDisplay: false, cancelOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD')
+    addOrderDisplay: false, accountDetailsDisplay: false, priceQuotesDisplay: false, walletInfoDisplay: false,
+    orderInfoDisplay: false, addOutletDisplay: false, cancelOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD'),walletLink: ''
 }
 
 
@@ -54,8 +57,8 @@ export default () => {
 
     const { token, accountId, clearAuth, setToast } = useAppConfigStore(state => ({ token: state.token, accountId: state.accountId, clearAuth: state.clearAuth, setToast: state.setToast }))
 
-    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder,
-        getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, getOrderDetails, orderPriceQuote, orderInfo,getCustomerInfo } = useOrdersStore(state => ({
+    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, getWalletDashboardLink,
+        getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, getOrderDetails, orderPriceQuote, orderInfo, getCustomerInfo } = useOrdersStore(state => ({
             orders: state.orders,
             getOrders: state.getOrders,
             googlePlacesApi: state.googlePlacesApi,
@@ -71,7 +74,8 @@ export default () => {
             saveInStorage: state.saveInStorage,
             googlePlaceDetailsApi: state.googlePlaceDetailsApi,
             orderInfo: state.orderInfo,
-            getCustomerInfo: state.getCustomerInfo
+            getCustomerInfo: state.getCustomerInfo,
+            getWalletDashboardLink: state.getWalletDashboardLink
         }))
 
     const navigate = useNavigate()
@@ -91,7 +95,11 @@ export default () => {
     }, [state.orderFilterDate])
 
     return <div>
-        <TopBar accountId={accountId || ''} showAccountDetails={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: true } })} />
+        <TopBar accountId={accountId || ''} showAccountDetails={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: true } })} showWalletDashboard={() => {
+            getWalletDashboardLink(token || '', (link) => {
+                dispatch({ type: 'update', payload: { walletInfoDisplay: true, walletLink: link } })
+            })
+        }} />
         <OrderList onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })} onRefresh={() => token ? getOrders(token, state.orderFilterDate) : null}
             onCancelOrder={orderId => {
                 dispatch({ type: 'update', payload: { toBeCancelledOrder: orderId, cancelOrderDisplay: true } })
@@ -123,7 +131,7 @@ export default () => {
                     dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, category, drop, quoteId } })
                 })
             }} showNewOutletForm={() => dispatch({ type: 'update', payload: { addOutletDisplay: true } })}
-            saveInStorage={(keyName, value) => saveInStorage(keyName, value)} getCustomerInfo={(phone, callback) => getCustomerInfo(token || '', phone, callback)}/>
+            saveInStorage={(keyName, value) => saveInStorage(keyName, value)} getCustomerInfo={(phone, callback) => getCustomerInfo(token || '', phone, callback)} />
         <AccountDetails open={state.accountDetailsDisplay} onClose={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: false } })} accountId={accountId || ''}
             onLogout={() => clearAuth()} />
         <ShowPriceQuotes open={state.priceQuotesDisplay} onClose={() => dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })}
@@ -170,5 +178,7 @@ export default () => {
                     }
                 })
             }} loading={activity.cancelOrder} />
+        <WalletInfo open={state.walletInfoDisplay} onClose={() => dispatch({ type: 'update', payload: { walletInfoDisplay: false } })}
+            link={state.walletLink} />
     </div>
 }       
