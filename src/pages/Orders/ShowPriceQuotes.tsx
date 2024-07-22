@@ -9,7 +9,13 @@ import { useState } from "react"
 import Button from "@components/Button"
 
 
-export default ({ open, onClose, priceQuotes, createOrder, loading }: { open: boolean, onClose: () => void, priceQuotes: PriceQuote[], createOrder: (lspId: string) => void, loading: boolean }) => {
+export default ({ open, onClose, priceQuotes, createOrder, loading }: { 
+    open: boolean, 
+    onClose: () => void, 
+    priceQuotes: PriceQuote[], 
+    createOrder: (lspId: string) => void, 
+    loading: boolean 
+}) => {
     const [chosenLsp, setChosenLsp] = useState('')
 
     return <Modal open={open} onClose={onClose} >

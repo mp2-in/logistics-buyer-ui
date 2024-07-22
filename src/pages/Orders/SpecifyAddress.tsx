@@ -25,9 +25,14 @@ interface Payload {
 }
 
 export default ({ onUpdate, onPlacesSearch, onPlaceChoose, payload, module, storeLocation }: {
-    onUpdate: (a: Partial<Payload>) => void, payload: Payload, onPlacesSearch: (searchText: string, callback: (data: PlaceAutoComplete[]) => void, latitude?:number, longitude?: number) => void,
+    onUpdate: (a: Partial<Payload>) => void, 
+    payload: Payload, 
+    onPlacesSearch: (searchText: string, callback: (data: PlaceAutoComplete[]) => void, 
+    latitude?:number, 
+    longitude?: number) => void,
     onPlaceChoose: (placeId: string, callback: (data: PlaceDetails) => void) => void,
-    module?: string, storeLocation?: {lat: number, lng: number}
+    module?: string, 
+    storeLocation?: {lat: number, lng: number}
 }) => {
 
     return <div className={`flex flex-col items-start`}>

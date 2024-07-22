@@ -8,7 +8,13 @@ import Button from "@components/Button"
 import { cancellationIdReasonMapping } from "@lib/utils"
 
 
-export default ({ open, onClose, onCancel, loading }: { open: boolean, onClose: () => void, onCancel: (reason: string) => void, loading: boolean }) => {
+export default ({ open, onClose, onCancel, loading }: { 
+    open: boolean, 
+    onClose: () => void, 
+    onCancel: (reason: string) => void, 
+    loading: boolean 
+}) => {
+    
     const [cancellationReason, setCancellationReason] = useState('005')
 
     return <Modal open={open} onClose={onClose}>

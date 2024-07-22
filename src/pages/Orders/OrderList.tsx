@@ -15,8 +15,14 @@ import Button from '@components/Button';
 
 
 export default ({ onAddOrder, onRefresh, changeDate, getOrderDetails, onCancelOrder, orders, activity, filterDate }: {
-    onAddOrder: () => void, onRefresh: () => void, onCancelOrder: (orderId: string) => void,
-    orders: Order[], activity: { [k: string]: boolean }, filterDate: string, changeDate: (date: string) => void, getOrderDetails: (orderId: string) => void
+    onAddOrder: () => void, 
+    onRefresh: () => void, 
+    onCancelOrder: (orderId: string) => void,
+    orders: Order[], 
+    activity: { [k: string]: boolean }, 
+    filterDate: string, 
+    changeDate: (date: string) => void, 
+    getOrderDetails: (orderId: string) => void
 }) => {
 
     const cancellable = (orderState: string) => {
@@ -60,8 +66,8 @@ export default ({ onAddOrder, onRefresh, changeDate, getOrderDetails, onCancelOr
                     <input className={`flex-[7] md:flex[2] border-none outline-none`} readOnly value={eachOrder.state} />
                     {eachOrder.rider.phone ? <a className={`flex-[4] underline cursor-pointer font-semibold text-blue-400`} href={`tel:${eachOrder.rider.phone}`}>{eachOrder.rider.name}</a> :
                         <p className={`flex-[4]`}>{eachOrder.rider.name}</p>}
-                    <p className={`flex-[3] hidden md:block`}>{eachOrder.distance ? `${eachOrder.distance} km` : 0}</p>
-                    <p className={`flex-[3] hidden md:block`}>{eachOrder.price ? `₹ ${eachOrder.price}` : 0}</p>
+                    <p className={`flex-[3] hidden md:block`}>{eachOrder.distance ? `${eachOrder.distance.toFixed(2)} km` : 0}</p>
+                    <p className={`flex-[3] hidden md:block`}>{eachOrder.price ? `₹ ${eachOrder.price.toFixed(2)}` : 0}</p>
                     <div className={`flex-[2] flex justify-between items-center md:justify-evenly`}>
                         {eachOrder.tracking_url ? <a href={eachOrder.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-6' onClick={e => e.stopPropagation()}>
                             <img src={trackIcon} title='Track Shipment' className='w-6' />

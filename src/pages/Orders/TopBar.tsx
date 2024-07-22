@@ -1,7 +1,11 @@
 import menuIcon from "@assets/menu.png"
 import accountIcon from "@assets/account.png"
 
-export default ({ accountId, showAccountDetails, showWalletDashboard }: { accountId: string, showAccountDetails: () => void, showWalletDashboard: () => void }) => {
+export default ({ accountId, showAccountDetails, showWalletDashboard }: { 
+    accountId: string, 
+    showAccountDetails: () => void, 
+    showWalletDashboard: () => void 
+}) => {
     return <div className={'flex justify-between items-center border-b border-gray-300 md:py-3 md:px-5 py-1 px-1'}>
         <div className={'flex items-center'}>
             <img src={menuIcon} className="w-9 mx-2 cursor-pointer" onClick={showWalletDashboard}/>

@@ -14,7 +14,12 @@ const ShowValue = ({ label, value, isDate, large }: { label: string, value: stri
     </div>
 }
 
-export default ({ open, onClose, orderInfo, onCancelOrder }: { open: boolean, onClose: () => void, orderInfo: Order | undefined, onCancelOrder: (orderId: string) => void }) => {
+export default ({ open, onClose, orderInfo, onCancelOrder }: { 
+    open: boolean, 
+    onClose: () => void, 
+    orderInfo: Order | undefined, 
+    onCancelOrder: (orderId: string) => void 
+}) => {
     return <Modal open={open} onClose={onClose}>
         <div className={'md:h-[700px] md:w-[600px] w-[350px] h-[600px] bg-white p-3 rounded-md relative'} onMouseDown={e => e.stopPropagation()}>
             <div className={'flex justify-between'}>

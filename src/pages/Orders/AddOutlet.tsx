@@ -41,9 +41,12 @@ const reducer = (state: State, action: { type: 'reset' } | { type: 'update', pay
 }
 
 export default ({ open, onClose, onPlacesSearch, addOutlet, onPlaceChoose, activity }: {
-    open: boolean, onClose: () => void, onPlacesSearch: (searchText: string, callback: (data: PlaceAutoComplete[]) => void) => void,
+    open: boolean, 
+    onClose: () => void, 
+    onPlacesSearch: (searchText: string, callback: (data: PlaceAutoComplete[]) => void) => void,
     onPlaceChoose: (placeId: string, callback: (data: PlaceDetails) => void) => void,
-    activity: { [k: string]: boolean }, addOutlet: (storeId: string, address: LocationAddress, placeId: string) => void
+    activity: { [k: string]: boolean }, 
+    addOutlet: (storeId: string, address: LocationAddress, placeId: string) => void
 }) => {
     const [state, dispatch] = useReducer(reducer, initialValue)
 

@@ -8,7 +8,9 @@ import { useState } from "react"
 
 
 export default ({ open, onClose, onLogout, accountId }: {
-    open: boolean, onClose: () => void, onLogout: () => void, accountId: string
+    open: boolean, 
+    onClose: () => void, 
+    onLogout: () => void, accountId: string
 }) => {
 
     const [rechargeAmount, setRechargeAmount] = useState('')
