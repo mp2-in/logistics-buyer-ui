@@ -13,41 +13,18 @@ interface Attributes {
 }
 
 interface State extends Attributes {
-    login: (username: string, password: string, successCallback: () => void, errCallback: () => void) => void,
     checkLoginStatus: (callback: () => void) => void
     clearAuth: () => void
     setToast: (message: string, type: 'success' | 'warning' | 'error') => void,
     hideToast: () => void,
+    sendOtp: (phoneNumber: string, callback: (success: boolean) => void) => void,
+    verifyOtp: (phoneNumber: string, otp: string, callback: (success: boolean) => void) => void
 }
 
 const initialState: Attributes = { loggedIn: false, activity: {}, toastMessage: '', toastVisibility: false };
 
 export const useAppConfigStore = create<State>()((set) => ({
     ...initialState,
-    login: async (username, password, successCallback, errCallback) => {
-        set(produce((state: State) => {
-            state.activity.login = true
-        }))
-        Api('/webui/login', { method: 'post', headers: {'x-mp2-api-key': 'MP2Kktmeeezr309axf9eagfrrds61tqauv1am5qqh6dzyhuzqv4ggb8x7jts4bim', 'Content-Type': 'application/json' }, data: { username, password } })
-            .then(res => {
-                set(produce((state: State) => {
-                    state.token = res.access_token
-                    state.accountId = res.account_id
-                    state.loggedIn = true
-                    state.activity.login = false
-                }))
-                localStorage.setItem("token", res.access_token);
-                localStorage.setItem("accountId",res.account_id);
-                successCallback()
-            })
-            .catch(() => {
-                set(produce((state: State) => {
-                    state.loggedIn = false
-                    state.activity.login = false
-                }))
-                errCallback()
-            })
-    },
     checkLoginStatus: async (callback) => {
         const token = localStorage.getItem("token");
         const accountId = localStorage.getItem("accountId");
@@ -82,5 +59,60 @@ export const useAppConfigStore = create<State>()((set) => ({
         set(produce((state: State) => {
             state.toastVisibility = false
         }))
+    },
+    sendOtp: async (phoneNumber, callback) => {
+        set(produce((state: State) => {
+            state.activity.sendOtp = true
+        }))
+        Api('/webui/sendOTP', { method: 'post',headers: {'Content-Type': 'application/json' }, data: { phone_number: phoneNumber } })
+            .then(res => {
+                set(produce((state: State) => {
+                    state.activity.sendOtp = false
+                }))
+
+                if(res.status === 1) {
+                    callback(true)
+                } else {
+                    callback(false)
+                }
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.activity.sendOtp = false
+                }))
+                callback(false)
+            })
+    },
+    verifyOtp: async (phoneNumber, otp, callback) => {
+        set(produce((state: State) => {
+            state.activity.verifyOtp = true
+        }))
+        Api('/webui/verifyOTP', { method: 'post', headers: {'Content-Type': 'application/json' }, data: {phone_number: phoneNumber, OTP: otp} })
+            .then(res => {
+                if(res.status === 1) {
+                    set(produce((state: State) => {
+                        state.token = res.access_token
+                        state.accountId = res.selected_account_id
+                        state.loggedIn = true
+                        state.activity.verifyOtp = false
+                    }))
+                    localStorage.setItem("token", res.access_token);
+                    localStorage.setItem("accountId",res.selected_account_id);
+                    callback(true)
+                } else {
+                    callback(false)
+                    set(produce((state: State) => {
+                        state.loggedIn = false
+                        state.activity.verifyOtp = false
+                    }))
+                }
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.loggedIn = false
+                    state.activity.verifyOtp = false
+                }))
+                callback(false)
+            })
     },
 }))
