@@ -89,6 +89,6 @@ export default () => {
                 setOtp(e.target.value)
             }
             setErrMsg(undefined)
-        }} className='m-1 opacity-0 cursor-default' value={otp} ref={inputRef} />
+        }} className='m-1 opacity-0 cursor-default' value={otp} ref={inputRef} type='number'/>
     </div>
 }
