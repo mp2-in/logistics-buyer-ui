@@ -2,30 +2,46 @@ import Modal from "@components/Modal"
 import closeIcon from '@assets/close.png'
 
 import Button from "@components/Button"
-import accountIcon from "@assets/account.png"
-import Input from "@components/Input"
-import { useState } from "react"
+import checkIcon from "@assets/check.png"
+// import Input from "@components/Input"
 
 
-export default ({ open, onClose, onLogout, accountId }: {
-    open: boolean, 
-    onClose: () => void, 
-    onLogout: () => void, accountId: string
+export default ({ open, onClose, onLogout, selectedAccount, accountIds, phoneNumber, switchAccount }: {
+    open: boolean,
+    onClose: () => void,
+    onLogout: () => void,
+    selectedAccount: string,
+    accountIds: string[],
+    phoneNumber?: string
+    switchAccount: (accountId: string) => void
 }) => {
 
-    const [rechargeAmount, setRechargeAmount] = useState('')
+    // const [rechargeAmount, setRechargeAmount] = useState('')
 
     return <Modal open={open} onClose={onClose}>
-        <div className={'bg-white rounded flex flex-col items-center p-5 w-[300px] relative'} onMouseDown={e => e.stopPropagation()}>
+        <div className={'bg-white rounded flex flex-col items-center p-5 w-[300px] relative md:w-[400px]'} onMouseDown={e => e.stopPropagation()}>
             <div>
-                <img src={closeIcon} onClick={onClose} className="w-6 absolute top-1 right-1" />
+                <img src={closeIcon} onClick={onClose} className="w-6 absolute top-1 right-1 cursor-pointer" />
             </div>
             <div className={'w-full flex flex-col items-center'}>
-                <div className="flex items-center mb-8">
-                    <img src={accountIcon} className="w-14 mr-4" />
-                    <p>{accountId}</p>
+                <div>
+                    <p className="font-bold"><span>Phone : </span>{phoneNumber}</p>
                 </div>
-                <div className="flex flex-col items-center *:mb-5">
+                <div className="mt-6">
+                    {accountIds.map(eachAccount => {
+                        return <div className="flex flex-row-reverse h-8 w-[250px] items-center justify-evenly hover:bg-slate-200" key={eachAccount} onClick={() => {
+                            if(selectedAccount !== eachAccount) {
+                                switchAccount(eachAccount)
+                            }
+                        }}>
+                            <p className={`flex-[7] font-semibold ${selectedAccount === eachAccount?'cursor-default':'cursor-pointer'}`}>{eachAccount}</p>
+                            <div className="flex-[2] flex justify-center pl-5">
+                                {selectedAccount === eachAccount ? <img src={checkIcon} className="w-6" /> : <span />}
+                            </div>
+                        </div>
+                    })}
+                </div>
+                {/* <div className="flex flex-col items-center *:mb-5">
                     <Input label='Recharge Amount' type={'number'} size="small" value={rechargeAmount} onChange={val => /^[0-9]*$/.test(val) && setRechargeAmount(val)}/>
                     <Button title="Recharge" variant="primary" onClick={() => {
                         var options = {
@@ -52,7 +68,7 @@ export default ({ open, onClose, onLogout, accountId }: {
                         var rzp1 = (window as any).Razorpay(options);
                         rzp1.open();
                     }} disabled={!rechargeAmount}/>
-                </div>
+                </div> */}
                 <div className="flex justify-end w-full mt-8">
                     <Button title="Logout" onClick={onLogout} variant="secondary" />
                 </div>

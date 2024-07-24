@@ -4,12 +4,14 @@ import { Api } from '@lib/utils'
 
 interface Attributes {
     token?: string,
-    accountId?: string,
+    selectedAccount?: string,
+    phone?: string,
+    accountIds: string[],
     loggedIn: boolean,
     toastMessage: string,
     toastType?: 'success' | 'warning' | 'error',
     toastVisibility: boolean,
-    activity: {[k: string]: boolean}
+    activity: { [k: string]: boolean }
 }
 
 interface State extends Attributes {
@@ -19,32 +21,39 @@ interface State extends Attributes {
     hideToast: () => void,
     sendOtp: (phoneNumber: string, callback: (success: boolean) => void) => void,
     verifyOtp: (phoneNumber: string, otp: string, callback: (success: boolean) => void) => void
+    switchAccount: (token: string, accountId: string, callback: (success: boolean) => void) => void
 }
 
-const initialState: Attributes = { loggedIn: false, activity: {}, toastMessage: '', toastVisibility: false };
+const initialState: Attributes = { loggedIn: false, activity: {}, toastMessage: '', toastVisibility: false, accountIds: [] };
 
 export const useAppConfigStore = create<State>()((set) => ({
     ...initialState,
     checkLoginStatus: async (callback) => {
         const token = localStorage.getItem("token");
-        const accountId = localStorage.getItem("accountId");
+        const selectedAccount = localStorage.getItem("selectedAccount");
+        const phone = localStorage.getItem("phone");
+        const accountIds = localStorage.getItem("accountIds");
 
-        if(token && accountId) {
+        if (token && selectedAccount && phone && accountIds) {
             set(produce((state: State) => {
                 state.token = token
-                state.accountId = accountId
+                state.selectedAccount = selectedAccount
+                state.phone = phone
                 state.loggedIn = true
+                state.accountIds = JSON.parse(accountIds)
             }))
         }
         callback()
     },
     clearAuth: async () => {
         localStorage.removeItem('token')
-        localStorage.removeItem('accountId')
+        localStorage.removeItem('selectedAccount')
+        localStorage.removeItem('phone')
+        localStorage.removeItem('accountIds')
 
         set(produce((state: State) => {
             state.token = undefined
-            state.accountId = undefined
+            state.selectedAccount = undefined
             state.loggedIn = false
         }))
     },
@@ -64,13 +73,13 @@ export const useAppConfigStore = create<State>()((set) => ({
         set(produce((state: State) => {
             state.activity.sendOtp = true
         }))
-        Api('/webui/sendOTP', { method: 'post',headers: {'Content-Type': 'application/json' }, data: { phone_number: phoneNumber } })
+        Api('/webui/sendOTP', { method: 'post', headers: { 'Content-Type': 'application/json' }, data: { phone_number: phoneNumber } })
             .then(res => {
                 set(produce((state: State) => {
                     state.activity.sendOtp = false
                 }))
 
-                if(res.status === 1) {
+                if (res.status === 1) {
                     callback(true)
                 } else {
                     callback(false)
@@ -87,17 +96,22 @@ export const useAppConfigStore = create<State>()((set) => ({
         set(produce((state: State) => {
             state.activity.verifyOtp = true
         }))
-        Api('/webui/verifyOTP', { method: 'post', headers: {'Content-Type': 'application/json' }, data: {phone_number: phoneNumber, OTP: otp} })
+        Api('/webui/verifyOTP', { method: 'post', headers: { 'Content-Type': 'application/json' }, data: { phone_number: phoneNumber, OTP: otp } })
             .then(res => {
-                if(res.status === 1) {
+                if (res.status === 1) {
                     set(produce((state: State) => {
                         state.token = res.access_token
-                        state.accountId = res.selected_account_id
+                        state.selectedAccount = res.selected_account_id
+                        state.phone = phoneNumber
+                        state.accountIds = res.account_ids
                         state.loggedIn = true
                         state.activity.verifyOtp = false
                     }))
                     localStorage.setItem("token", res.access_token);
-                    localStorage.setItem("accountId",res.selected_account_id);
+                    localStorage.setItem("accountIds", JSON.stringify(res.account_ids));
+                    localStorage.setItem("selectedAccount", res.selected_account_id);
+                    localStorage.setItem("phone", phoneNumber);
+
                     callback(true)
                 } else {
                     callback(false)
@@ -111,6 +125,34 @@ export const useAppConfigStore = create<State>()((set) => ({
                 set(produce((state: State) => {
                     state.loggedIn = false
                     state.activity.verifyOtp = false
+                }))
+                callback(false)
+            })
+    },
+    switchAccount: async (token, accountId, callback) => {
+        set(produce((state: State) => {
+            state.activity.switchAccount = true
+        }))
+
+        Api('/webui/switchaccount', { method: 'post', headers: { 'Content-Type': 'application/json', token }, data: { switch_account_id: accountId } })
+            .then(res => {
+                if (res.status === 1) {
+                    localStorage.setItem("selectedAccount", res.selected_account_id);
+                    set(produce((state: State) => {
+                        state.selectedAccount = res.selected_account_id
+                        state.activity.switchAccount = false
+                    }))
+                    callback(true)
+                } else {
+                    callback(false)
+                    set(produce((state: State) => {
+                        state.activity.switchAccount = false
+                    }))
+                }
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.activity.switchAccount = false
                 }))
                 callback(false)
             })

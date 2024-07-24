@@ -7,24 +7,20 @@ import AddOrder from "./AddOrder";
 
 import { useAppConfigStore } from "stores/appConfig";
 import { useOrdersStore } from "stores/orders";
-import AccountDetails from "./AccountDetails";
 import ShowPriceQuotes from "./ShowPriceQuotes";
 import AddOutlet from "./AddOutlet";
 import { LocationAddress } from "@lib/interfaces";
 import dayjs from "dayjs";
 import OrderInfo from "./OrderInfo";
 import CancelOrder from "./CancelOrder";
-import WalletInfo from "./WalletInfo";
 
 
 interface State {
     addOrderDisplay: boolean
-    accountDetailsDisplay: boolean
     priceQuotesDisplay: boolean
     addOutletDisplay: boolean
     orderInfoDisplay: boolean
     cancelOrderDisplay: boolean
-    walletInfoDisplay: boolean
     billNumber?: string
     storeId?: string
     drop?: LocationAddress
@@ -33,13 +29,12 @@ interface State {
     orderFilterDate: string
     toBeCancelledOrder?: string
     quoteId?: string
-    walletLink: string
     chosenStoreId?: string
 }
 
 const initialValue: State = {
-    addOrderDisplay: false, accountDetailsDisplay: false, priceQuotesDisplay: false, walletInfoDisplay: false,
-    orderInfoDisplay: false, addOutletDisplay: false, cancelOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD'), walletLink: ''
+    addOrderDisplay: false, priceQuotesDisplay: false, orderInfoDisplay: false, 
+    addOutletDisplay: false, cancelOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD')
 }
 
 
@@ -56,7 +51,15 @@ export default () => {
 
     const [state, dispatch] = useReducer(reducer, initialValue)
 
-    const { token, accountId, clearAuth, setToast } = useAppConfigStore(state => ({ token: state.token, accountId: state.accountId, clearAuth: state.clearAuth, setToast: state.setToast }))
+    const { token, selectedAccount, clearAuth, setToast, accountIds, phone, switchAccount } = useAppConfigStore(state => ({ 
+        token: state.token, 
+        selectedAccount: state.selectedAccount, 
+        clearAuth: state.clearAuth, 
+        setToast: state.setToast, 
+        accountIds: state.accountIds, 
+        phone: state.phone,
+        switchAccount: state.switchAccount
+    }))
 
     const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, getWalletDashboardLink,
         getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, getOrderDetails, orderPriceQuote, orderInfo, getCustomerInfo } = useOrdersStore(state => ({
@@ -97,11 +100,22 @@ export default () => {
 
     return <div>
         <TopBar
-            accountId={accountId || ''}
-            showAccountDetails={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: true } })}
-            showWalletDashboard={() => {
+            selectedAccount={selectedAccount || ''}
+            clearAuth={clearAuth}
+            getWalletInfoPageLink={(callback) => {
                 getWalletDashboardLink(token || '', (link) => {
-                    dispatch({ type: 'update', payload: { walletInfoDisplay: true, walletLink: link } })
+                    callback(link)
+                })
+            }}
+            accountIds={accountIds}
+            phoneNumber={phone}
+            switchAccount={accountId => {
+                switchAccount(token || '', accountId, (success) => {
+                    if (success) {
+                        setToast('Account switched successfully', 'success')
+                    } else {
+                        setToast('Error switching account', 'error')
+                    }
                 })
             }}
         />
@@ -154,12 +168,6 @@ export default () => {
             showNewOutletForm={(chosenStoreId) => dispatch({ type: 'update', payload: { addOutletDisplay: true, chosenStoreId } })}
             saveInStorage={(keyName, value) => saveInStorage(keyName, value)}
             getCustomerInfo={(phone, callback) => getCustomerInfo(token || '', phone, callback)}
-        />
-        <AccountDetails
-            open={state.accountDetailsDisplay}
-            onClose={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: false } })}
-            accountId={accountId || ''}
-            onLogout={() => clearAuth()}
         />
         <ShowPriceQuotes
             open={state.priceQuotesDisplay}
@@ -224,11 +232,6 @@ export default () => {
                 })
             }}
             loading={activity.cancelOrder}
-        />
-        <WalletInfo
-            open={state.walletInfoDisplay}
-            onClose={() => dispatch({ type: 'update', payload: { walletInfoDisplay: false } })}
-            link={state.walletLink}
         />
     </div>
 }       
