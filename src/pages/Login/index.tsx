@@ -24,6 +24,7 @@ export default () => {
         activity: state.activity,
         loggedIn: state.loggedIn
     }))
+    
     const navigate = useNavigate()
 
     useEffect(() => {

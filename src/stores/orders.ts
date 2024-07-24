@@ -19,7 +19,7 @@ interface State extends Attributes {
     createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, category: string, lspId: string | undefined, quoteId: string | undefined, callback: (success: boolean) => void) => void
     cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean) => void) => void
     getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, category: string, callback: (quoteId: string) => void) => void
-    addOutlet: (token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean) => void) => void
+    addOutlet: (action: 'create'|'update', token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean) => void) => void
     saveInStorage: (keyName: string, value: string) => void
     getOrderDetails: (token: string, orderId: string, callback: (success: boolean, message?: string) => void) => void
     getCustomerInfo: (token: string, phone: string, callback: (customerInfo: LocationAddress) => void) => void
@@ -202,11 +202,11 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 })
         }
     },
-    addOutlet: async (token, storeId, drop, placesId, callback) => {
+    addOutlet: async (action,token, storeId, drop, placesId, callback) => {
         set(produce((state: State) => {
             state.activity.addOutlet = true
         }))
-        Api('/webui/pickup/create', {
+        Api(`/webui/pickup/${action}`, {
             method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {
                 store_id: storeId,
                 ...drop,

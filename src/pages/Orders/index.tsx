@@ -34,11 +34,12 @@ interface State {
     toBeCancelledOrder?: string
     quoteId?: string
     walletLink: string
+    chosenStoreId?: string
 }
 
 const initialValue: State = {
     addOrderDisplay: false, accountDetailsDisplay: false, priceQuotesDisplay: false, walletInfoDisplay: false,
-    orderInfoDisplay: false, addOutletDisplay: false, cancelOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD'),walletLink: ''
+    orderInfoDisplay: false, addOutletDisplay: false, cancelOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD'), walletLink: ''
 }
 
 
@@ -95,28 +96,46 @@ export default () => {
     }, [state.orderFilterDate])
 
     return <div>
-        <TopBar accountId={accountId || ''} showAccountDetails={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: true } })} showWalletDashboard={() => {
-            getWalletDashboardLink(token || '', (link) => {
-                dispatch({ type: 'update', payload: { walletInfoDisplay: true, walletLink: link } })
-            })
-        }} />
-        <OrderList onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })} onRefresh={() => token ? getOrders(token, state.orderFilterDate) : null}
+        <TopBar
+            accountId={accountId || ''}
+            showAccountDetails={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: true } })}
+            showWalletDashboard={() => {
+                getWalletDashboardLink(token || '', (link) => {
+                    dispatch({ type: 'update', payload: { walletInfoDisplay: true, walletLink: link } })
+                })
+            }}
+        />
+        <OrderList
+            onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })}
+            onRefresh={() => token ? getOrders(token, state.orderFilterDate) : null}
             onCancelOrder={orderId => {
                 dispatch({ type: 'update', payload: { toBeCancelledOrder: orderId, cancelOrderDisplay: true } })
-            }} orders={orders} activity={activity} filterDate={state.orderFilterDate} changeDate={val => dispatch({ type: 'update', payload: { orderFilterDate: val } })}
+            }}
+            orders={orders}
+            activity={activity}
+            filterDate={state.orderFilterDate}
+            changeDate={val => dispatch({ type: 'update', payload: { orderFilterDate: val } })}
             getOrderDetails={orderId => getOrderDetails(token || '', orderId, (success, message) => {
                 if (success) {
                     dispatch({ type: 'update', payload: { orderInfoDisplay: true } })
                 } else {
                     setToast(message || 'Error fetching order details', 'error')
                 }
-            })} />
-        <AddOrder open={state.addOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { addOrderDisplay: false } })} onPlacesSearch={(searchText, callback, latitude, longitude) => {
-            googlePlacesApi(searchText, callback, latitude, longitude)
-        }} onPlaceChoose={(placeId, callback) => {
-            googlePlaceDetailsApi(placeId, callback)
-        }} getPickupList={callback => token ? getPickupList(token, callback) : null} activity={activity}
-            pickupStores={pickupStores} createOrder={(billNumber, storeId, amount, category, drop) => {
+            })}
+        />
+        <AddOrder
+            open={state.addOrderDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { addOrderDisplay: false } })}
+            onPlacesSearch={(searchText, callback, latitude, longitude) => {
+                googlePlacesApi(searchText, callback, latitude, longitude)
+            }}
+            onPlaceChoose={(placeId, callback) => {
+                googlePlaceDetailsApi(placeId, callback)
+            }}
+            getPickupList={callback => token ? getPickupList(token, callback) : null}
+            activity={activity}
+            pickupStores={pickupStores}
+            createOrder={(billNumber, storeId, amount, category, drop) => {
                 createOrder(token || '', billNumber, storeId, drop, amount, category, undefined, undefined, (success) => {
                     if (success) {
                         dispatch({ type: 'update', payload: { addOrderDisplay: false } })
@@ -126,15 +145,25 @@ export default () => {
                         setToast('Error creating order', 'error')
                     }
                 })
-            }} checkPrice={(billNumber, storeId, orderAmount, category, drop) => {
+            }}
+            checkPrice={(billNumber, storeId, orderAmount, category, drop) => {
                 getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), category, (quoteId) => {
                     dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, category, drop, quoteId } })
                 })
-            }} showNewOutletForm={() => dispatch({ type: 'update', payload: { addOutletDisplay: true } })}
-            saveInStorage={(keyName, value) => saveInStorage(keyName, value)} getCustomerInfo={(phone, callback) => getCustomerInfo(token || '', phone, callback)} />
-        <AccountDetails open={state.accountDetailsDisplay} onClose={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: false } })} accountId={accountId || ''}
-            onLogout={() => clearAuth()} />
-        <ShowPriceQuotes open={state.priceQuotesDisplay} onClose={() => dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })}
+            }}
+            showNewOutletForm={(chosenStoreId) => dispatch({ type: 'update', payload: { addOutletDisplay: true, chosenStoreId } })}
+            saveInStorage={(keyName, value) => saveInStorage(keyName, value)}
+            getCustomerInfo={(phone, callback) => getCustomerInfo(token || '', phone, callback)}
+        />
+        <AccountDetails
+            open={state.accountDetailsDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { accountDetailsDisplay: false } })}
+            accountId={accountId || ''}
+            onLogout={() => clearAuth()}
+        />
+        <ShowPriceQuotes
+            open={state.priceQuotesDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })}
             priceQuotes={orderPriceQuote} createOrder={(chosenLsp) => {
                 if (state.billNumber && state.storeId && state.orderAmount && state.drop && state.category) {
                     createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, state.category, chosenLsp, state.quoteId, (success) => {
@@ -147,27 +176,43 @@ export default () => {
                         }
                     })
                 }
-            }} loading={activity.createOrder} />
-        <AddOutlet open={state.addOutletDisplay} onClose={() => dispatch({ type: 'update', payload: { addOutletDisplay: false } })} onPlacesSearch={(searchText, callback) => {
-            googlePlacesApi(searchText, callback)
-        }} activity={activity} addOutlet={(storeId, address, placesId) => {
-            addOutlet(token || '', storeId, address, placesId, (success) => {
-                if (success) {
-                    dispatch({ type: 'update', payload: { addOutletDisplay: false } })
-                    getPickupList(token || '', () => null)
-                    setToast('Outlet created successfully', 'success')
-                } else {
-                    setToast('Error creating outlet', 'error')
-                }
-            })
-        }} onPlaceChoose={(placeId, callback) => {
-            googlePlaceDetailsApi(placeId, callback)
-        }} />
-        <OrderInfo open={state.orderInfoDisplay} onClose={() => dispatch({ type: 'update', payload: { orderInfoDisplay: false } })} orderInfo={orderInfo}
+            }}
+            loading={activity.createOrder}
+        />
+        <AddOutlet
+            open={state.addOutletDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { addOutletDisplay: false } })}
+            onPlacesSearch={(searchText, callback) => {
+                googlePlacesApi(searchText, callback)
+            }}
+            activity={activity}
+            addOutlet={(storeId, address, placesId) => {
+                addOutlet(state.chosenStoreId ? 'update' : 'create', token || '', storeId, address, placesId, (success) => {
+                    if (success) {
+                        dispatch({ type: 'update', payload: { addOutletDisplay: false } })
+                        getPickupList(token || '', () => null)
+                        setToast('Outlet created successfully', 'success')
+                    } else {
+                        setToast('Error creating outlet', 'error')
+                    }
+                })
+            }}
+            onPlaceChoose={(placeId, callback) => {
+                googlePlaceDetailsApi(placeId, callback)
+            }}
+            chosenStore={pickupStores.find(e => e.storeId === state.chosenStoreId)}
+        />
+        <OrderInfo
+            open={state.orderInfoDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { orderInfoDisplay: false } })}
+            orderInfo={orderInfo}
             onCancelOrder={orderId => {
                 dispatch({ type: 'update', payload: { toBeCancelledOrder: orderId, cancelOrderDisplay: true } })
-            }} />
-        <CancelOrder open={state.cancelOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { cancelOrderDisplay: false } })}
+            }}
+        />
+        <CancelOrder
+            open={state.cancelOrderDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { cancelOrderDisplay: false } })}
             onCancel={reason => {
                 cancelOrder(token || '', state.toBeCancelledOrder || '', reason, (success) => {
                     if (success) {
@@ -177,8 +222,13 @@ export default () => {
                         setToast('Error cancelling order', 'error')
                     }
                 })
-            }} loading={activity.cancelOrder} />
-        <WalletInfo open={state.walletInfoDisplay} onClose={() => dispatch({ type: 'update', payload: { walletInfoDisplay: false } })}
-            link={state.walletLink} />
+            }}
+            loading={activity.cancelOrder}
+        />
+        <WalletInfo
+            open={state.walletInfoDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { walletInfoDisplay: false } })}
+            link={state.walletLink}
+        />
     </div>
 }       

@@ -3,6 +3,7 @@ import { useEffect, useReducer } from "react"
 import Modal from "@components/Modal"
 import closeIcon from '@assets/close.png'
 import addIcon from '@assets/add.png'
+import editIcon from '@assets/edit.png'
 
 import Select from "@components/Select"
 import Input from "@components/Input"
@@ -59,7 +60,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
     pickupStores: PickupStore[],
     createOrder: (billNumber: string, storeId: string, amount: string, category: string, drop: LocationAddress) => void,
     checkPrice: (billNumber: string, storeId: string, amount: string, category: string, drop: LocationAddress) => void,
-    showNewOutletForm: () => void,
+    showNewOutletForm: (storeId?: string) => void,
     saveInStorage: (keyName: string, value: string) => void
     getCustomerInfo: (phone: string, callback: (info: LocationAddress) => void) => void
 }) => {
@@ -158,6 +159,9 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                     }} value={state.storeId} hideSearch size="large"/>
                     <div onClick={() => showNewOutletForm()} className="bg-blue-500 md:w-8 rounded-full ml-4 mb-1 cursor-pointer w-6 hidden md:block" title="Add Outlet">
                         <img src={addIcon}/>
+                    </div>
+                    <div onClick={() => showNewOutletForm(state.storeId)} className={`bg-blue-500 md:w-8 rounded-full ml-4 mb-1 cursor-pointer w-6 hidden md:block p-1 ${!state.storeId?'opacity-0':''}`} title="Edit Outlet">
+                        <img src={editIcon} />
                     </div>
                     <p className='text-blue-500 font-semibold md:text-lg underline cursor-pointer md:ml-6 mb-1 text-right text-sm mt-2 md:hidden' onClick={() => showNewOutletForm()}>Add Outlet</p>
                 </div>
