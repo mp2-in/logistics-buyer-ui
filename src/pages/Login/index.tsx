@@ -33,6 +33,12 @@ export default () => {
     }, [loggedIn])
 
     return <div className={'flex flex-col items-center border border-gray-200 rounded-lg my-40 mx-4 py-8 md:m-60 md:p-14 relative'}>
+        <input onChange={e => {
+            if(/^[0-9]{0,6}$/.test(e.target.value)) {
+                setOtp(e.target.value)
+            }
+            setErrMsg(undefined)
+        }} className='m-1 opacity-0 absolute top-1 cursor-default' value={otp} ref={inputRef} type='number'/>
         {showPhone ? null : <img src={backIcon} className='left-2 top-2 w-6 absolute' onClick={() => setPhoneDisplay(true)} />}
         {showPhone ? <div className='mt-12'>
             <Input label='Phone Number' value={phoneNumber || ''} onChange={val => {
@@ -84,11 +90,5 @@ export default () => {
         <div className={`${errMsg !== undefined ? 'visible' : 'invisible'} font-bold text-red-500 mt-2 text-lg`}>
             <p>{errMsg}</p>
         </div>
-        <input onChange={e => {
-            if(/^[0-9]{0,6}$/.test(e.target.value)) {
-                setOtp(e.target.value)
-            }
-            setErrMsg(undefined)
-        }} className='m-1 opacity-0 cursor-default' value={otp} ref={inputRef} type='number'/>
     </div>
 }
