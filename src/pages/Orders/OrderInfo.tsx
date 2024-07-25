@@ -1,5 +1,6 @@
 import Modal from "@components/Modal"
 import closeIcon from '@assets/close.png'
+import trackIcon from '@assets/track.png'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 
 import { Order } from "@lib/interfaces"
@@ -13,15 +14,15 @@ dayjs.extend(advancedFormat)
 const ShowValue = ({ label, value, isDate, large }: { label: string, value: string | number | undefined, isDate?: boolean, large?: boolean }) => {
     return <div className={`relative border border-gray-100 my-3 py-[4px] px-3 ${large ? `md:w-[500px] w-[290px]` : 'md:w-[260px] w-[290px]'} rounded-md`}>
         <p className="absolute -top-2 px-2 bg-white text-xs left-3 text-gray-500">{label}</p>
-        <input className="font-semibold outline-none border-none w-full text-sm" readOnly value={value === undefined || value === ''  || !value ? '--' : isDate ? dayjs(value).format('MMM Do, hh:mm A') : value} />
+        <input className="font-semibold outline-none border-none w-full text-sm" readOnly value={value === undefined || value === '' || !value ? '--' : isDate ? dayjs(value).format('MMM Do, hh:mm A') : value} />
     </div>
 }
 
-export default ({ open, onClose, orderInfo, onCancelOrder }: { 
-    open: boolean, 
-    onClose: () => void, 
-    orderInfo: Order | undefined, 
-    onCancelOrder: (orderId: string) => void 
+export default ({ open, onClose, orderInfo, onCancelOrder }: {
+    open: boolean,
+    onClose: () => void,
+    orderInfo: Order | undefined,
+    onCancelOrder: (orderId: string) => void
 }) => {
     return <Modal open={open} onClose={onClose}>
         <div className={'md:h-[700px] md:w-[600px] w-[350px] h-[600px] bg-white p-3 rounded-md relative'} onMouseDown={e => e.stopPropagation()}>
@@ -53,24 +54,56 @@ export default ({ open, onClose, orderInfo, onCancelOrder }: {
                     <ShowValue label="RTO Initiated At" value={orderInfo?.rtoPickedupAt} isDate />
                     <ShowValue label="RTO Delivered At" value={orderInfo?.rtoDeliveredAt} isDate />
                 </div>
+                <div className="md:flex justify-between">
+                    <ShowValue label="LSP" value={orderInfo?.providerId} />
+                </div>
                 <div className="flex justify-between items-center">
                     {orderInfo?.trackingUrl ? <a className="font-semibold underline cursor-pointer text-blue-500 ml-4" href={orderInfo?.trackingUrl} target="_blank">Track Order</a> :
                         <p className="font-semibold underline text-gray-300 ml-1">Track Order</p>}
                     <Button title="Cancel Order" variant="danger" disabled={!['UnFulfilled', 'Searching-for-Agent', 'Pending'].includes(orderInfo?.orderState || '')} onClick={() => {
-                        if(orderInfo?.orderId) {
+                        if (orderInfo?.orderId) {
                             onCancelOrder(orderInfo.orderId)
                         }
-                    }}/>
-                </div>
-                <p className="font-bold bg-slate-100 my-2 py-1 px-3">LSP</p>
-                <div className="md:flex justify-between">
-                    <ShowValue label="ID" value={orderInfo?.providerId} />
-                    <ShowValue label="Name" value={orderInfo?.providerId} />
+                    }} />
                 </div>
                 <p className="font-bold bg-slate-100 my-2 py-1 px-3">Rider</p>
                 <div className="md:flex justify-between">
                     <ShowValue label="Name" value={orderInfo?.riderName} />
                     <ShowValue label="Phone" value={orderInfo?.riderNumber} />
+                </div>
+                <p className="font-bold bg-slate-100 my-2 py-1 px-3">Pickup</p>
+                <div className="md:flex justify-between">
+                    <ShowValue label="Name" value={orderInfo?.pickupName} />
+                    <ShowValue label="Phone" value={orderInfo?.pickupPhone} />
+                </div>
+                <div className="md:flex justify-between">
+                    <ShowValue label="Address Line 1" value={orderInfo?.pickupAddress.line1} />
+                    <ShowValue label="Address Line 2" value={orderInfo?.pickupAddress.line2} />
+                </div>
+                <div className="md:flex justify-between">
+                    <ShowValue label="City" value={orderInfo?.pickupAddress.city} />
+                    <ShowValue label="State" value={orderInfo?.pickupAddress.state} />
+                </div>
+                <div className="md:flex items-center">
+                    <ShowValue label="Pincode" value={orderInfo?.pickupPincode} />
+                    {orderInfo?.pickupLatitude && orderInfo?.pickupLongitude ? <a href={`https://maps.google.com/?q=${orderInfo?.pickupLatitude},${orderInfo?.pickupLongitude}`} target="_blank"><img src={trackIcon} className="w-6 ml-5"/></a> : null}
+                </div>
+                <p className="font-bold bg-slate-100 my-2 py-1 px-3">Drop</p>
+                <div className="md:flex justify-between">
+                    <ShowValue label="Name" value={orderInfo?.dropName} />
+                    <ShowValue label="Phone" value={orderInfo?.dropPhone} />
+                </div>
+                <div className="md:flex justify-between">
+                    <ShowValue label="Address Line 1" value={orderInfo?.dropAddress.line1} />
+                    <ShowValue label="Address Line 2" value={orderInfo?.dropAddress.line2} />
+                </div>
+                <div className="md:flex justify-between">
+                    <ShowValue label="City" value={orderInfo?.dropAddress.city} />
+                    <ShowValue label="State" value={orderInfo?.dropAddress.state} />
+                </div>
+                <div className="md:flex items-center">
+                    <ShowValue label="Pincode" value={orderInfo?.dropPincode} />
+                    {orderInfo?.dropLatitude && orderInfo?.dropLongitude ? <a href={`https://maps.google.com/?q=${orderInfo?.dropLatitude},${orderInfo?.dropLongitude}`} target="_blank"><img src={trackIcon} className="w-6 ml-5"/></a> : null}
                 </div>
                 <p className="font-bold bg-slate-100 my-2 py-1 px-3">Cancellation</p>
                 <div className="md:flex justify-between">
