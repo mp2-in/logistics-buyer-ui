@@ -77,12 +77,12 @@ export default ({ open, onClose, orderInfo, onCancelOrder }: {
                     <ShowValue label="Phone" value={orderInfo?.pickupPhone} />
                 </div>
                 <div className="md:flex justify-between">
-                    <ShowValue label="Address Line 1" value={orderInfo?.pickupAddress.line1} />
-                    <ShowValue label="Address Line 2" value={orderInfo?.pickupAddress.line2} />
+                    <ShowValue label="Address Line 1" value={orderInfo?.pickupAddress?.line1} />
+                    <ShowValue label="Address Line 2" value={orderInfo?.pickupAddress?.line2} />
                 </div>
                 <div className="md:flex justify-between">
-                    <ShowValue label="City" value={orderInfo?.pickupAddress.city} />
-                    <ShowValue label="State" value={orderInfo?.pickupAddress.state} />
+                    <ShowValue label="City" value={orderInfo?.pickupAddress?.city} />
+                    <ShowValue label="State" value={orderInfo?.pickupAddress?.state} />
                 </div>
                 <div className="flex items-center">
                     <ShowValue label="Pincode" value={orderInfo?.pickupPincode} small/>
@@ -94,12 +94,12 @@ export default ({ open, onClose, orderInfo, onCancelOrder }: {
                     <ShowValue label="Phone" value={orderInfo?.dropPhone} />
                 </div>
                 <div className="md:flex justify-between">
-                    <ShowValue label="Address Line 1" value={orderInfo?.dropAddress.line1} />
-                    <ShowValue label="Address Line 2" value={orderInfo?.dropAddress.line2} />
+                    <ShowValue label="Address Line 1" value={orderInfo?.dropAddress?.line1} />
+                    <ShowValue label="Address Line 2" value={orderInfo?.dropAddress?.line2} />
                 </div>
                 <div className="md:flex justify-between">
-                    <ShowValue label="City" value={orderInfo?.dropAddress.city} />
-                    <ShowValue label="State" value={orderInfo?.dropAddress.state} />
+                    <ShowValue label="City" value={orderInfo?.dropAddress?.city} />
+                    <ShowValue label="State" value={orderInfo?.dropAddress?.state} />
                 </div>
                 <div className="flex items-center">
                     <ShowValue label="Pincode" value={orderInfo?.dropPincode} small/>
