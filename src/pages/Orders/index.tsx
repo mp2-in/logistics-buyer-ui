@@ -101,7 +101,7 @@ export default () => {
         <TopBar
             selectedAccount={selectedAccount || ''}
             clearAuth={clearAuth}
-            getWalletInfoPageLink={(callback) => {
+            getWalletInfoPageLink={callback => {
                 getWalletDashboardLink(token || '', (link) => {
                     callback(link)
                 })
