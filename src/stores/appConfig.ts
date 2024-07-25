@@ -138,8 +138,10 @@ export const useAppConfigStore = create<State>()((set) => ({
             .then(res => {
                 if (res.status === 1) {
                     localStorage.setItem("selectedAccount", res.selected_account_id);
+                    localStorage.setItem("token", res.access_token);
                     set(produce((state: State) => {
                         state.selectedAccount = res.selected_account_id
+                        state.token = res.access_token
                         state.activity.switchAccount = false
                     }))
                     callback(true)
