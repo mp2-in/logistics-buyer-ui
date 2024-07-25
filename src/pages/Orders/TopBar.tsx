@@ -15,7 +15,7 @@ export default ({ selectedAccount, clearAuth, getWalletInfoPageLink, accountIds,
     getWalletInfoPageLink: (callback: (link: string) => void) => void
     accountIds: string[]
     phoneNumber?: string
-    switchAccount: (accountId: string) => void
+    switchAccount: (accountId: string, callback: () => void) => void
 }) => {
     let divRef = createRef<HTMLInputElement>();
 
@@ -82,7 +82,11 @@ export default ({ selectedAccount, clearAuth, getWalletInfoPageLink, accountIds,
             onLogout={clearAuth}
             accountIds={accountIds}
             phoneNumber={phoneNumber}
-            switchAccount={(accountId) => switchAccount(accountId)}
+            switchAccount={(accountId) => switchAccount(accountId, () => {
+                setTimeout(() => {
+                    setAccountInfoDisplay(false)
+                }, 200)
+            })}
         />
     </div>
 }
