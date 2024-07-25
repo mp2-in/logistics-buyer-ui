@@ -4,11 +4,10 @@ import { Api, GooglePlacesApi, PlaceDetailsApi } from '@lib/utils'
 import { LocationAddress, Order, PickupStore, PlaceAutoComplete, PlaceDetails, PriceQuote } from '@lib/interfaces'
 
 interface Attributes {
-    orders: Order[],
-    activity: { [k: string]: boolean },
-    pickupStores: PickupStore[],
-    orderPriceQuote: PriceQuote[],
-    orderInfo?: Order
+    orders: Order[]
+    activity: { [k: string]: boolean }
+    pickupStores: PickupStore[]
+    orderPriceQuote: PriceQuote[]
 }
 
 interface State extends Attributes {
@@ -21,7 +20,6 @@ interface State extends Attributes {
     getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, category: string, callback: (quoteId: string) => void) => void
     addOutlet: (action: 'create'|'update', token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean) => void) => void
     saveInStorage: (keyName: string, value: string) => void
-    getOrderDetails: (token: string, orderId: string, callback: (success: boolean, message?: string) => void) => void
     getCustomerInfo: (token: string, phone: string, callback: (customerInfo: LocationAddress) => void) => void
     getWalletDashboardLink: (token: string, callback: (link: string) => void) => void
 }
@@ -34,7 +32,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
         set(produce((state: State) => {
             state.activity.getOrders = true
         }))
-        Api('/webui/orders', { method: 'post', headers: { 'Content-Type': 'application/json', token }, data: { date: forDate } })
+        Api('/webui/orders_detailed', { method: 'post', headers: { 'Content-Type': 'application/json', token }, data: { date: forDate } })
             .then(res => {
                 set(produce((state: State) => {
                     state.orders = res
@@ -232,34 +230,6 @@ export const useOrdersStore = create<State>()((set, get) => ({
     },
     saveInStorage: async (keyName, value) => {
         localStorage.setItem(keyName, value);
-    },
-    getOrderDetails: async (token, orderId, callback) => {
-        set(produce((state: State) => {
-            state.activity.getOrderDetails = true
-        }))
-        Api('/webui/order/info', {
-            method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {
-                order: {
-                    id: orderId
-                }
-            }
-        })
-            .then(res => {
-                set(produce((state: State) => {
-                    if (res.status === 1) {
-                        state.orderInfo = res.order
-                        callback(true)
-                    } else {
-                        callback(false, res.message)
-                    }
-                    state.activity.getOrderDetails = false
-                }))
-            })
-            .catch(() => {
-                set(produce((state: State) => {
-                    state.activity.getOrderDetails = false
-                }))
-            })
     },
     getCustomerInfo: async (token, phone, callback) => {
         set(produce((state: State) => {

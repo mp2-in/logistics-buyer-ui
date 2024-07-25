@@ -14,15 +14,15 @@ import Input from '@components/Input';
 import Button from '@components/Button';
 
 
-export default ({ onAddOrder, onRefresh, changeDate, getOrderDetails, onCancelOrder, orders, activity, filterDate }: {
-    onAddOrder: () => void, 
-    onRefresh: () => void, 
+export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder }: {
+    onAddOrder: () => void,
+    onRefresh: () => void,
     onCancelOrder: (orderId: string) => void,
-    orders: Order[], 
-    activity: { [k: string]: boolean }, 
-    filterDate: string, 
-    changeDate: (date: string) => void, 
-    getOrderDetails: (orderId: string) => void
+    orders: Order[],
+    activity: { [k: string]: boolean },
+    filterDate: string,
+    changeDate: (date: string) => void,
+    chooseOrder: (orderId: string) => void
 }) => {
 
     const cancellable = (orderState: string) => {
@@ -35,6 +35,12 @@ export default ({ onAddOrder, onRefresh, changeDate, getOrderDetails, onCancelOr
         }, 90000);
         return () => clearInterval(interval);
     }, [filterDate])
+
+    const mapLink = (order: Order): string | undefined => {
+        if (order.pickupLatitude && order.pickupLongitude && order.dropLatitude && order.dropLongitude) {
+            return `https://www.google.com/maps/dir/?api=1&origin=${order.pickupLatitude},${order.pickupLongitude}&destination=${order.dropLatitude},${order.dropLongitude}`
+        }
+    }
 
     return <div className={`absolute left-0 right-0 top-12 bottom-3 md:px-5 md:py-3 px-2 overflow-hidden md:top-16`}>
         <div className={`flex md:items-end items-start justify-between p-2 md:flex-row-reverse flex-col mb-2`}>
@@ -50,38 +56,48 @@ export default ({ onAddOrder, onRefresh, changeDate, getOrderDetails, onCancelOr
             <p className={`flex-[3]`}>Date</p>
             <p className={`flex-[5] hidden md:block`}>Order Id</p>
             <p className={`flex-[5] hidden md:block`}>LSP</p>
-            <p className={`flex-[7] md:flex[2]`}>Status</p>
+            <p className={`flex-[2] hidden md:block`}>PCC</p>
+            <p className={`flex-[5] md:flex[2]`}>Status</p>
+            <p className={`flex-[4] hidden md:block`}>Customer</p>
             <p className={`flex-[4]`}>Rider</p>
             <p className={`flex-[3] hidden md:block`}>Distance</p>
             <p className={`flex-[3] hidden md:block`}>Price</p>
+            <p className={`flex-[3] hidden md:block`}>Delivered At</p>
             <p className={`flex-[2] hidden md:block`}>Actions</p>
             <p className={`flex-[2] md:hidden`}></p>
         </div>
         <div className={`absolute flex items-center flex-col left-2 right-2 bottom-2 top-[148px] overflow-auto md:left-5 md:right-5 md:top-[123px]`}>
             {orders.map(eachOrder => {
-                return <div key={eachOrder.id} className={`flex items-center w-full py-1 px-1 border-b border-l border-r text-xs relative *:text-center md:text-sm`}>
-                    <p className={`flex-[3]`}>{eachOrder.created_at ? dayjs(eachOrder.created_at).format('hh:mm A') : '--'}</p>
-                    <input className={`flex-[5] hidden md:block border-none outline-none`} readOnly value={eachOrder.client_order_id} />
-                    <input className={`flex-[5] hidden md:block border-none outline-none`} readOnly value={eachOrder.lsp.name} />
-                    <input className={`flex-[7] md:flex[2] border-none outline-none`} readOnly value={eachOrder.state} />
-                    {eachOrder.rider.phone ? <a className={`flex-[4] underline cursor-pointer font-semibold text-blue-400`} href={`tel:${eachOrder.rider.phone}`}>{eachOrder.rider.name}</a> :
-                        <p className={`flex-[4]`}>{eachOrder.rider.name}</p>}
-                    <p className={`flex-[3] hidden md:block`}>{eachOrder.distance ? `${eachOrder.distance.toFixed(2)} km` : 0}</p>
+                return <div key={eachOrder.orderId} className={`flex items-center w-full py-1 px-1 border-b border-l border-r text-xs relative *:text-center md:text-sm`}>
+                    <p className={`flex-[3]`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
+                    <input className={`flex-[5] hidden md:block  border-none outline-none`} readOnly value={eachOrder.clientOrderId} />
+                    <input className={`flex-[5] hidden md:block  border-none outline-none`} readOnly value={eachOrder.providerId} />
+                    <p className={`flex-[2] hidden md:block`} >{eachOrder.pcc}</p>
+                    <input className={`flex-[5] md:flex[2]  border-none outline-none`} readOnly value={eachOrder.orderState} />
+                    <div className={`flex-[4] md:block  hidden`}>
+                        <p className='text-xs'>{eachOrder.dropName}</p>
+                        <p className='text-xs'>{eachOrder.dropPhone}</p>
+                    </div>
+                    {eachOrder.riderNumber ? <a className={`flex-[4] underline cursor-pointer font-semibold text-blue-400`} href={`tel:${eachOrder.riderNumber}`}>{eachOrder.riderName}</a> :
+                        <p className={`flex-[4]`}>{eachOrder.riderName}</p>}
+                    {eachOrder.distance ? <a className={`flex-[3] hidden md:block text-blue-400 underline font-semibold`} href={mapLink(eachOrder) || ''} target='_blank'>{`${eachOrder.distance.toFixed(2)} km`}</a> :
+                        <p className={`flex-[3] hidden md:block`}>0</p>}
                     <p className={`flex-[3] hidden md:block`}>{eachOrder.price ? `₹ ${eachOrder.price.toFixed(2)}` : 0}</p>
+                    <p className={`flex-[3] hidden md:block`}>{eachOrder.deliveredAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
                     <div className={`flex-[2] flex justify-between items-center md:justify-evenly`}>
-                        {eachOrder.tracking_url ? <a href={eachOrder.tracking_url} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-6' onClick={e => e.stopPropagation()}>
+                        {eachOrder.trackingUrl ? <a href={eachOrder.trackingUrl} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-6' onClick={e => e.stopPropagation()}>
                             <img src={trackIcon} title='Track Shipment' className='w-6' />
                         </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-6'>
                             <img src={trackIcon} title='Track Shipment' className='w-6 opacity-40' />
                         </a>}
                         <img src={cancelIcon} onClick={e => {
-                            if (cancellable(eachOrder.state)) {
-                                onCancelOrder(eachOrder.id)
+                            if (cancellable(eachOrder.orderState)) {
+                                onCancelOrder(eachOrder.orderId)
                             }
                             e.stopPropagation()
-                        }} title='Cancel Order' className={`w-5 hidden md:block ${cancellable(eachOrder.state) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
+                        }} title='Cancel Order' className={`w-5 hidden md:block ${cancellable(eachOrder.orderState) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
                         <img src={moreIcon} onClick={e => {
-                            getOrderDetails(eachOrder.id)
+                            chooseOrder(eachOrder.orderId)
                             e.stopPropagation()
                         }} title='Order Details' className={'cursor-pointer w-6 hover:shadow-md'} />
                     </div>

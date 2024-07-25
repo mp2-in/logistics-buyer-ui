@@ -1,32 +1,76 @@
 export interface Order {
-    [k: string]: any
-    id: string
-    client_order_id: string
-    state: string
-    lsp: {
-        id: string
-        name: string
-        item_id: string
-        network_order_id: string
-    }
+    orderId: string
+    clientOrderId: string
+    networkOrderId: string
+    accountId: string
+    orderState: string
+    selectionMode: string
+    createdAt: string
+    lastupdatedat: string
+    promisedDeliveryTime: string
+    totalDeliveryCharge: number
+    saasFee: number
+    rts: number
+    rtsAt: string
+    orderCategory: string
+    searchCategory: string
+    orderAmount: number
+    pcc: string
+    dcc: string
+    source: string
+    loggedinUserphone: string,
+    callbackUrl: string,
+    cancelledBy: string,
+    cancellationReason: string,
+    storeId: string
+    buyerName: string
+    transactionId: string
+    fulfillmentState: string
+    bppId: string
+    bppUri: string
+    providerId: string
+    skuId: string
+    city: string
     price: number
-    distance: number
-    rider: {
+    pickupName: string
+    pickupLatitude: number
+    pickupLongitude: number
+    pickupAddress: {
         name: string
-        phone: string
-    }
-    created_at: string
-    assigned_at: string
-    pickedup_at: string
-    delivered_at: string
-    cancelled_at: string
-    rto_initiated_at: string
-    rto_delivered_at: string
-    tracking_url: string
-    cancellation: {
-        reason_id: string
-        cancelled_by: string
-    }
+        line1: string
+        line2: string
+        city: string
+        state: string
+    },
+    pickupPincode: string
+    pickupPhone: string
+    dropName: string
+    dropLatitude: number
+    dropLongitude: number
+    dropAddress: {
+        name: string
+        line1: string
+        line2: string
+        city: string
+        state: string
+    },
+    dropPincode: string
+    dropPhone: string
+    distance: number
+    assignedAt: string,
+    atpickupAt: string,
+    pickedupAt: string,
+    deliveredAt: string,
+    cancelledAt: string,
+    rtoPickedupAt: string,
+    rtoDeliveredAt: string,
+    pickupProof: string
+    deliveryProof: string
+    riderName: string
+    riderNumber: string
+    note1: string,
+    note2: string,
+    trackingUrl: string
 }
 
 export interface PlaceDetails {

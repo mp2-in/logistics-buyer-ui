@@ -9,7 +9,7 @@ import { useAppConfigStore } from "stores/appConfig";
 import { useOrdersStore } from "stores/orders";
 import ShowPriceQuotes from "./ShowPriceQuotes";
 import AddOutlet from "./AddOutlet";
-import { LocationAddress } from "@lib/interfaces";
+import { LocationAddress, Order } from "@lib/interfaces";
 import dayjs from "dayjs";
 import OrderInfo from "./OrderInfo";
 import CancelOrder from "./CancelOrder";
@@ -30,6 +30,7 @@ interface State {
     toBeCancelledOrder?: string
     quoteId?: string
     chosenStoreId?: string
+    chosenOrder?: string
 }
 
 const initialValue: State = {
@@ -62,7 +63,7 @@ export default () => {
     }))
 
     const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, getWalletDashboardLink,
-        getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, getOrderDetails, orderPriceQuote, orderInfo, getCustomerInfo } = useOrdersStore(state => ({
+        getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, orderPriceQuote, getCustomerInfo } = useOrdersStore(state => ({
             orders: state.orders,
             getOrders: state.getOrders,
             googlePlacesApi: state.googlePlacesApi,
@@ -72,12 +73,10 @@ export default () => {
             pickupStores: state.pickupStores,
             createOrder: state.createOrder,
             cancelOrder: state.cancelOrder,
-            getOrderDetails: state.getOrderDetails,
             orderPriceQuote: state.orderPriceQuote,
             addOutlet: state.addOutlet,
             saveInStorage: state.saveInStorage,
             googlePlaceDetailsApi: state.googlePlaceDetailsApi,
-            orderInfo: state.orderInfo,
             getCustomerInfo: state.getCustomerInfo,
             getWalletDashboardLink: state.getWalletDashboardLink
         }))
@@ -129,13 +128,9 @@ export default () => {
             activity={activity}
             filterDate={state.orderFilterDate}
             changeDate={val => dispatch({ type: 'update', payload: { orderFilterDate: val } })}
-            getOrderDetails={orderId => getOrderDetails(token || '', orderId, (success, message) => {
-                if (success) {
-                    dispatch({ type: 'update', payload: { orderInfoDisplay: true } })
-                } else {
-                    setToast(message || 'Error fetching order details', 'error')
-                }
-            })}
+            chooseOrder={orderId => {
+                dispatch({ type: 'update', payload: { chosenOrder: orderId, orderInfoDisplay: true } })
+            }}
         />
         <AddOrder
             open={state.addOrderDisplay}
@@ -213,7 +208,7 @@ export default () => {
         <OrderInfo
             open={state.orderInfoDisplay}
             onClose={() => dispatch({ type: 'update', payload: { orderInfoDisplay: false } })}
-            orderInfo={orderInfo}
+            orderInfo={orders.find(e => e.orderId === state.chosenOrder)}
             onCancelOrder={orderId => {
                 dispatch({ type: 'update', payload: { toBeCancelledOrder: orderId, cancelOrderDisplay: true } })
             }}
