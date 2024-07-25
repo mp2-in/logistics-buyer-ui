@@ -21,7 +21,7 @@ interface State extends Attributes {
     hideToast: () => void,
     sendOtp: (phoneNumber: string, callback: (success: boolean) => void) => void,
     verifyOtp: (phoneNumber: string, otp: string, callback: (success: boolean) => void) => void
-    switchAccount: (token: string, accountId: string, callback: (success: boolean) => void) => void
+    switchAccount: (token: string, accountId: string, callback: (success: boolean, token: string) => void) => void
 }
 
 const initialState: Attributes = { loggedIn: false, activity: {}, toastMessage: '', toastVisibility: false, accountIds: [] };
@@ -144,9 +144,9 @@ export const useAppConfigStore = create<State>()((set) => ({
                         state.token = res.access_token
                         state.activity.switchAccount = false
                     }))
-                    callback(true)
+                    callback(true, res.access_token)
                 } else {
-                    callback(false)
+                    callback(false, '')
                     set(produce((state: State) => {
                         state.activity.switchAccount = false
                     }))
@@ -156,7 +156,7 @@ export const useAppConfigStore = create<State>()((set) => ({
                 set(produce((state: State) => {
                     state.activity.switchAccount = false
                 }))
-                callback(false)
+                callback(false, '')
             })
     },
 }))

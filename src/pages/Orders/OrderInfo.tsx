@@ -12,7 +12,7 @@ dayjs.extend(advancedFormat)
 
 
 const ShowValue = ({ label, value, isDate, large, small }: { label: string, value: string | number | undefined, isDate?: boolean, large?: boolean, small?: boolean }) => {
-    return <div className={`relative border border-gray-100 my-3 py-[4px] px-3 ${large ? `md:w-[500px] w-[290px]` : 'md:w-[260px] w-[290px]'} ${small ? `md:w-[260px] w-[100px]` : 'md:w-[260px] w-[290px]'} rounded-md`}>
+    return <div className={`relative border border-gray-100 my-3 py-[4px] px-3 ${large ? `md:w-[500px] w-[290px]` : small ? `md:w-[260px] w-[100px]` : 'md:w-[260px] w-[290px]'} rounded-md`}>
         <p className="absolute -top-2 px-2 bg-white text-xs left-3 text-gray-500">{label}</p>
         <input className="font-semibold outline-none border-none w-full text-sm" readOnly value={value === undefined || value === '' || !value ? '--' : isDate ? dayjs(value).format('MMM Do, hh:mm A') : value} />
     </div>

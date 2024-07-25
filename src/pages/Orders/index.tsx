@@ -109,9 +109,11 @@ export default () => {
             accountIds={accountIds}
             phoneNumber={phone}
             switchAccount={accountId => {
-                switchAccount(token || '', accountId, (success) => {
+                switchAccount(token || '', accountId, (success, newToken) => {
                     if (success) {
                         setToast('Account switched successfully', 'success')
+                        getOrders(newToken, state.orderFilterDate)
+                        getPickupList(newToken, () => null)
                     } else {
                         setToast('Error switching account', 'error')
                     }
