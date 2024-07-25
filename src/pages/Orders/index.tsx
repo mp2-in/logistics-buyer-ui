@@ -9,7 +9,7 @@ import { useAppConfigStore } from "stores/appConfig";
 import { useOrdersStore } from "stores/orders";
 import ShowPriceQuotes from "./ShowPriceQuotes";
 import AddOutlet from "./AddOutlet";
-import { LocationAddress, Order } from "@lib/interfaces";
+import { LocationAddress } from "@lib/interfaces";
 import dayjs from "dayjs";
 import OrderInfo from "./OrderInfo";
 import CancelOrder from "./CancelOrder";
