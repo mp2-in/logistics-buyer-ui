@@ -35,7 +35,7 @@ interface State {
 
 const initialValue: State = {
     addOrderDisplay: false, priceQuotesDisplay: false, orderInfoDisplay: false, 
-    addOutletDisplay: false, cancelOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD')
+    addOutletDisplay: false, cancelOrderDisplay: false, orderFilterDate: dayjs('2024-07-24').format('YYYY-MM-DD')
 }
 
 

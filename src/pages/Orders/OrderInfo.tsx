@@ -37,9 +37,14 @@ export default ({ open, onClose, orderInfo, onCancelOrder }: {
                 </div>
                 <div className="md:flex justify-between">
                     <ShowValue label="State" value={orderInfo?.orderState} />
+                    <ShowValue label="Selection Mode" value={orderInfo?.selectionMode} />
                 </div>
                 <div className="md:flex justify-between">
-                    <ShowValue label="Price" value={orderInfo?.price ? `₹ ${orderInfo?.price}` : '₹ 0'} />
+                    <ShowValue label="Delivery Charge" value={orderInfo?.totalDeliveryCharge ? `₹ ${orderInfo?.totalDeliveryCharge}` : '₹ 0'} />
+                    <ShowValue label="SAAS Fee" value={orderInfo?.saasFee ? `₹ ${orderInfo?.saasFee}` : '₹ 0'} />
+                </div>
+                <div className="md:flex justify-between">
+                    <ShowValue label="Order Amount" value={orderInfo?.orderAmount ? `₹ ${orderInfo?.orderAmount}` : '₹ 0'} />
                     <ShowValue label="Distance" value={orderInfo?.distance ? `${orderInfo?.distance} km` : '0 km'} />
                 </div>
                 <div className="md:flex justify-between">
@@ -56,6 +61,7 @@ export default ({ open, onClose, orderInfo, onCancelOrder }: {
                 </div>
                 <div className="md:flex justify-between">
                     <ShowValue label="LSP" value={orderInfo?.providerId} />
+                    <ShowValue label="Category" value={orderInfo?.orderCategory} />
                 </div>
                 <div className="flex justify-between items-center">
                     {orderInfo?.trackingUrl ? <a className="font-semibold underline cursor-pointer text-blue-500 ml-4" href={orderInfo?.trackingUrl} target="_blank">Track Order</a> :
