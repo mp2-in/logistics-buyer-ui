@@ -96,7 +96,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 code: "1234",
                 store_id: storeId
             },
-            drop: drop,
+            drop,
             order_category: category,
             search_category: "Immediate Delivery",
             ready_to_ship: "yes",

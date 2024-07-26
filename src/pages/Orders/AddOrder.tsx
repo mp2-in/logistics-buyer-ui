@@ -33,11 +33,12 @@ interface State {
     state: string
     pincode: string
     geoLocation: string
+    dropCode: string
 }
 
 const initialValue: State = {
     placesResponse: [], billNumber: '', address: '', placeId: '', name: '', phoneNumber: '', orderAmount: '', pincode: '',
-    rto: false, storeId: '', category: 'F&B', addrLine1: '', addrLine2: '', city: '', state: '', geoLocation: ''
+    rto: false, storeId: '', category: 'F&B', addrLine1: '', addrLine2: '', city: '', state: '', geoLocation: '', dropCode: ''
 }
 
 const reducer = (state: State, action: { type: 'reset', payload: Partial<State> } | { type: 'update', payload: Partial<State> }) => {
@@ -121,6 +122,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                     },
                     pincode: string
                     phone: string
+                    code: string
                 } = {
                     lat: latitude,
                     lng: longitude,
@@ -132,20 +134,21 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                         state: state.state
                     },
                     pincode: state.pincode,
-                    phone: state.phoneNumber
+                    phone: state.phoneNumber,
+                    code: state.dropCode
                 }
 
                 if (action === 'checkPrice' && drop) {
                     checkPrice(state.billNumber, state.storeId, state.orderAmount, state.category, drop)
                 } else if (action === 'createOrder' && drop) {
-                    createOrder(state.billNumber, state.storeId, state.orderAmount, state.category, { ...drop, code: '1234' })
+                    createOrder(state.billNumber, state.storeId, state.orderAmount, state.category, { ...drop })
                 }
             }
         }
     }
 
     return <Modal open={open} onClose={onClose} loading={activity.getPickupList || activity.getCustomerInfo}>
-        <div className={`bg-white rounded flex flex-col items-center py-3 px-5 md:h-[730px] w-[370px] h-[600px] relative md:w-[650px]`} onMouseDown={e => e.stopPropagation()}>
+        <div className={`bg-white rounded flex flex-col items-center py-3 px-5 md:h-[750px] w-[370px] h-[600px] relative md:w-[650px]`} onMouseDown={e => e.stopPropagation()}>
             <div className={`flex justify-between w-full items-center mb-3`}>
                 <p className="text-xl font-semibold">Add Order</p>
                 <img src={closeIcon} onClick={onClose} className="w-6 cursor-pointer absolute right-1 top-1" />
@@ -165,7 +168,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                     </div>
                     <div className="flex justify-between">
                         <p className='text-blue-500 font-semibold md:text-lg underline cursor-pointer md:ml-6 mb-1 text-sm mt-2 md:hidden' onClick={() => showNewOutletForm()}>Add Outlet</p>
-                        {state.storeId?<p className='text-blue-500 font-semibold md:text-lg underline cursor-pointer md:ml-6 mb-1 text-sm mt-2 md:hidden' onClick={() => showNewOutletForm(state.storeId)}>Edit Outlet</p>:null}
+                        {state.storeId ? <p className='text-blue-500 font-semibold md:text-lg underline cursor-pointer md:ml-6 mb-1 text-sm mt-2 md:hidden' onClick={() => showNewOutletForm(state.storeId)}>Edit Outlet</p> : null}
                     </div>
                 </div>
                 <div>
@@ -189,6 +192,9 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 </div>
                 <SpecifyAddress onPlacesSearch={onPlacesSearch} onUpdate={payload => dispatch({ type: 'update', payload })} payload={state} onPlaceChoose={onPlaceChoose}
                     module="addOrder" storeLocation={storeGeolocation()} />
+                <div className="mt-2">
+                    <Input label="Code" size="small" type='number' value={state.dropCode} onChange={val => /^\d{0,4}$/.test(val) && dispatch({ type: 'update', payload: { dropCode: val } })} />
+                </div>
                 <p className={'text-lg font-bold my-3 mx-1'}>Order  Details</p>
                 <div className={'md:flex md:items-center'}>
                     <DefaultSelect label="Category" options={[{ label: 'Food', value: 'F&B' }, { label: 'Grocery', value: 'Grocery' }]} onChange={val => dispatch({ type: 'update', payload: ({ category: val }) })} value={state.category} />

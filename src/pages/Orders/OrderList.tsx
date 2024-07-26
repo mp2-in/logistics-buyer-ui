@@ -62,9 +62,10 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
         </div>
         <div className={`flex items-center py-2 px-1 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-semibold *:text-md xl:*:mx-2`}>
             <p className={`flex-[3] ml-0`}>Date</p>
-            <p className={`flex-[5] hidden xl:block`}>Order Id</p>
-            <p className={`flex-[5] hidden xl:block`}>LSP</p>
+            <p className={`flex-[4] hidden xl:block`}>Order Id</p>
+            <p className={`flex-[4] hidden xl:block`}>LSP</p>
             <p className={`flex-[2] hidden xl:block`}>PCC</p>
+            <p className={`flex-[2] hidden xl:block`}>DCC</p>
             <p className={`flex-[5] xl:flex[2]`}>Status</p>
             <p className={`flex-[4] hidden xl:block`}>Customer</p>
             <p className={`flex-[4]`}>Rider</p>
@@ -72,16 +73,17 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             <p className={`flex-[3] hidden xl:block`}>Price</p>
             <p className={`flex-[4] hidden xl:block`}>Delivered At</p>
             <p className={`flex-[3] hidden xl:block mr-0`}>Actions</p>
-            <p className={`flex-[2] xl:hidden`}></p>
+            <p className={`flex-[3] xl:hidden`}></p>
         </div>
         <div className={`absolute flex items-center flex-col left-2 right-2 bottom-2 top-[148px] overflow-auto lg:left-5 lg:right-5 lg:top-[123px] md:top-[110px]`}>
             {orders.map(eachOrder => {
                 return <div key={eachOrder.orderId} className={`flex items-center w-full py-1 px-1 border-b border-l border-r text-xs relative *:text-center lg:text-sm xl:*:mx-2`}>
                     <p className={`flex-[3] ml-0`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
-                    <input className={`flex-[5] hidden xl:block  border-none outline-none`} readOnly value={eachOrder.clientOrderId} />
-                    <input className={`flex-[5] hidden xl:block  border-none outline-none`} readOnly value={eachOrder.providerId} />
+                    <input className={`flex-[4] hidden xl:block  border-none outline-none w-full`} readOnly value={eachOrder.orderId} />
+                    <input className={`flex-[4] hidden xl:block  border-none outline-none w-full`} readOnly value={eachOrder.providerId} />
                     <p className={`flex-[2] hidden xl:block`} >{eachOrder.pcc}</p>
-                    <input className={`flex-[5] xl:flex[2]  border-none outline-none`} readOnly value={eachOrder.orderState} />
+                    <p className={`flex-[2] hidden xl:block`} >{eachOrder.dcc}</p>
+                    <input className={`flex-[5] xl:flex[2] border-none outline-none w-full`} readOnly value={eachOrder.orderState} />
                     <div className={`flex-[4] xl:block  hidden`}>
                         <p className='text-xs'>{eachOrder.dropName}</p>
                         <p className='text-xs'>{eachOrder.dropPhone}</p>
