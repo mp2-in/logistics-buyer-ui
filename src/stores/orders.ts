@@ -17,7 +17,7 @@ interface State extends Attributes {
     googlePlaceDetailsApi: (placeId: string, callback: (data: PlaceDetails) => void) => void
     createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, category: string, lspId: string | undefined, quoteId: string | undefined, callback: (success: boolean) => void) => void
     cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean) => void) => void
-    getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, category: string, callback: (quoteId: string) => void) => void
+    getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, category: string, callback: (success: boolean, quoteId: string) => void) => void
     addOutlet: (action: 'create'|'update', token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean) => void) => void
     saveInStorage: (keyName: string, value: string) => void
     getCustomerInfo: (token: string, phone: string, callback: (customerInfo: LocationAddress) => void) => void
@@ -187,11 +187,18 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 }
             })
                 .then(res => {
-                    set(produce((state: State) => {
-                        state.activity.getPriceQuote = false
-                        state.orderPriceQuote = res.quotes
-                    }))
-                    callback(res.quote_id)
+                    if(res.status === 1) {
+                        set(produce((state: State) => {
+                            state.activity.getPriceQuote = false
+                            state.orderPriceQuote = res.quotes
+                        }))
+                        callback(true, res.quote_id)
+                    } else {
+                        set(produce((state: State) => {
+                            state.activity.getPriceQuote = false
+                        }))
+                        callback(false, '')
+                    }
                 })
                 .catch(() => {
                     set(produce((state: State) => {

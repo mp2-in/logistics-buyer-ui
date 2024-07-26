@@ -159,8 +159,12 @@ export default () => {
                 })
             }}
             checkPrice={(billNumber, storeId, orderAmount, category, drop) => {
-                getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), category, (quoteId) => {
-                    dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, category, drop, quoteId } })
+                getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), category, (success, quoteId) => {
+                    if(success) {
+                        dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, category, drop, quoteId } })
+                    } else {
+                        setToast('Error fetching price quotes', 'error')
+                    }
                 })
             }}
             showNewOutletForm={(chosenStoreId) => dispatch({ type: 'update', payload: { addOutletDisplay: true, chosenStoreId } })}
