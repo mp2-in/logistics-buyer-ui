@@ -32,12 +32,20 @@ export default ({ open, onClose, orderInfo, onCancelOrder }: {
             </div>
             <div className="p-4 md:h-[640px] overflow-auto h-[540px]">
                 <div className="md:flex justify-between">
-                    <ShowValue label="ID" value={orderInfo?.orderId} />
+                    <ShowValue label="Order Id" value={orderInfo?.orderId} />
                     <ShowValue label="Client Order Id" value={orderInfo?.clientOrderId} />
                 </div>
                 <div className="md:flex justify-between">
-                    <ShowValue label="State" value={orderInfo?.orderState} />
+                    <ShowValue label="Network Id" value={orderInfo?.networkOrderId} />
                     <ShowValue label="Selection Mode" value={orderInfo?.selectionMode} />
+                </div>
+                <div className="md:flex justify-between">
+                    <ShowValue label="State" value={orderInfo?.orderState} />
+                    <ShowValue label="Search Category" value={orderInfo?.searchCategory} />
+                </div>
+                <div className="md:flex justify-between">
+                    <ShowValue label="LSP" value={orderInfo?.providerId} />
+                    <ShowValue label="Order Category" value={orderInfo?.orderCategory} />
                 </div>
                 <div className="md:flex justify-between">
                     <ShowValue label="Delivery Charge" value={orderInfo?.totalDeliveryCharge ? `₹ ${orderInfo?.totalDeliveryCharge}` : '₹ 0'} />
@@ -58,10 +66,6 @@ export default ({ open, onClose, orderInfo, onCancelOrder }: {
                 <div className="md:flex justify-between">
                     <ShowValue label="RTO Initiated At" value={orderInfo?.rtoPickedupAt} isDate />
                     <ShowValue label="RTO Delivered At" value={orderInfo?.rtoDeliveredAt} isDate />
-                </div>
-                <div className="md:flex justify-between">
-                    <ShowValue label="LSP" value={orderInfo?.providerId} />
-                    <ShowValue label="Category" value={orderInfo?.orderCategory} />
                 </div>
                 <div className="flex justify-between items-center">
                     {orderInfo?.trackingUrl ? <a className="font-semibold underline cursor-pointer text-blue-500 ml-4" href={orderInfo?.trackingUrl} target="_blank">Track Order</a> :
