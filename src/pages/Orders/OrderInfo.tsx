@@ -36,12 +36,11 @@ export default ({ open, onClose, orderInfo, onCancelOrder }: {
                     <ShowValue label="Client Order Id" value={orderInfo?.clientOrderId} />
                 </div>
                 <div className="md:flex justify-between">
-                    <ShowValue label="Network Id" value={orderInfo?.networkOrderId} />
-                    <ShowValue label="Selection Mode" value={orderInfo?.selectionMode} />
+                    <ShowValue label="Network Order Id" value={orderInfo?.networkOrderId} large/>
                 </div>
                 <div className="md:flex justify-between">
                     <ShowValue label="State" value={orderInfo?.orderState} />
-                    <ShowValue label="Search Category" value={orderInfo?.searchCategory} />
+                    <ShowValue label="Selction Mode" value={orderInfo?.selectionMode} />
                 </div>
                 <div className="md:flex justify-between">
                     <ShowValue label="LSP" value={orderInfo?.providerId} />
