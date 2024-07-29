@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 
 import addIcon from "@assets/add.png"
 import cancelIcon from "@assets/cancel.png"
-import trackIcon from "@assets/track.png"
-import moreIcon from "@assets/more.png"
+import moreIcon from "@assets/info.png"
+import warningIcon from "@assets/warning.png"
 import refreshIcon from "@assets/refresh.png"
 import ActivityIndicator from '@components/ActivityIndicator';
 
@@ -14,7 +14,7 @@ import Input from '@components/Input';
 import Button from '@components/Button';
 
 
-export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder }: {
+export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport }: {
     onAddOrder: () => void,
     onRefresh: () => void,
     onCancelOrder: (orderId: string) => void,
@@ -22,7 +22,8 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     activity: { [k: string]: boolean },
     filterDate: string,
     changeDate: (date: string) => void,
-    chooseOrder: (orderId: string) => void
+    chooseOrder: (orderId: string) => void,
+    onIssueReport: (orderId: string) => void
 }) => {
 
     const cancellable = (orderState: string) => {
@@ -60,8 +61,8 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => changeDate(val)} />
             </div>
         </div>
-        <div className={`flex items-center py-2 px-1 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-semibold *:text-md xl:*:mx-2`}>
-            <p className={`flex-[3] ml-0`}>Date</p>
+        <div className={`flex items-center py-2 px-1 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-semibold md:*:text-md xl:*:mx-2 *:text-sm`}>
+            <p className={`flex-[4] ml-0`}>Created At</p>
             <p className={`flex-[4] hidden xl:block`}>Order Id</p>
             <p className={`flex-[4] hidden xl:block`}>LSP</p>
             <p className={`flex-[2] hidden xl:block`}>PCC</p>
@@ -72,13 +73,13 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             <p className={`flex-[3] hidden xl:block`}>Distance</p>
             <p className={`flex-[3] hidden xl:block`}>Price</p>
             <p className={`flex-[4] hidden xl:block`}>Delivered At</p>
-            <p className={`flex-[3] hidden xl:block mr-0`}>Actions</p>
-            <p className={`flex-[3] xl:hidden`}></p>
+            <p className={`flex-[4] hidden xl:block mr-0`}>Actions</p>
+            <p className={`flex-[4] xl:hidden`}></p>
         </div>
         <div className={`absolute flex items-center flex-col left-2 right-2 bottom-2 top-[148px] overflow-auto lg:left-5 lg:right-5 lg:top-[123px] md:top-[110px]`}>
             {orders.map(eachOrder => {
                 return <div key={eachOrder.orderId} className={`flex items-center w-full py-1 px-1 border-b border-l border-r text-xs relative *:text-center lg:text-sm xl:*:mx-2`}>
-                    <p className={`flex-[3] ml-0`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
+                    <p className={`flex-[4] ml-0`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
                     <input className={`flex-[4] hidden xl:block  border-none outline-none w-full`} readOnly value={eachOrder.orderId} />
                     <input className={`flex-[4] hidden xl:block  border-none outline-none w-full`} readOnly value={eachOrder.providerId} />
                     <p className={`flex-[2] hidden xl:block`} >{eachOrder.pcc}</p>
@@ -94,12 +95,11 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                         <p className={`flex-[3] hidden xl:block`}>0</p>}
                     <p className={`flex-[3] hidden xl:block`}>{getPrice(eachOrder) ? `₹ ${getPrice(eachOrder).toFixed(2)}` : 0}</p>
                     <p className={`flex-[4] hidden xl:block`}>{eachOrder.deliveredAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
-                    <div className={`flex-[3] flex justify-between items-center xl:justify-evenly mx-0`}>
-                        {eachOrder.trackingUrl ? <a href={eachOrder.trackingUrl} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-6' onClick={e => e.stopPropagation()}>
-                            <img src={trackIcon} title='Track Shipment' className='w-6' />
-                        </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-6'>
-                            <img src={trackIcon} title='Track Shipment' className='w-6 opacity-40' />
-                        </a>}
+                    <div className={`flex-[4] flex justify-between items-center xl:justify-evenly mx-0`}>
+                        <img src={warningIcon} onClick={e => {
+                            onIssueReport(eachOrder.orderId)
+                            e.stopPropagation()
+                        }} title='Raise Issue' className={`w-5 cursor-pointer`} />
                         <img src={cancelIcon} onClick={e => {
                             if (cancellable(eachOrder.orderState)) {
                                 onCancelOrder(eachOrder.orderId)

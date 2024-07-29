@@ -12,7 +12,7 @@ dayjs.extend(advancedFormat)
 
 
 const ShowValue = ({ label, value, isDate, large, small }: { label: string, value: string | number | undefined, isDate?: boolean, large?: boolean, small?: boolean }) => {
-    return <div className={`relative border border-gray-100 my-3 py-[4px] px-3 ${large ? `md:w-[500px] w-[290px]` : small ? `md:w-[260px] w-[100px]` : 'md:w-[260px] w-[290px]'} rounded-md`}>
+    return <div className={`relative border border-gray-100 my-3 py-[4px] px-3 ${large ? `md:w-[500px] w-[290px]` : small ? `md:w-[150px] w-[100px]` : 'md:w-[260px] w-[290px]'} rounded-md`}>
         <p className="absolute -top-2 px-2 bg-white text-xs left-3 text-gray-500">{label}</p>
         <input className="font-semibold outline-none border-none w-full text-sm" readOnly value={value === undefined || value === '' || !value ? '--' : isDate ? dayjs(value).format('MMM Do, hh:mm A') : value} />
     </div>
@@ -95,7 +95,9 @@ export default ({ open, onClose, orderInfo, onCancelOrder }: {
                 </div>
                 <div className="flex items-center">
                     <ShowValue label="Pincode" value={orderInfo?.pickupPincode} small/>
-                    {orderInfo?.pickupLatitude && orderInfo?.pickupLongitude ? <a href={`https://maps.google.com/?q=${orderInfo?.pickupLatitude},${orderInfo?.pickupLongitude}`} target="_blank"><img src={trackIcon} className="w-6 ml-5"/></a> : null}
+                    {orderInfo?.pickupLatitude && orderInfo?.pickupLongitude ? <a href={`https://maps.google.com/?q=${orderInfo?.pickupLatitude},${orderInfo?.pickupLongitude}`} target="_blank">
+                    <img src={trackIcon} className="w-6 mx-5"/></a> : <img src={trackIcon} className="w-6 mx-5 opacity-30"/>}
+                    <ShowValue label="Pcc" value={orderInfo?.pcc} small/>
                 </div>
                 <p className="font-bold bg-slate-100 my-2 py-1 px-3">Drop</p>
                 <div className="md:flex justify-between">
@@ -112,7 +114,9 @@ export default ({ open, onClose, orderInfo, onCancelOrder }: {
                 </div>
                 <div className="flex items-center">
                     <ShowValue label="Pincode" value={orderInfo?.dropPincode} small/>
-                    {orderInfo?.dropLatitude && orderInfo?.dropLongitude ? <a href={`https://maps.google.com/?q=${orderInfo?.dropLatitude},${orderInfo?.dropLongitude}`} target="_blank"><img src={trackIcon} className="w-6 ml-5"/></a> : null}
+                    {orderInfo?.dropLatitude && orderInfo?.dropLongitude ? <a href={`https://maps.google.com/?q=${orderInfo?.dropLatitude},${orderInfo?.dropLongitude}`} target="_blank">
+                    <img src={trackIcon} className="w-6 mx-5"/></a> : <img src={trackIcon} className="w-6 mx-5 opacity-30"/>}
+                    <ShowValue label="Dcc" value={orderInfo?.dcc} small/>
                 </div>
                 <p className="font-bold bg-slate-100 my-2 py-1 px-3">Cancellation</p>
                 <div className="md:flex justify-between">

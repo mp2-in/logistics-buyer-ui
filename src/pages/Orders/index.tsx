@@ -13,6 +13,7 @@ import { LocationAddress } from "@lib/interfaces";
 import dayjs from "dayjs";
 import OrderInfo from "./OrderInfo";
 import CancelOrder from "./CancelOrder";
+import RaiseIssue from "./RaiseIssue";
 
 
 interface State {
@@ -21,6 +22,7 @@ interface State {
     addOutletDisplay: boolean
     orderInfoDisplay: boolean
     cancelOrderDisplay: boolean
+    raiseIssueDisplay: boolean
     billNumber?: string
     storeId?: string
     drop?: LocationAddress
@@ -31,10 +33,11 @@ interface State {
     quoteId?: string
     chosenStoreId?: string
     chosenOrder?: string
+    reportedOrderIssue?: string
 }
 
 const initialValue: State = {
-    addOrderDisplay: false, priceQuotesDisplay: false, orderInfoDisplay: false, 
+    addOrderDisplay: false, priceQuotesDisplay: false, orderInfoDisplay: false, raiseIssueDisplay: false,
     addOutletDisplay: false, cancelOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD')
 }
 
@@ -52,18 +55,18 @@ export default () => {
 
     const [state, dispatch] = useReducer(reducer, initialValue)
 
-    const { token, selectedAccount, clearAuth, setToast, accountIds, phone, switchAccount } = useAppConfigStore(state => ({ 
-        token: state.token, 
-        selectedAccount: state.selectedAccount, 
-        clearAuth: state.clearAuth, 
-        setToast: state.setToast, 
-        accountIds: state.accountIds, 
+    const { token, selectedAccount, clearAuth, setToast, accountIds, phone, switchAccount } = useAppConfigStore(state => ({
+        token: state.token,
+        selectedAccount: state.selectedAccount,
+        clearAuth: state.clearAuth,
+        setToast: state.setToast,
+        accountIds: state.accountIds,
         phone: state.phone,
         switchAccount: state.switchAccount
     }))
 
     const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, getWalletDashboardLink,
-        getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, orderPriceQuote, getCustomerInfo } = useOrdersStore(state => ({
+        getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, orderPriceQuote, getCustomerInfo, raiseIssue } = useOrdersStore(state => ({
             orders: state.orders,
             getOrders: state.getOrders,
             googlePlacesApi: state.googlePlacesApi,
@@ -78,7 +81,8 @@ export default () => {
             saveInStorage: state.saveInStorage,
             googlePlaceDetailsApi: state.googlePlaceDetailsApi,
             getCustomerInfo: state.getCustomerInfo,
-            getWalletDashboardLink: state.getWalletDashboardLink
+            getWalletDashboardLink: state.getWalletDashboardLink,
+            raiseIssue: state.raiseIssue
         }))
 
     const navigate = useNavigate()
@@ -134,6 +138,9 @@ export default () => {
             chooseOrder={orderId => {
                 dispatch({ type: 'update', payload: { chosenOrder: orderId, orderInfoDisplay: true } })
             }}
+            onIssueReport={orderId => {
+                dispatch({ type: 'update', payload: { reportedOrderIssue: orderId, raiseIssueDisplay: true } })
+            }}
         />
         <AddOrder
             open={state.addOrderDisplay}
@@ -160,7 +167,7 @@ export default () => {
             }}
             checkPrice={(billNumber, storeId, orderAmount, category, drop) => {
                 getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), category, (success, quoteId) => {
-                    if(success) {
+                    if (success) {
                         dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, category, drop, quoteId } })
                     } else {
                         setToast('Error fetching price quotes', 'error')
@@ -235,5 +242,14 @@ export default () => {
             }}
             loading={activity.cancelOrder}
         />
+        <RaiseIssue open={state.raiseIssueDisplay} onClose={() => dispatch({ type: 'update', payload: { raiseIssueDisplay: false } })}
+            raiseIssue={(issue, description) => raiseIssue(token || '', state.reportedOrderIssue || '', issue, description, (success) => {
+                if (success) {
+                    setToast('Issue had been registered', 'success')
+                    dispatch({ type: 'update', payload: { raiseIssueDisplay: false } })
+                } else {
+                    setToast('Error registering issue', 'error')
+                }
+            })} loading={activity.raiseIssue} />
     </div>
 }       

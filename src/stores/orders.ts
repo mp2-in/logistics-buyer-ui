@@ -22,6 +22,7 @@ interface State extends Attributes {
     saveInStorage: (keyName: string, value: string) => void
     getCustomerInfo: (token: string, phone: string, callback: (customerInfo: LocationAddress) => void) => void
     getWalletDashboardLink: (token: string, callback: (link: string) => void) => void
+    raiseIssue: (token: string, orderId: string, issue: string, description: string, callback: (sucess: boolean) => void) => void
 }
 
 const initialState: Attributes = { orders: [], activity: {}, pickupStores: [], orderPriceQuote: [] };
@@ -282,4 +283,34 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 }))
             })
     },
+    raiseIssue: async (token, orderId, issue, description,  callback) => {
+        set(produce((state: State) => {
+            state.activity.raiseIssue = true
+        }))
+        Api('/webui/order/issue', {
+            method: 'post', headers: { token }, data: {
+                order: {
+                    id: orderId
+                },
+                description: {
+                    line1: issue,
+                    line2: description
+                }
+            }
+        }).then(res => {
+            set(produce((state: State) => {
+                state.activity.raiseIssue = false
+            }))
+            if (res.status === 1) {
+                callback(true)
+            } else {
+                callback(false)
+            }
+        }).catch(() => {
+            set(produce((state: State) => {
+                state.activity.raiseIssue = false
+            }))
+            callback(false)
+        })
+    }
 }))
