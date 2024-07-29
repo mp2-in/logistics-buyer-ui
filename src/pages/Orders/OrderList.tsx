@@ -61,7 +61,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => changeDate(val)} />
             </div>
         </div>
-        <div className={`flex items-center py-2 px-1 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-semibold md:*:text-md xl:*:mx-2 *:text-sm`}>
+        <div className={`flex items-center py-2 px-1 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-semibold  xl:*:mx-2 *:text-xs md:*:text-base`}>
             <p className={`flex-[4] ml-0`}>Created At</p>
             <p className={`flex-[4] hidden xl:block`}>Order Id</p>
             <p className={`flex-[4] hidden xl:block`}>LSP</p>
