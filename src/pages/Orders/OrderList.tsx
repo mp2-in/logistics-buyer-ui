@@ -94,7 +94,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                     {eachOrder.distance ? <a className={`flex-[3] hidden xl:block text-blue-400 underline font-semibold`} href={mapLink(eachOrder) || ''} target='_blank'>{`${eachOrder.distance.toFixed(2)} km`}</a> :
                         <p className={`flex-[3] hidden xl:block`}>0</p>}
                     <p className={`flex-[3] hidden xl:block`}>{getPrice(eachOrder) ? `₹ ${getPrice(eachOrder).toFixed(2)}` : 0}</p>
-                    <p className={`flex-[4] hidden xl:block`}>{eachOrder.deliveredAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
+                    <p className={`flex-[4] hidden xl:block`}>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
                     <div className={`flex-[4] flex justify-between items-center xl:justify-evenly mx-0`}>
                         <img src={warningIcon} onClick={e => {
                             onIssueReport(eachOrder.orderId)
