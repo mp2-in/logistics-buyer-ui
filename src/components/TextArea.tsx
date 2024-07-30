@@ -9,9 +9,9 @@ interface Props {
 }
  export default ({ label, onChange, size, placeholder, readOnly, required, value }: Props) => {
 
-  return <div className={`relative inline-flex flex-col justify-end ${label ? 'h-[30px] md:h-[146px]' : 'md:h-[35px]'}`}>
-    <div className={`flex flex-col border border-gray-300 rounded relative h-[135px] justify-center px-[8px] bg-white group focus-within:border-blue-500 py-2
-                                    ${size === 'small' ? `w-[150px] md:w-[196px]` : size === 'medium' || !size ? 'w-[300px] md:w-[400px]' : size === 'large' ? 'w-[500px]' : 'w-[620px]'} ${readOnly ? 'opacity-60' : ''}`}>
+  return <div className={`relative inline-flex flex-col justify-end ${label ? 'h-[100px] md:h-[146px]' : 'md:h-[135px]'}`}>
+    <div className={`flex flex-col border border-gray-300 rounded relative h-full justify-center px-[8px] bg-white group focus-within:border-blue-500 py-2
+                                    ${size === 'small' ? `w-[150px] md:w-[196px]` : size === 'medium' || !size ? 'w-[300px] md:w-[400px]' : size === 'large' ? 'w-[320px] md:w-[500px]' : 'w-[620px]'} ${readOnly ? 'opacity-60' : ''}`}>
       <textarea className={`font-sans text-sm border-none outline-none bg-white resize-none h-full`}
         placeholder={placeholder}
         readOnly={readOnly}
