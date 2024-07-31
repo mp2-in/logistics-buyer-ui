@@ -31,7 +31,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     }
 
     const rowBackground = (orderState: string) => {
-        return orderState === 'Order-delivered' ? 'bg-green-200' : orderState === 'Cancelled' ? 'bg-red-200' : ''
+        return orderState === 'Order-delivered' ? 'bg-green-100' : orderState === 'Cancelled' ? 'bg-red-100' : ''
     }
 
     useEffect(() => {
