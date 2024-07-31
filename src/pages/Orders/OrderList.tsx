@@ -14,7 +14,7 @@ import Input from '@components/Input';
 import Button from '@components/Button';
 
 
-export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport }: {
+export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail }: {
     onAddOrder: () => void,
     onRefresh: () => void,
     onCancelOrder: (orderId: string) => void,
@@ -24,6 +24,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     changeDate: (date: string) => void,
     chooseOrder: (orderId: string) => void,
     onIssueReport: (orderId: string) => void
+    isRetail: boolean
 }) => {
 
     const cancellable = (orderState: string) => {
@@ -58,7 +59,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     return <div className={`absolute left-0 right-0 top-12 bottom-3 lg:px-5 lg:py-3 px-2 overflow-hidden sm:top-16`}>
         <div className={`flex sm:items-end items-start justify-between p-2 sm:flex-row-reverse flex-col mb-2`}>
             <div className={`flex flex-row-reverse w-full mb-3 sm:mb-0`}>
-                <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" onClick={onAddOrder} />
+                {isRetail ? <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" onClick={onAddOrder} /> : null}
             </div>
             <div className={'flex items-end sm:*:mr-4 justify-between mt-2 sm:mt-0 w-full sm:w-auto'}>
                 <Button title="Refresh" icon={<img src={refreshIcon} />} variant="primary" onClick={onRefresh} />

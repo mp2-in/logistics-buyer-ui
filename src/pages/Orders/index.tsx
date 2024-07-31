@@ -55,14 +55,16 @@ export default () => {
 
     const [state, dispatch] = useReducer(reducer, initialValue)
 
-    const { token, selectedAccount, clearAuth, setToast, accountIds, phone, switchAccount } = useAppConfigStore(state => ({
+    const { token, selectedAccount, clearAuth, setToast, accountIds, phone, switchAccount, isRetail, role } = useAppConfigStore(state => ({
         token: state.token,
         selectedAccount: state.selectedAccount,
         clearAuth: state.clearAuth,
         setToast: state.setToast,
         accountIds: state.accountIds,
         phone: state.phone,
-        switchAccount: state.switchAccount
+        switchAccount: state.switchAccount,
+        isRetail: state.isRetail,
+        role: state.role
     }))
 
     const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, getWalletDashboardLink,
@@ -141,6 +143,7 @@ export default () => {
             onIssueReport={orderId => {
                 dispatch({ type: 'update', payload: { reportedOrderIssue: orderId, raiseIssueDisplay: true } })
             }}
+            isRetail={isRetail || false}
         />
         <AddOrder
             open={state.addOrderDisplay}
@@ -177,6 +180,7 @@ export default () => {
             showNewOutletForm={(chosenStoreId) => dispatch({ type: 'update', payload: { addOutletDisplay: true, chosenStoreId } })}
             saveInStorage={(keyName, value) => saveInStorage(keyName, value)}
             getCustomerInfo={(phone, callback) => getCustomerInfo(token || '', phone, callback)}
+            role={role || ''}
         />
         <ShowPriceQuotes
             open={state.priceQuotesDisplay}
