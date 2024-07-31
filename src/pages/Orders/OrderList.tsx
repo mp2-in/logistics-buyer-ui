@@ -6,12 +6,14 @@ import cancelIcon from "@assets/cancel.png"
 import moreIcon from "@assets/info.png"
 import warningIcon from "@assets/warning.png"
 import refreshIcon from "@assets/refresh.png"
+import trackIcon from "@assets/track.png"
 import ActivityIndicator from '@components/ActivityIndicator';
 
 import { Order } from '@lib/interfaces'
 
 import Input from '@components/Input';
 import Button from '@components/Button';
+import { cancellable } from '@lib/utils';
 
 
 export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail }: {
@@ -26,10 +28,6 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     onIssueReport: (orderId: string) => void
     isRetail: boolean
 }) => {
-
-    const cancellable = (orderState: string) => {
-        return ['Pending', 'Accepted', 'UnFulFilled', 'Searching-for-Agent', 'Agent-assigned', 'At-pickup', 'UnFulfilled'].includes(orderState)
-    }
 
     const rowBackground = (orderState: string) => {
         return orderState === 'Order-delivered' ? 'bg-green-100' : orderState === 'Cancelled' ? 'bg-red-100' : ''
@@ -79,9 +77,9 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             <p className={`flex-[3] hidden xl:block`}>Price</p>
             <p className={`flex-[4] hidden xl:block`}>Delivered At</p>
             <p className={`flex-[4] hidden xl:block mr-0`}>Actions</p>
-            <p className={`flex-[4] xl:hidden`}></p>
+            <p className={`flex-[3] xl:hidden`}></p>
         </div>
-        <div className={`absolute flex items-center flex-col left-2 right-2 bottom-2 top-[148px] overflow-auto lg:left-5 lg:right-5 lg:top-[123px] md:top-[110px]`}>
+        <div className={`absolute flex items-center flex-col left-2 right-2 bottom-2 top-[140px] overflow-auto lg:left-5 lg:right-5 lg:top-[123px] md:top-[110px]`}>
             {orders.map(eachOrder => {
                 return <div key={eachOrder.orderId} className={`flex items-center w-full py-1 px-1 border-b border-l border-r text-xs relative *:text-center lg:text-sm xl:*:mx-2 ${rowBackground(eachOrder.orderState)}`}>
                     <p className={`flex-[4] ml-0`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
@@ -94,17 +92,26 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                         <p className='text-xs'>{eachOrder.dropName}</p>
                         <p className='text-xs'>{eachOrder.dropPhone}</p>
                     </div>
-                    {eachOrder.riderNumber ? <a className={`flex-[4] underline cursor-pointer font-semibold text-blue-400`} href={`tel:${eachOrder.riderNumber}`}>{eachOrder.riderName}</a> :
-                        <p className={`flex-[4]`}>{eachOrder.riderName}</p>}
+                    {eachOrder.riderNumber ? <a className={`flex-[4] underline cursor-pointer font-semibold text-blue-400`} href={`tel:${eachOrder.riderNumber}`}>
+                        <div>
+                            <p className='text-xs'>{eachOrder.riderName}</p>
+                            <p className='text-xs'>{eachOrder.riderNumber}</p>
+                        </div>
+                    </a> : <p className={`flex-[4]`}>{eachOrder.riderName}</p>}
                     {eachOrder.distance ? <a className={`flex-[3] hidden xl:block text-blue-600 underline font-semibold`} href={mapLink(eachOrder) || ''} target='_blank'>{`${eachOrder.distance.toFixed(2)} km`}</a> :
                         <p className={`flex-[3] hidden xl:block`}>0</p>}
                     <p className={`flex-[3] hidden xl:block`}>{getPrice(eachOrder) ? `₹ ${getPrice(eachOrder).toFixed(2)}` : 0}</p>
                     <p className={`flex-[4] hidden xl:block`}>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
-                    <div className={`flex-[4] flex justify-between items-center xl:justify-evenly mx-0`}>
+                    <div className={`flex-[3] xl:flex-[4] flex justify-around md:justify-between items-center xl:justify-evenly mx-0`}>
+                        {eachOrder.trackingUrl ? <a href={eachOrder.trackingUrl} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-5' onClick={e => e.stopPropagation()}>
+                            <img src={trackIcon} title='Track Shipment' className='w-5' />
+                        </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-5'>
+                            <img src={trackIcon} title='Track Shipment' className='w-5 opacity-40' />
+                        </a>}
                         <img src={warningIcon} onClick={e => {
                             onIssueReport(eachOrder.orderId)
                             e.stopPropagation()
-                        }} title='Raise Issue' className={`w-5 cursor-pointer`} />
+                        }} title='Raise Issue' className={`w-5 cursor-pointer hidden xl:block`} />
                         <img src={cancelIcon} onClick={e => {
                             if (cancellable(eachOrder.orderState)) {
                                 onCancelOrder(eachOrder.orderId)
@@ -114,7 +121,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                         <img src={moreIcon} onClick={e => {
                             chooseOrder(eachOrder.orderId)
                             e.stopPropagation()
-                        }} title='Order Details' className={'cursor-pointer w-6 hover:shadow-md'} />
+                        }} title='Order Details' className={'cursor-pointer w-5 hover:shadow-md'} />
                     </div>
                 </div>
             })}

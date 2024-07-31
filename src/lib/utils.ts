@@ -147,3 +147,7 @@ export const cancellationIdReasonMapping:{[k: string]: string} = {
   "010": 'Buyer wants to modify details',
   "012": 'Buyer does not want product any more',
 }
+
+export const cancellable = (orderState: string) => {
+  return ['Pending', 'Accepted', 'UnFulFilled', 'Searching-for-Agent', 'Agent-assigned', 'At-pickup', 'UnFulfilled'].includes(orderState)
+}

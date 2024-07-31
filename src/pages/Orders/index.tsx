@@ -230,6 +230,9 @@ export default () => {
             onCancelOrder={orderId => {
                 dispatch({ type: 'update', payload: { toBeCancelledOrder: orderId, cancelOrderDisplay: true } })
             }}
+            onIssueReport={orderId => {
+                dispatch({ type: 'update', payload: { reportedOrderIssue: orderId, raiseIssueDisplay: true } })
+            }}
         />
         <CancelOrder
             open={state.cancelOrderDisplay}
