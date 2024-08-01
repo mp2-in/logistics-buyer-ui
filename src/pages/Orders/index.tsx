@@ -67,7 +67,7 @@ export default () => {
         role: state.role
     }))
 
-    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, getWalletDashboardLink,
+    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder,
         getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, orderPriceQuote, getCustomerInfo, raiseIssue } = useOrdersStore(state => ({
             orders: state.orders,
             getOrders: state.getOrders,
@@ -83,7 +83,6 @@ export default () => {
             saveInStorage: state.saveInStorage,
             googlePlaceDetailsApi: state.googlePlaceDetailsApi,
             getCustomerInfo: state.getCustomerInfo,
-            getWalletDashboardLink: state.getWalletDashboardLink,
             raiseIssue: state.raiseIssue
         }))
 
@@ -107,11 +106,6 @@ export default () => {
         <TopBar
             selectedAccount={selectedAccount || ''}
             clearAuth={clearAuth}
-            getWalletInfoPageLink={callback => {
-                getWalletDashboardLink(token || '', (link) => {
-                    callback(link)
-                })
-            }}
             accountIds={accountIds}
             phoneNumber={phone}
             switchAccount={(accountId, callback) => {

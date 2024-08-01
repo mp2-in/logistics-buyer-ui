@@ -21,7 +21,6 @@ interface State extends Attributes {
     addOutlet: (action: 'create'|'update', token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean) => void) => void
     saveInStorage: (keyName: string, value: string) => void
     getCustomerInfo: (token: string, phone: string, callback: (customerInfo: LocationAddress) => void) => void
-    getWalletDashboardLink: (token: string, callback: (link: string) => void) => void
     raiseIssue: (token: string, orderId: string, issue: string, description: string, callback: (sucess: boolean) => void) => void
 }
 
@@ -259,27 +258,6 @@ export const useOrdersStore = create<State>()((set, get) => ({
             .catch(() => {
                 set(produce((state: State) => {
                     state.activity.getCustomerInfo = false
-                }))
-            })
-    },
-    getWalletDashboardLink: async (token, callback) => {
-        set(produce((state: State) => {
-            state.activity.getWalletDashboardLink = true
-        }))
-        Api('/webui/wallet_info', {
-            method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {}
-        })
-            .then(res => {
-                set(produce((state: State) => {
-                    if (res.status === 1) {
-                        callback(res.embed_link)
-                    }
-                    state.activity.getWalletDashboardLink = false
-                }))
-            })
-            .catch(() => {
-                set(produce((state: State) => {
-                    state.activity.getWalletDashboardLink = false
                 }))
             })
     },

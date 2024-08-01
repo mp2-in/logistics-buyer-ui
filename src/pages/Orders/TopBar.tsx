@@ -1,18 +1,16 @@
 import { createRef, useEffect, useState } from "react"
 
-import WalletInfo from "./WalletInfo"
-
 import menuIcon from "@assets/menu.png"
 import userIcon from "@assets/user.png"
 import accountIcon from "@assets/account.png"
 import walletIcon from "@assets/wallet.png"
 import AccountDetails from "./AccountDetails"
+import { useNavigate } from "react-router-dom"
 
 
-export default ({ selectedAccount, clearAuth, getWalletInfoPageLink, accountIds, phoneNumber, switchAccount }: {
+export default ({ selectedAccount, clearAuth, accountIds, phoneNumber, switchAccount }: {
     selectedAccount: string,
     clearAuth: () => void,
-    getWalletInfoPageLink: (callback: (link: string) => void) => void
     accountIds: string[]
     phoneNumber?: string
     switchAccount: (accountId: string, callback: () => void) => void
@@ -20,9 +18,7 @@ export default ({ selectedAccount, clearAuth, getWalletInfoPageLink, accountIds,
     let divRef = createRef<HTMLInputElement>();
 
     const [showMenu, setMenuDisplay] = useState(false)
-    const [showWalletInfo, setWalletInfoDisplay] = useState(false)
     const [showAccountInfo, setAccountInfoDisplay] = useState(false)
-    const [walletPageLink, setWalletPageLink] = useState('')
 
     const handleClickOutside = (event: MouseEvent) => {
         if (
@@ -39,6 +35,8 @@ export default ({ selectedAccount, clearAuth, getWalletInfoPageLink, accountIds,
             document.removeEventListener("click", handleClickOutside, true);
         };
     });
+
+    const  navigate = useNavigate()
 
     return <div>
         <div className={'flex justify-between items-center border-b border-gray-300 md:py-3 md:px-5 py-1 px-1'}>
@@ -58,10 +56,7 @@ export default ({ selectedAccount, clearAuth, getWalletInfoPageLink, accountIds,
                         <p className="font-semibold">Profile</p>
                     </div>
                     <div className="flex items-center justify-evenly py-1 hover:bg-blue-200" onClick={() => {
-                        getWalletInfoPageLink((link) => {
-                            setWalletPageLink(link)
-                            setWalletInfoDisplay(true)
-                        })
+                        navigate('/u/wallet')
                         setMenuDisplay(false)
                     }}>
                         <img src={walletIcon} className="w-7" />
@@ -70,11 +65,6 @@ export default ({ selectedAccount, clearAuth, getWalletInfoPageLink, accountIds,
                 </div> : null}
             </div>
         </div>
-        <WalletInfo
-            open={showWalletInfo}
-            onClose={() => setWalletInfoDisplay(false)}
-            link={walletPageLink}
-        />
         <AccountDetails
             open={showAccountInfo}
             onClose={() => setAccountInfoDisplay(false)}
