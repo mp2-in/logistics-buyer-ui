@@ -54,7 +54,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
         return 0
     }
 
-    return <div className={`absolute left-0 right-0 top-12 bottom-3 lg:px-5 lg:py-3 px-2 sm:top-16 w-[1000px] bg-white`}>
+    return <div className={`absolute left-0 right-0 top-12 bottom-3 lg:px-5 lg:py-3 px-2 sm:top-16 w-[1400px] bg-white`}>
         <div className={`flex sm:items-end items-start justify-between p-2 sm:flex-row-reverse flex-col mb-2 w-full`}>
             <div className={`flex flex-row-reverse w-full mb-3 sm:mb-0`}>
                 {isRetail ? <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" onClick={onAddOrder} /> : null}
@@ -64,7 +64,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => changeDate(val)} />
             </div>
         </div>
-        <div className={`flex items-center py-2 px-1 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-semibold  xl:*:mx-2 *:text-xs md:*:text-base max-w-[1000px] overflow-auto`}>
+        <div className={`flex items-center py-2 px-1 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-semibold  xl:*:mx-2 *:text-xs md:*:text-base w-[1400px] overflow-auto *:border`}>
             <p className={`flex-[4] ml-0`}>Created At</p>
             <p className={`flex-[4]`}>Order Id</p>
             <p className={`flex-[4]`}>LSP</p>
@@ -77,18 +77,17 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             <p className={`flex-[3]`}>Price</p>
             <p className={`flex-[4]`}>Delivered At</p>
             <p className={`flex-[4] mr-0`}>Actions</p>
-            <p className={`flex-[3] xl:hidden`}></p>
         </div>
-        <div className={`absolute flex items-center flex-col left-2 right-2 bottom-2 top-[140px] overflow-auto lg:left-5 lg:right-5 lg:top-[123px] md:top-[110px] max-w-[1000px]`}>
+        <div className={`absolute flex items-center flex-col left-2 right-2 bottom-2 top-[140px] overflow-auto lg:left-5 lg:right-5 lg:top-[123px] md:top-[110px] w-[1400px]`}>
             {orders.map(eachOrder => {
-                return <div key={eachOrder.orderId} className={`flex items-center w-full py-1 px-1 border-b border-l border-r text-xs relative *:text-center lg:text-sm xl:*:mx-2 ${rowBackground(eachOrder.orderState)}`}>
+                return <div key={eachOrder.orderId} className={`flex items-center w-full py-1 px-1 border-b border-l border-r text-xs relative *:text-center lg:text-sm xl:*:mx-2 ${rowBackground(eachOrder.orderState)} *:border w-[1400px]`}>
                     <p className={`flex-[4] ml-0`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
-                    <input className={`flex-[4]  border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderId || ''} />
-                    <input className={`flex-[4]  border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.providerId || ''} />
+                    <input className={`flex-[4]  outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderId || ''} />
+                    <input className={`flex-[4]  outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.providerId || ''} />
                     <p className={`flex-[2]`} >{eachOrder.pcc}</p>
                     <p className={`flex-[2]`} >{eachOrder.dcc}</p>
-                    <input className={`flex-[5] xl:flex[2] border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderState || ''} />
-                    <div className={`flex-[4] xl:block  hidden`}>
+                    <input className={`flex-[5] xl:flex[2] outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderState || ''} />
+                    <div className={`flex-[4] xl:block`}>
                         <p className='text-xs'>{eachOrder.dropName}</p>
                         <p className='text-xs'>{eachOrder.dropPhone}</p>
                     </div>
@@ -102,7 +101,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                         <p className={`flex-[3]`}>0</p>}
                     <p className={`flex-[3]`}>{getPrice(eachOrder) ? `₹ ${getPrice(eachOrder).toFixed(2)}` : 0}</p>
                     <p className={`flex-[4]`}>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
-                    <div className={`flex-[3] xl:flex-[4] flex justify-around md:justify-between items-center xl:justify-evenly mx-0`}>
+                    <div className={`flex-[4] xl:flex-[4] flex justify-around md:justify-between items-center xl:justify-evenly mx-0`}>
                         {eachOrder.trackingUrl ? <a href={eachOrder.trackingUrl} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-5' onClick={e => e.stopPropagation()}>
                             <img src={trackIcon} title='Track Shipment' className='w-5' />
                         </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-5'>
