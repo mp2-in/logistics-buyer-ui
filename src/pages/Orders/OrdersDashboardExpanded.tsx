@@ -14,6 +14,7 @@ import dayjs from "dayjs";
 import OrderInfo from "./OrderInfo";
 import CancelOrder from "./CancelOrder";
 import RaiseIssue from "./RaiseIssue";
+import ExpandedOrderList from "./ExpandedOrderList";
 
 
 interface State {
@@ -121,7 +122,7 @@ export default () => {
                 })
             }}
         />
-        <OrderList
+        <ExpandedOrderList
             onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })}
             onRefresh={() => token ? getOrders(token, state.orderFilterDate) : null}
             onCancelOrder={orderId => {

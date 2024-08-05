@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import ActivityIndicator from "@components/ActivityIndicator";
 import Toast from "@components/Toast";
 import Wallet from "@pages/Wallet";
+import OrdersDashboardExpanded from "@pages/Orders/OrdersDashboardExpanded";
 
 
 const RequireAuth = ({ children, loggedIn }: { children: React.ReactNode, loggedIn: boolean }) => {
@@ -40,6 +41,7 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/u/" element={<RequireAuth loggedIn={loggedIn}><><Outlet /></></RequireAuth>}>
         <Route path="orders" element={<Orders />} />
+        <Route path="orders_detailed" element={<OrdersDashboardExpanded />} />
         <Route path="wallet" element={<Wallet />} />
       </Route>
     </Routes> : <ActivityIndicator />}

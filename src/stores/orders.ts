@@ -15,13 +15,13 @@ interface State extends Attributes {
     getPickupList: (token: string, callback: () => void) => void,
     googlePlacesApi: (searchText: string, callback: (data: PlaceAutoComplete[]) => void, latitude?: number, longitude?: number) => void
     googlePlaceDetailsApi: (placeId: string, callback: (data: PlaceDetails) => void) => void
-    createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, category: string, lspId: string | undefined, quoteId: string | undefined, callback: (success: boolean) => void) => void
-    cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean) => void) => void
-    getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, category: string, callback: (success: boolean, quoteId: string) => void) => void
-    addOutlet: (action: 'create'|'update', token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean) => void) => void
+    createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, category: string, lspId: string | undefined, quoteId: string | undefined, callback: (success: boolean, message?: string) => void) => void
+    cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean, message?: string) => void) => void
+    getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, category: string, callback: (success: boolean, quoteId: string, message?: string) => void) => void
+    addOutlet: (action: 'create'|'update', token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean, message?: string) => void) => void
     saveInStorage: (keyName: string, value: string) => void
     getCustomerInfo: (token: string, phone: string, callback: (customerInfo: LocationAddress) => void) => void
-    raiseIssue: (token: string, orderId: string, issue: string, description: string, callback: (sucess: boolean) => void) => void
+    raiseIssue: (token: string, orderId: string, issue: string, description: string, callback: (sucess: boolean, message?: string) => void) => void
 }
 
 const initialState: Attributes = { orders: [], activity: {}, pickupStores: [], orderPriceQuote: [] };
@@ -123,14 +123,14 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 if (res.status === 1) {
                     callback(true)
                 } else {
-                    callback(false)
+                    callback(false, res.message || 'Error creating order')
                 }
             })
             .catch(() => {
                 set(produce((state: State) => {
                     state.activity.createOrder = false
                 }))
-                callback(false)
+                callback(false, 'Error creating order')
             })
     },
     cancelOrder: async (token, orderId, cancellationReason, callback) => {
@@ -151,13 +151,13 @@ export const useOrdersStore = create<State>()((set, get) => ({
             if (res.status === 1) {
                 callback(true)
             } else {
-                callback(false)
+                callback(false, res.message || 'Error cancelling order')
             }
         }).catch(() => {
             set(produce((state: State) => {
                 state.activity.cancelOrder = false
             }))
-            callback(false)
+            callback(false, 'Error cancelling order')
         })
     },
     getPriceQuote: async (token, storeId, drop, orderAmount, category, callback) => {
@@ -197,13 +197,14 @@ export const useOrdersStore = create<State>()((set, get) => ({
                         set(produce((state: State) => {
                             state.activity.getPriceQuote = false
                         }))
-                        callback(false, '')
+                        callback(false, '', res.message || 'Error fetching price quotes')
                     }
                 })
                 .catch(() => {
                     set(produce((state: State) => {
                         state.activity.getPriceQuote = false
                     }))
+                    callback(false, '', 'Error fetching price quotes')
                 })
         }
     },
@@ -225,14 +226,14 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 if (res.status === 1) {
                     callback(true)
                 } else {
-                    callback(false)
+                    callback(false, res.message || 'Error creating outlet')
                 }
             })
             .catch(() => {
                 set(produce((state: State) => {
                     state.activity.addOutlet = false
                 }))
-                callback(false)
+                callback(false,'Error creating outlet')
             })
     },
     saveInStorage: async (keyName, value) => {
@@ -282,13 +283,13 @@ export const useOrdersStore = create<State>()((set, get) => ({
             if (res.status === 1) {
                 callback(true)
             } else {
-                callback(false)
+                callback(false, res.message || 'Error registering issue')
             }
         }).catch(() => {
             set(produce((state: State) => {
                 state.activity.raiseIssue = false
             }))
-            callback(false)
+            callback(false, 'Error registering issue')
         })
     }
 }))
