@@ -93,7 +93,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
         let data: { [k: string]: string | number | string[] | LocationAddress | { [j: string]: string }, select_criteria: { mode: string, lsp_id?: string, quote_id?: string } } = {
             client_order_id: billNumber,
             pickup: {
-                code: "1234",
+                code: billNumber.slice(-4),
                 store_id: storeId
             },
             drop,
