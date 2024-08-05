@@ -38,7 +38,7 @@ export default () => {
     }, [showPhone])
 
     return <div className='fixed left-0 right-0 top-0 bottom-0 border flex justify-center items-center' onClick={() => !showPhone && inputRef.current?.focus()}>
-        <div className={'flex flex-col items-center border border-gray-200 rounded-lg my-40 mx-4 py-8 md:m-60 md:p-14 relative lg:w-[900px]'}>
+        <div className={'flex flex-col items-center border border-gray-200 rounded-lg relative lg:w-[900px] w-[380px] mb-[300px] py-[40px]'}>
             <input onChange={e => {
                 if (/^[0-9]{0,6}$/.test(e.target.value)) {
                     setOtp(e.target.value)
