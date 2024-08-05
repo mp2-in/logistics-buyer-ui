@@ -71,15 +71,15 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 <p className={`w-[150px] bg-blue-300 py-2`}>LSP</p>
                 <p className={`w-[100px] bg-blue-300 py-2`}>PCC</p>
                 <p className={`w-[100px] bg-blue-300 py-2`}>DCC</p>
-                <p className={`w-[100px] bg-blue-300 py-2`}>Status</p>
-                <p className={`w-[100px] bg-blue-300 py-2`}>Customer</p>
-                <p className={`w-[100px] bg-blue-300 py-2`}>Rider</p>
+                <p className={`w-[150px] bg-blue-300 py-2`}>Status</p>
+                <p className={`w-[160px] bg-blue-300 py-2`}>Customer</p>
+                <p className={`w-[150px] bg-blue-300 py-2`}>Rider</p>
                 <p className={`w-[100px] bg-blue-300 py-2`}>Distance</p>
                 <p className={`w-[100px] bg-blue-300 py-2`}>Price</p>
                 <p className={`w-[100px] bg-blue-300 py-2`}>Delivered At</p>
-                <p className={`w-[100px] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
+                <p className={`w-[160px] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
             </div>
-            <div className={`absolute flex items-center flex-col left-0 right-0 bottom-0 top-[30px] lg:left-5 lg:right-5 lg:top-[123px] md:top-[110px] w-full`}>
+            <div className={`absolute flex items-center flex-col left-0 right-0 bottom-0 top-[30px] lg:left-5 lg:right-5 lg:top-[123px] md:top-[110px] w-full overflow-y-auto`}>
                 {orders.map(eachOrder => {
                     return <div key={eachOrder.orderId} className={`flex items-center w-full text-xs relative *:text-center lg:text-sm xl:*:mx-2 ${rowBackground(eachOrder.orderState)}  *:flex-shrink-0 overflow-y-visible h-[40px] w-full`}>
                         <p className={`w-[100px] ml-0 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
@@ -87,24 +87,30 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                             <input className={`w-[150px] outline-none  border-none ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderId} />
                         </div>
                         <input className={`w-[150px]  border-none outline-none ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.providerId} />
-                        <p className={`w-[100px] ${rowBackground(eachOrder.orderState)} py-3`} >{eachOrder.pcc || ' '}</p>
-                        <p className={`w-[100px] ${rowBackground(eachOrder.orderState)} py-3`} >{eachOrder.dcc || ' '}</p>
-                        <input className={`w-[100px] xl:flex[2] border-none outline-none ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderState} />
-                        <div className={`w-[100px] xl:block  ${rowBackground(eachOrder.orderState)}`}>
+                        <div className={`flex justify-center items-center h-full w-[100px] ${rowBackground(eachOrder.orderState)} `}>
+                            <p>{eachOrder.pcc || ' '}</p>
+                        </div>
+                        <div className={`flex justify-center items-center h-[40px] w-[100px] ${rowBackground(eachOrder.orderState)} `}>
+                            <p>{eachOrder.dcc || ' '}</p>
+                        </div>
+                        <div className={`flex justify-center items-center h-full w-[150px] ${rowBackground(eachOrder.orderState)} `}>
+                            <input className={`border-none outline-none text-center ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderState} />
+                        </div>
+                        <div className={`flex-col justify-center items-center h-full w-[160px] pt-1 ${rowBackground(eachOrder.orderState)} `}>
                             <p className='text-xs'>{eachOrder.dropName}</p>
                             <p className='text-xs'>{eachOrder.dropPhone}</p>
                         </div>
-                        {eachOrder.riderNumber ? <a className={`w-[100px] underline cursor-pointer font-semibold text-blue-400`} href={`tel:${eachOrder.riderNumber}`}>
-                            <div>
+                        {eachOrder.riderNumber ? <a className={`w-[150px] underline cursor-pointer font-semibold text-blue-400`} href={`tel:${eachOrder.riderNumber}`}>
+                            <div className={`flex-col justify-center items-center h-full py-1 ${rowBackground(eachOrder.orderState)}`}>
                                 <p className='text-xs'>{eachOrder.riderName}</p>
                                 <p className='text-xs'>{eachOrder.riderNumber}</p>
                             </div>
-                        </a> : <p className={`w-[100px]`}>{eachOrder.riderName}</p>}
-                        {eachOrder.distance ? <a className={`w-[100px] text-blue-600 underline font-semibold`} href={mapLink(eachOrder) || ''} target='_blank'>{`${eachOrder.distance.toFixed(2)} km`}</a> :
-                            <p className={`w-[100px]`}>0</p>}
-                        <p className={`w-[100px]`}>{getPrice(eachOrder) ? `₹ ${getPrice(eachOrder).toFixed(2)}` : 0}</p>
-                        <p className={`w-[100px]`}>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
-                        <div className={`w-[100px] flex justify-around md:justify-between items-center xl:justify-evenly mx-0`}>
+                        </a> : <p className={`w-[150px] h-full py-1 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.riderName}</p>}
+                        {eachOrder.distance ? <a className={`w-[100px] text-blue-600 underline font-semibold py-3 h-full ${rowBackground(eachOrder.orderState)}`} href={mapLink(eachOrder) || ''} target='_blank'>{`${eachOrder.distance.toFixed(2)} km`}</a> :
+                            <p className={`w-[100px] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>0</p>}
+                        <p className={`w-[100px] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{getPrice(eachOrder) ? `₹ ${getPrice(eachOrder).toFixed(2)}` : 0}</p>
+                        <p className={`w-[100px] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
+                        <div className={`w-[160px] flex justify-around md:justify-between items-center xl:justify-evenly mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
                             {eachOrder.trackingUrl ? <a href={eachOrder.trackingUrl} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-5' onClick={e => e.stopPropagation()}>
                                 <img src={trackIcon} title='Track Shipment' className='w-5' />
                             </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-5'>
