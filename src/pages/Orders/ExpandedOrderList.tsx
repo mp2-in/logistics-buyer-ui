@@ -79,9 +79,9 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 <p className={`w-[100px] bg-blue-300 py-2`}>Delivered At</p>
                 <p className={`w-[160px] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
             </div>
-            <div className={`absolute flex items-center flex-col left-0 right-0 bottom-0 top-[30px] lg:left-5 lg:right-5 lg:top-[123px] md:top-[110px] w-full overflow-y-auto`}>
+            <div className={`absolute flex items-center flex-col left-0 right-0 bottom-0 top-[30px] lg:left-5 lg:right-5 lg:top-[123px] md:top-[110px] w-full`}>
                 {orders.map(eachOrder => {
-                    return <div key={eachOrder.orderId} className={`flex items-center w-full text-xs relative *:text-center lg:text-sm xl:*:mx-2 ${rowBackground(eachOrder.orderState)}  *:flex-shrink-0 overflow-y-visible h-[40px] w-full`}>
+                    return <div key={eachOrder.orderId} className={`flex items-center w-full text-xs relative *:text-center lg:text-sm xl:*:mx-2 ${rowBackground(eachOrder.orderState)}  *:flex-shrink-0 h-[40px] w-full`}>
                         <p className={`w-[100px] ml-0 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
                         <div className={`w-[150px] ${rowBackground(eachOrder.orderState)}`}>
                             <input className={`w-[150px] outline-none  border-none ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderId} />
