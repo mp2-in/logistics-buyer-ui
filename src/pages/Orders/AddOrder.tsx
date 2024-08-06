@@ -149,7 +149,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
     }
 
     return <Modal open={open} onClose={onClose} loading={activity.getPickupList || activity.getCustomerInfo}>
-        <div className={`bg-white rounded flex flex-col items-center py-3 px-5 md:h-[600px] w-[370px] h-[570px] relative md:w-[650px] xl:h-[800px]`} onMouseDown={e => e.stopPropagation()}>
+        <div className={`bg-white rounded flex flex-col items-center py-3 px-5  w-[370px] h-[500px] relative md:w-[650px] md:h-[600px] lg:h-[650px] xl:h[700px] 2xl:h-[800px]`} onMouseDown={e => e.stopPropagation()}>
             <div className={`flex justify-between w-full items-center mb-3`}>
                 <p className="text-xl font-semibold">Add Order</p>
                 <img src={closeIcon} onClick={onClose} className="w-6 cursor-pointer absolute right-1 top-1" />
@@ -206,7 +206,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                     </div>
                 </div>
             </div>
-            <div className="absolute flex justify-end mt-5 *:ml-3 mb-2 md:mb-0 md:bottom-5 bottom-2">
+            <div className="absolute flex justify-end mt-5 *:ml-3 pt-2 md:mb-0 md:bottom-5 bottom-2">
                 <Button title="Check Price" onClick={() => processOrder('checkPrice')} disabled={!state.billNumber || !state.storeId ||
                     (!/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation) && (!state.latitude || !state.longitude)) || !state.phoneNumber || !state.category || !state.orderAmount || activity.getPriceQuote}
                     loading={activity.getPriceQuote} variant="info" />

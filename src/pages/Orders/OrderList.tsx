@@ -30,7 +30,7 @@ const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: str
     </div>
 }
 
-export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail }: {
+export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail, token }: {
     onAddOrder: () => void,
     onRefresh: () => void,
     onCancelOrder: (orderId: string) => void,
@@ -41,6 +41,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     chooseOrder: (orderId: string) => void,
     onIssueReport: (orderId: string) => void
     isRetail: boolean
+    token?: string
 }) => {
 
     const [sortOrder, setSortOrder] = useState<'asc' | 'dsc'>('dsc')
@@ -55,7 +56,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             onRefresh()
         }, 90000);
         return () => clearInterval(interval);
-    }, [filterDate])
+    }, [filterDate, token])
 
     const mapLink = (order: Order): string | undefined => {
         if (order.pickupLatitude && order.pickupLongitude && order.dropLatitude && order.dropLongitude) {
@@ -95,7 +96,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             </div>
         </div>
         <div className={`flex items-center py-2 px-1 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-semibold  xl:*:mx-2 *:text-xs md:*:text-base`}>
-            <HeaderField cssClass='flex-[4] ml-0' label='Created At' sort={sortField === 'createdAt' ? sortOrder : undefined} onClick={() => updateSortField('createdAt')} />
+            <HeaderField cssClass='flex-[4] ml-0' label='Creation' sort={sortField === 'createdAt' ? sortOrder : undefined} onClick={() => updateSortField('createdAt')} />
             <HeaderField cssClass='flex-[4]' label='Order Id' hidden sort={sortField === 'orderId' ? sortOrder : undefined} onClick={() => updateSortField('orderId')} />
             <HeaderField cssClass='flex-[4]' label='LSP' hidden sort={sortField === 'providerId' ? sortOrder : undefined} onClick={() => updateSortField('providerId')} />
             <p className={`flex-[2] hidden xl:block`}>PCC</p>
@@ -105,7 +106,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             <p className={`flex-[4]`}>Rider</p>
             <p className={`flex-[3] hidden xl:block`}>Distance</p>
             <HeaderField cssClass='flex-[3]' label='Price' sort={sortField === 'totalDeliveryCharge' ? sortOrder : undefined} onClick={() => updateSortField('totalDeliveryCharge')} hidden/>
-            <HeaderField cssClass='flex-[4]' label='Delivered At' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} hidden/>
+            <HeaderField cssClass='flex-[4]' label='Delivery' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} hidden/>
             <p className={`flex-[4] hidden xl:block mr-0`}>Actions</p>
             <p className={`flex-[3] xl:hidden`}></p>
         </div>

@@ -138,6 +138,7 @@ export default () => {
                 dispatch({ type: 'update', payload: { reportedOrderIssue: orderId, raiseIssueDisplay: true } })
             }}
             isRetail={isRetail || false}
+            token={token}
         />
         <AddOrder
             open={state.addOrderDisplay}
