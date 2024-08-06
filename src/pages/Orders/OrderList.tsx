@@ -30,7 +30,7 @@ const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: str
     </div>
 }
 
-export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail }: {
+export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail, token }: {
     onAddOrder: () => void,
     onRefresh: () => void,
     onCancelOrder: (orderId: string) => void,
@@ -41,6 +41,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     chooseOrder: (orderId: string) => void,
     onIssueReport: (orderId: string) => void
     isRetail: boolean
+    token?: string
 }) => {
 
     const [sortOrder, setSortOrder] = useState<'asc' | 'dsc'>('dsc')
@@ -55,7 +56,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             onRefresh()
         }, 90000);
         return () => clearInterval(interval);
-    }, [filterDate])
+    }, [filterDate, token])
 
     const mapLink = (order: Order): string | undefined => {
         if (order.pickupLatitude && order.pickupLongitude && order.dropLatitude && order.dropLongitude) {
