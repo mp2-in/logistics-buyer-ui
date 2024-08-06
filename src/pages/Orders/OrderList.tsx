@@ -1,11 +1,15 @@
 import dayjs from 'dayjs'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import addIcon from "@assets/add.png"
 import cancelIcon from "@assets/cancel.png"
 import moreIcon from "@assets/info.png"
 import warningIcon from "@assets/warning.png"
 import refreshIcon from "@assets/refresh.png"
+import sortBlackDownIcon from "@assets/sort_black_down.png"
+import sortBlackUpIcon from "@assets/sort_black_up.png"
+import sortGreyDownIcon from "@assets/sort_grey_down.png"
+import sortGreyUpIcon from "@assets/sort_grey_up.png"
 import trackIcon from "@assets/track.png"
 import ActivityIndicator from '@components/ActivityIndicator';
 
@@ -15,6 +19,16 @@ import Input from '@components/Input';
 import Button from '@components/Button';
 import { cancellable } from '@lib/utils';
 
+
+const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: string, label: string, sort?: 'asc' | 'dsc', hidden?: boolean, onClick: () => void }) => {
+    return <div className={`${cssClass} ${hidden ? 'hidden xl:flex' : 'flex'} items-center cursor-pointer justify-center`} onClick={onClick}>
+        <p>{label}</p>
+        <div className={'flex-col items-center ml-2'}>
+            <img src={sort === 'asc' ? sortBlackUpIcon : sortGreyUpIcon} className='w-2 mb-1' />
+            <img src={sort === 'dsc' ? sortBlackDownIcon : sortGreyDownIcon} className='w-2' />
+        </div>
+    </div>
+}
 
 export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail }: {
     onAddOrder: () => void,
@@ -28,6 +42,9 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     onIssueReport: (orderId: string) => void
     isRetail: boolean
 }) => {
+
+    const [sortOrder, setSortOrder] = useState<'asc' | 'dsc'>('asc')
+    const [sortField, setSortField] = useState<keyof Order>('createdAt')
 
     const rowBackground = (orderState: string) => {
         return orderState === 'Order-delivered' ? 'bg-green-100' : orderState === 'Cancelled' ? 'bg-red-100' : ''
@@ -54,6 +71,15 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
         return 0
     }
 
+    const sortOrders = (a: Order, b: Order) => {
+        return (a[sortField] > b[sortField]) ? sortOrder === 'dsc' ? 1 : -1 : a[sortField] < b[sortField] ? sortOrder === 'dsc' ? -1 : 1 : 0
+    }
+
+    const updateSortField = (field: keyof Order) => {
+        setSortField(field)
+        setSortOrder(sortOrder === 'asc' ? 'dsc' : 'asc')
+    }
+
     return <div className={`absolute left-0 right-0 top-12 bottom-3 lg:px-5 lg:py-3 px-2 sm:top-16`}>
         <div className={`flex sm:items-end items-start justify-between p-2 sm:flex-row-reverse flex-col mb-2`}>
             <div className={`flex flex-row-reverse w-full mb-3 sm:mb-0`}>
@@ -65,29 +91,29 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             </div>
         </div>
         <div className={`flex items-center py-2 px-1 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-semibold  xl:*:mx-2 *:text-xs md:*:text-base`}>
-            <p className={`flex-[4] ml-0`}>Created At</p>
-            <p className={`flex-[4] hidden xl:block`}>Order Id</p>
-            <p className={`flex-[4] hidden xl:block`}>LSP</p>
+            <HeaderField cssClass='flex-[4] ml-0' label='Created At' sort={sortField === 'createdAt' ? sortOrder : undefined} onClick={() => updateSortField('createdAt')} />
+            <HeaderField cssClass='flex-[4]' label='Order Id' hidden sort={sortField === 'orderId' ? sortOrder : undefined} onClick={() => updateSortField('orderId')} />
+            <HeaderField cssClass='flex-[4]' label='LSP' hidden sort={sortField === 'providerId' ? sortOrder : undefined} onClick={() => updateSortField('providerId')} />
             <p className={`flex-[2] hidden xl:block`}>PCC</p>
             <p className={`flex-[2] hidden xl:block`}>DCC</p>
-            <p className={`flex-[5] xl:flex[2]`}>Status</p>
-            <p className={`flex-[4] hidden xl:block`}>Customer</p>
+            <HeaderField cssClass='flex-[5] xl:flex[3]' label='Status' sort={sortField === 'orderState' ? sortOrder : undefined} onClick={() => updateSortField('orderState')} />
+            <HeaderField cssClass='flex-[4]' label='Customer' sort={sortField === 'dropName' ? sortOrder : undefined} onClick={() => updateSortField('dropName')} hidden/>
             <p className={`flex-[4]`}>Rider</p>
             <p className={`flex-[3] hidden xl:block`}>Distance</p>
-            <p className={`flex-[3] hidden xl:block`}>Price</p>
-            <p className={`flex-[4] hidden xl:block`}>Delivered At</p>
+            <HeaderField cssClass='flex-[3]' label='Price' sort={sortField === 'totalDeliveryCharge' ? sortOrder : undefined} onClick={() => updateSortField('totalDeliveryCharge')} hidden/>
+            <HeaderField cssClass='flex-[4]' label='Delivered At' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} hidden/>
             <p className={`flex-[4] hidden xl:block mr-0`}>Actions</p>
             <p className={`flex-[3] xl:hidden`}></p>
         </div>
         <div className={`absolute flex items-center flex-col left-2 right-2 bottom-2 top-[140px] overflow-auto lg:left-5 lg:right-5 lg:top-[123px] md:top-[110px]`}>
-            {orders.map(eachOrder => {
+            {[...orders].sort(sortOrders).map(eachOrder => {
                 return <div key={eachOrder.orderId} className={`flex items-center w-full py-1 px-1 border-b border-l border-r text-xs relative *:text-center lg:text-sm xl:*:mx-2 ${rowBackground(eachOrder.orderState)}`}>
                     <p className={`flex-[4] ml-0`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
                     <input className={`flex-[4] hidden xl:block  border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderId} />
                     <input className={`flex-[4] hidden xl:block  border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.providerId} />
                     <p className={`flex-[2] hidden xl:block`} >{eachOrder.pcc}</p>
                     <p className={`flex-[2] hidden xl:block`} >{eachOrder.dcc}</p>
-                    <input className={`flex-[5] xl:flex[2] border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderState} />
+                    <input className={`flex-[5] xl:flex[3] border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderState} />
                     <div className={`flex-[4] xl:block  hidden`}>
                         <p className='text-xs'>{eachOrder.dropName}</p>
                         <p className='text-xs'>{eachOrder.dropPhone}</p>
