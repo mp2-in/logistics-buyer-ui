@@ -24,8 +24,8 @@ const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: str
     return <div className={`${cssClass} ${hidden ? 'hidden xl:flex' : 'flex'} items-center cursor-pointer justify-center`} onClick={onClick}>
         <p>{label}</p>
         <div className={'flex-col items-center ml-2'}>
-            <img src={sort === 'dsc' ? sortBlackUpIcon : sortGreyUpIcon} className='w-2 mb-1' />
-            <img src={sort === 'asc' ? sortBlackDownIcon : sortGreyDownIcon} className='w-2' />
+            <img src={sort === 'asc' ? sortBlackUpIcon : sortGreyUpIcon} className='w-2 mb-1' />
+            <img src={sort === 'dsc' ? sortBlackDownIcon : sortGreyDownIcon} className='w-2' />
         </div>
     </div>
 }
@@ -43,7 +43,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     isRetail: boolean
 }) => {
 
-    const [sortOrder, setSortOrder] = useState<'asc' | 'dsc'>('asc')
+    const [sortOrder, setSortOrder] = useState<'asc' | 'dsc'>('dsc')
     const [sortField, setSortField] = useState<keyof Order>('createdAt')
 
     const rowBackground = (orderState: string) => {
@@ -72,12 +72,16 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     }
 
     const sortOrders = (a: Order, b: Order) => {
-        return (a[sortField] > b[sortField]) ? sortOrder === 'dsc' ? 1 : -1 : a[sortField] < b[sortField] ? sortOrder === 'dsc' ? -1 : 1 : 0
+        return (a[sortField] > b[sortField]) ? sortOrder === 'asc' ? 1 : -1 : a[sortField] < b[sortField] ? sortOrder === 'asc' ? -1 : 1 : 0
     }
 
     const updateSortField = (field: keyof Order) => {
-        setSortField(field)
-        setSortOrder(sortOrder === 'asc' ? 'dsc' : 'asc')
+        if(field === sortField) {
+            setSortOrder(sortOrder === 'asc' ? 'dsc' : 'asc')
+        } else {
+            setSortField(field)
+            setSortOrder('dsc')
+        }
     }
 
     return <div className={`absolute left-0 right-0 top-12 bottom-3 lg:px-5 lg:py-3 px-2 sm:top-16`}>
