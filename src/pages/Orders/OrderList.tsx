@@ -73,7 +73,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     }
 
     const sortOrders = (a: Order, b: Order) => {
-        return (a[sortField] > b[sortField]) ? sortOrder === 'asc' ? 1 : -1 : a[sortField] < b[sortField] ? sortOrder === 'asc' ? -1 : 1 : 0
+        return (a[sortField] || '') > (b[sortField] || '') ? sortOrder === 'asc' ? 1 : -1 : (a[sortField] || '') < (b[sortField] || '') ? sortOrder === 'asc' ? -1 : 1 : 0
     }
 
     const updateSortField = (field: keyof Order) => {
@@ -104,7 +104,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             <HeaderField cssClass='flex-[5] xl:flex[3]' label='Status' sort={sortField === 'orderState' ? sortOrder : undefined} onClick={() => updateSortField('orderState')} />
             <HeaderField cssClass='flex-[4]' label='Customer' sort={sortField === 'dropName' ? sortOrder : undefined} onClick={() => updateSortField('dropName')} hidden/>
             <p className={`flex-[4]`}>Rider</p>
-            <p className={`flex-[3] hidden xl:block`}>Distance</p>
+            <HeaderField cssClass='flex-[3]' label='Distance' sort={sortField === 'distance' ? sortOrder : undefined} onClick={() => updateSortField('distance')} hidden/>
             <HeaderField cssClass='flex-[3]' label='Price' sort={sortField === 'totalDeliveryCharge' ? sortOrder : undefined} onClick={() => updateSortField('totalDeliveryCharge')} hidden/>
             <HeaderField cssClass='flex-[4]' label='Delivery' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} hidden/>
             <p className={`flex-[4] hidden xl:block mr-0`}>Actions</p>
