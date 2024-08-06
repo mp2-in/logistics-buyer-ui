@@ -24,8 +24,8 @@ const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: str
     return <div className={`${cssClass} ${hidden ? 'hidden xl:flex' : 'flex'} items-center cursor-pointer justify-center`} onClick={onClick}>
         <p>{label}</p>
         <div className={'flex-col items-center ml-2'}>
-            <img src={sort === 'asc' ? sortBlackUpIcon : sortGreyUpIcon} className='w-2 mb-1' />
-            <img src={sort === 'dsc' ? sortBlackDownIcon : sortGreyDownIcon} className='w-2' />
+            <img src={sort === 'dsc' ? sortBlackUpIcon : sortGreyUpIcon} className='w-2 mb-1' />
+            <img src={sort === 'asc' ? sortBlackDownIcon : sortGreyDownIcon} className='w-2' />
         </div>
     </div>
 }
