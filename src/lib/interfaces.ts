@@ -9,7 +9,7 @@ export interface Order {
     lastupdatedat: string
     promisedDeliveryTime: string
     totalDeliveryCharge: number
-    saasFee: number
+    platformFee: number
     rts: number
     rtsAt: string
     orderCategory: string

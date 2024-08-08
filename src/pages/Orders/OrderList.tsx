@@ -65,8 +65,8 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     }
 
     const getPrice = (order: Order) => {
-        if (order.totalDeliveryCharge || order.saasFee) {
-            return (order.totalDeliveryCharge || 0) + (order.saasFee || 0)
+        if (order.totalDeliveryCharge || order.platformFee) {
+            return (order.totalDeliveryCharge || 0) + (order.platformFee || 0)
         }
 
         return 0
