@@ -64,14 +64,6 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
         }
     }
 
-    const getPrice = (order: Order) => {
-        if (order.totalDeliveryCharge || order.saasFee) {
-            return (order.totalDeliveryCharge || 0) + (order.saasFee || 0)
-        }
-
-        return 0
-    }
-
     const sortOrders = (a: Order, b: Order) => {
         return (a[sortField] || '') > (b[sortField] || '') ? sortOrder === 'asc' ? 1 : -1 : (a[sortField] || '') < (b[sortField] || '') ? sortOrder === 'asc' ? -1 : 1 : 0
     }
@@ -131,7 +123,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                     </a> : <p className={`flex-[4]`}>{eachOrder.riderName}</p>}
                     {eachOrder.distance ? <a className={`flex-[3] hidden xl:block text-blue-600 underline font-semibold`} href={mapLink(eachOrder) || ''} target='_blank'>{`${eachOrder.distance.toFixed(2)} km`}</a> :
                         <p className={`flex-[3] hidden xl:block`}>0</p>}
-                    <p className={`flex-[3] hidden xl:block`}>{getPrice(eachOrder) ? `₹ ${getPrice(eachOrder).toFixed(2)}` : 0}</p>
+                    <p className={`flex-[3] hidden xl:block`}>{eachOrder.priceWithGST ? `₹ ${eachOrder.priceWithGST.toFixed(2)}` : 0}</p>
                     <p className={`flex-[4] hidden xl:block`}>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
                     <div className={`flex-[3] xl:flex-[4] flex justify-around md:justify-between items-center xl:justify-evenly mx-0`}>
                         {eachOrder.trackingUrl ? <a href={eachOrder.trackingUrl} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-5' onClick={e => e.stopPropagation()}>

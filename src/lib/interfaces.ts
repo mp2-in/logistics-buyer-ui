@@ -70,7 +70,8 @@ export interface Order {
     riderNumber: string
     note1: string,
     note2: string,
-    trackingUrl: string
+    trackingUrl: string,
+    priceWithGST: number
 }
 
 export interface PlaceDetails {
@@ -141,4 +142,5 @@ export interface PriceQuote {
     price_forward: number
     price_rto: number
     logistics_seller: string
+    price_with_gst: number
 }

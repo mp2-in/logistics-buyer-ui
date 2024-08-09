@@ -200,7 +200,8 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 </div>
                 <p className={'text-lg font-bold my-3 mx-1'}>Order  Details</p>
                 <div className={'md:flex md:items-center'}>
-                    <DefaultSelect label="Category" options={[{ label: 'Food', value: 'F&B' }, { label: 'Grocery', value: 'Grocery' }]} onChange={val => dispatch({ type: 'update', payload: ({ category: val }) })} value={state.category} />
+                    <DefaultSelect label="Category" options={[{ label: 'Food', value: 'F&B' }, { label: 'Grocery', value: 'Grocery' }, { label: 'Pharmacy', value: 'Pharma' }]}
+                        onChange={val => dispatch({ type: 'update', payload: ({ category: val }) })} value={state.category} />
                     <div className="md:ml-3 mt-4 md:mt-0">
                         <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { orderAmount: val } })} />
                     </div>

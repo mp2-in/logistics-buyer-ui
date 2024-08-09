@@ -24,16 +24,15 @@ export default ({ open, onClose, priceQuotes, createOrder, loading }: {
                 <p className="text-xl font-semibold ml-3">Price Quotes</p>
                 <img src={closeIcon} onClick={onClose} className="w-6 cursor-pointer absolute top-1 right-1" />
             </div>
-            <div className={'absolute top-[60px] md:left-[20px] md:right-[20px] bottom-[70px] md:text-base text-xs left-0 right-0'}>
+            <div className={'absolute top-[60px] md:left-[20px] md:right-[20px] bottom-[80px] md:text-base text-xs left-0 right-0'}>
                 <div className={`flex items-center py-[10px] px-[12px] bg-gray-200 md:rounded-tl-lg md:rounded-tr-lg *:text-left *:font-semibold *:px-[10px]`}>
                     <p className="flex-[1]"></p>
                     <p className="flex-[5]">LSP</p>
                     <p className="flex-[5]">ETA</p>
                     <p className="flex-[5]">SLA</p>
-                    <p className="flex-[5]">Forward</p>
-                    <p className="flex-[5]">RTO</p>
+                    <p className="flex-[5]">Price <span className="text-blue-500 text-xs md:text-sm">*</span></p>
                 </div>
-                <div className={'absolute flex top-[43px] bottom-0 left-0 right-0 flex-col overflow-auto items-center flex-grow'}>
+                <div className={'absolute flex top-[43px] bottom-0 left-0 right-0 flex-col overflow-auto flex-grow'}>
                     {priceQuotes.map(e => {
                         return <div key={e.lsp_id} className="flex items-center w-full py-[5px] md:px-[10px] border-b md:border-l md:border-r text-xs md:text-sm relative *:text-left *:px-[10px]">
                             <div className="flex-[1]">
@@ -42,11 +41,11 @@ export default ({ open, onClose, priceQuotes, createOrder, loading }: {
                             <p className="flex-[5]">{e.logistics_seller}</p>
                             <p className="flex-[5]">{e.pickup_eta} min</p>
                             <p className="flex-[5]">{e.sla} min</p>
-                            <p className="flex-[5]">{e.price_forward ? `₹ ${e.price_forward.toFixed(2)}` : 0}</p>
-                            <p className="flex-[5]">{e.price_rto ? `₹ ${e.price_rto.toFixed(2)}` : 0}</p>
+                            <p className="flex-[5]">{e.price_with_gst ? `₹ ${e.price_with_gst.toFixed(2)}` : 0}</p>
                         </div>
                     })}
                 </div>
+                <p className="absolute right-0 -bottom-6 text-blue-500 text-xs md:text-sm font-semibold"><span className="text-blue-500">*</span> includes 18% GST</p>
             </div>
             <div className={'absolute bottom-3'}>
                 <Button title="Place Order" variant='primary' disabled={!chosenLsp} onClick={() => createOrder(chosenLsp)} loading={loading} />
