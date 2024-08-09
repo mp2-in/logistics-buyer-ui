@@ -30,7 +30,7 @@ export default ({ open, onClose, priceQuotes, createOrder, loading }: {
                     <p className="flex-[5]">LSP</p>
                     <p className="flex-[5]">ETA</p>
                     <p className="flex-[5]">SLA</p>
-                    <p className="flex-[5]">Price <span className="text-blue-500 text-xs md:text-sm">*</span></p>
+                    <p className="flex-[5]">Price <span className="text-xs md:text-sm">*</span></p>
                 </div>
                 <div className={'absolute flex top-[43px] bottom-0 left-0 right-0 flex-col overflow-auto flex-grow'}>
                     {priceQuotes.map(e => {
@@ -45,7 +45,7 @@ export default ({ open, onClose, priceQuotes, createOrder, loading }: {
                         </div>
                     })}
                 </div>
-                <p className="absolute right-0 -bottom-6 text-blue-500 text-xs md:text-sm font-semibold"><span className="text-blue-500">*</span> includes 18% GST</p>
+                <p className="absolute right-1 -bottom-6 text-xs md:text-sm"><span className="font-bold">* includes</span> 18% GST</p>
             </div>
             <div className={'absolute bottom-3'}>
                 <Button title="Place Order" variant='primary' disabled={!chosenLsp} onClick={() => createOrder(chosenLsp)} loading={loading} />

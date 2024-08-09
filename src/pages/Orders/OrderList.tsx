@@ -106,11 +106,11 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             {[...orders].sort(sortOrders).map(eachOrder => {
                 return <div key={eachOrder.orderId} className={`flex items-center w-full py-1 px-1 border-b border-l border-r text-xs relative *:text-center lg:text-sm xl:*:mx-2 ${rowBackground(eachOrder.orderState)}`}>
                     <p className={`flex-[4] ml-0`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
-                    <input className={`flex-[4] hidden xl:block  border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderId} />
-                    <input className={`flex-[4] hidden xl:block  border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.providerId} />
+                    <input className={`flex-[4] hidden xl:block  border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderId || ''} />
+                    <input className={`flex-[4] hidden xl:block  border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.providerId || ''} />
                     <p className={`flex-[2] hidden xl:block`} >{eachOrder.pcc}</p>
                     <p className={`flex-[2] hidden xl:block`} >{eachOrder.dcc}</p>
-                    <input className={`flex-[5] xl:flex[3] border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderState} />
+                    <input className={`flex-[5] xl:flex[3] border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderState || ''} />
                     <div className={`flex-[4] xl:block  hidden`}>
                         <p className='text-xs'>{eachOrder.dropName}</p>
                         <p className='text-xs'>{eachOrder.dropPhone}</p>
