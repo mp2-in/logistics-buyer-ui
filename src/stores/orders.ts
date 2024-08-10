@@ -18,10 +18,11 @@ interface State extends Attributes {
     createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, category: string, lspId: string | undefined, quoteId: string | undefined, callback: (success: boolean, message?: string) => void) => void
     cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean, message?: string) => void) => void
     getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, category: string, callback: (success: boolean, quoteId: string, message?: string) => void) => void
-    addOutlet: (action: 'create'|'update', token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean, message?: string) => void) => void
+    addOutlet: (action: 'create' | 'update', token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean, message?: string) => void) => void
     saveInStorage: (keyName: string, value: string) => void
     getCustomerInfo: (token: string, phone: string, callback: (customerInfo: LocationAddress) => void) => void
     raiseIssue: (token: string, orderId: string, issue: string, description: string, callback: (sucess: boolean, message?: string) => void) => void
+    assignAgent: (token: string, orderId: string, pickupCode: string, callback: (success: boolean, message: string) => void) => void
 }
 
 const initialState: Attributes = { orders: [], activity: {}, pickupStores: [], orderPriceQuote: [] };
@@ -187,7 +188,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 }
             })
                 .then(res => {
-                    if(res.status === 1) {
+                    if (res.status === 1) {
                         set(produce((state: State) => {
                             state.activity.getPriceQuote = false
                             state.orderPriceQuote = res.quotes
@@ -208,7 +209,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 })
         }
     },
-    addOutlet: async (action,token, storeId, drop, placesId, callback) => {
+    addOutlet: async (action, token, storeId, drop, placesId, callback) => {
         set(produce((state: State) => {
             state.activity.addOutlet = true
         }))
@@ -233,7 +234,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 set(produce((state: State) => {
                     state.activity.addOutlet = false
                 }))
-                callback(false,'Error creating outlet')
+                callback(false, 'Error creating outlet')
             })
     },
     saveInStorage: async (keyName, value) => {
@@ -262,7 +263,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 }))
             })
     },
-    raiseIssue: async (token, orderId, issue, description,  callback) => {
+    raiseIssue: async (token, orderId, issue, description, callback) => {
         set(produce((state: State) => {
             state.activity.raiseIssue = true
         }))
@@ -290,6 +291,33 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 state.activity.raiseIssue = false
             }))
             callback(false, 'Error registering issue')
+        })
+    },
+    assignAgent: async (token, orderId, pickupCode, callback) => {
+        set(produce((state: State) => {
+            state.activity.assignAgent = true
+        }))
+        Api('/webui/order/update', {
+            method: 'post', headers: { token }, data: {
+                order: {
+                    id: orderId,
+                    pickup_code: pickupCode
+                }
+            }
+        }).then(res => {
+            set(produce((state: State) => {
+                state.activity.assignAgent = false
+            }))
+            if (res.status === 1) {
+                callback(true, res.message || '')
+            } else {
+                callback(false, res.message || 'Error proceeding with fulfillment of the order')
+            }
+        }).catch(() => {
+            set(produce((state: State) => {
+                state.activity.assignAgent = false
+            }))
+            callback(false, 'Error proceeding with fulfillment of the order')
         })
     }
 }))
