@@ -43,11 +43,11 @@ export default ({ selectedAccount, clearAuth, accountIds, phoneNumber, switchAcc
         <div className={'flex justify-between items-center border-b border-gray-300 md:py-3 md:px-3 py-1 px-1'}>
             <div className={'flex items-center'}>
                 <img src={mp2Icon} className="w-9 md:w-12 mx-2 cursor-pointer" />
-                <p className="font-semibold text-2xl hidden md:block">{title}</p>
+                <p className="font-medium text-2xl hidden md:block">{title}</p>
             </div>
             <div className={'flex items-center cursor-pointer relative'} ref={divRef} onClick={() => setMenuDisplay(!showMenu)}>
                 <img src={userIcon} className="w-10 mr-1" />
-                <p className="font-semibold text-lg hidden md:block">{selectedAccount}</p>
+                <p className="font-medium text-lg hidden md:block">{selectedAccount}</p>
                 {showMenu ? <div className="absolute top-5 border  bg-gray-100 cursor-pointer z-20 w-40 right-10 md:top-12 md:right-0 md:bg-gray-100">
                     <div className="flex items-center justify-evenly py-1 border-b border-gray-200 hover:bg-blue-200" onClick={() => {
                         setAccountInfoDisplay(true)

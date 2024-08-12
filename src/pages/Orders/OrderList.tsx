@@ -89,7 +89,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => changeDate(val)} />
             </div>
         </div>
-        <div className={`flex items-center py-2 px-1 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-semibold  xl:*:mx-2 *:text-xs md:*:text-base`}>
+        <div className={`flex items-center py-2 px-1 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-medium  xl:*:mx-2 *:text-xs md:*:text-base`}>
             <HeaderField cssClass='flex-[4] ml-0' label='Creation' sort={sortField === 'createdAt' ? sortOrder : undefined} onClick={() => updateSortField('createdAt')} />
             <HeaderField cssClass='flex-[4]' label='Order Id' hidden sort={sortField === 'orderId' ? sortOrder : undefined} onClick={() => updateSortField('orderId')} />
             <HeaderField cssClass='flex-[4]' label='LSP' hidden sort={sortField === 'providerId' ? sortOrder : undefined} onClick={() => updateSortField('providerId')} />
@@ -133,7 +133,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                                 onOrderFulfillment(eachOrder.orderId)
                             }
                             e.stopPropagation()
-                        }} title='Search Rider' className={`w-5 ${/unfulfilled/i.test(eachOrder.orderState) ? 'cursor-pointer' : 'opacity-30'}`} />
+                        }} title='Assign Rider' className={`w-5 ${/unfulfilled/i.test(eachOrder.orderState) ? 'cursor-pointer' : 'opacity-30'}`} />
                         {eachOrder.trackingUrl ? <a href={eachOrder.trackingUrl} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-5' onClick={e => e.stopPropagation()}>
                             <img src={trackIcon} title='Track Shipment' className='w-5' />
                         </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-5'>
