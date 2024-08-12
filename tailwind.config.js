@@ -6,7 +6,7 @@ export default {
   ],
   theme: {
     fontFamily: {
-      sans: ['"Nunito Sans"', 'sans-serif']
+      sans: ['"Ubuntu"', 'sans-serif']
     },
     extend: {
       boxShadow: {

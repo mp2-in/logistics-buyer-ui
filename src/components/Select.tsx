@@ -52,7 +52,7 @@ export default <T extends unknown>({ label, value, onChange, size, options, requ
                 <input readOnly value={getValueLabel()} className="w-full outline-none border-none text-sm"/>
                 <img src={downLogo} className='ml-5 w-6'/>
             </div>
-            {label ? <p className={`absolute group-focus-within:text-blue-500 bg-white left-[10px] -top-[8px] text-xs leading-3 font-medium px-1 text-blue-950 ${required ? "after:content-['*'] after:font-bold after:text-sm after:ml-1" : ''}`}>{label}</p> : null}
+            {label ? <p className={`absolute group-focus-within:text-blue-500 bg-white left-[10px] -top-[8px] text-xs leading-3 font-medium px-1 text-slate-500 ${required ? "after:content-['*'] after:font-bold after:text-sm after:ml-1" : ''}`}>{label}</p> : null}
             {!readOnly && optionDisplay && options?.length ?
                 <div ref={selectContainerRef} className={`absolute top-[33px] z-50 left-2 right-2 bg-white shadow-3xl rounded max-h-[250px] overflow-auto flex flex-col`}>
                     {options.length >= 6 && !hideSearch ?

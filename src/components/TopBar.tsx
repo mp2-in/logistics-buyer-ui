@@ -1,6 +1,6 @@
 import { createRef, useEffect, useState } from "react"
 
-import menuIcon from "@assets/menu.png"
+import mp2Icon from "@assets/mp2-logo.png"
 import userIcon from "@assets/user.png"
 import accountIcon from "@assets/account.png"
 import walletIcon from "@assets/wallet.png"
@@ -8,12 +8,13 @@ import AccountDetails from "./AccountDetails"
 import { useNavigate } from "react-router-dom"
 
 
-export default ({ selectedAccount, clearAuth, accountIds, phoneNumber, switchAccount }: {
+export default ({ selectedAccount, clearAuth, accountIds, phoneNumber, switchAccount, title }: {
     selectedAccount: string,
     clearAuth: () => void,
     accountIds: string[]
     phoneNumber?: string
     switchAccount: (accountId: string, callback: () => void) => void
+    title: string
 }) => {
     let divRef = createRef<HTMLInputElement>();
 
@@ -39,10 +40,10 @@ export default ({ selectedAccount, clearAuth, accountIds, phoneNumber, switchAcc
     const  navigate = useNavigate()
 
     return <div>
-        <div className={'flex justify-between items-center border-b border-gray-300 md:py-3 md:px-5 py-1 px-1'}>
+        <div className={'flex justify-between items-center border-b border-gray-300 md:py-3 md:px-3 py-1 px-1'}>
             <div className={'flex items-center'}>
-                <img src={menuIcon} className="w-9 mx-2 cursor-pointer" />
-                <p className="font-semibold text-2xl hidden md:block">Orders</p>
+                <img src={mp2Icon} className="w-9 md:w-12 mx-2 cursor-pointer" />
+                <p className="font-semibold text-2xl hidden md:block">{title}</p>
             </div>
             <div className={'flex items-center cursor-pointer relative'} ref={divRef} onClick={() => setMenuDisplay(!showMenu)}>
                 <img src={userIcon} className="w-10 mr-1" />

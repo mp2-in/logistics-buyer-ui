@@ -180,7 +180,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 <div>
                     <Input label="Bill Number" value={state.billNumber} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} />
                 </div>
-                <p className={'text-lg font-bold my-3 mx-1'}>Drop</p>
+                <p className={'text-lg font-semibold my-3 mx-1'}>Drop</p>
                 <div className={'md:flex md:items-center *:mb-3 md:*:mb-0'}>
                     <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => {
                         if (/^[0-9]*$/.test(val)) {
@@ -201,7 +201,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 <div className="mt-2">
                     <Input label="Code" size="small" type='number' value={state.dropCode} onChange={val => /^\d{0,4}$/.test(val) && dispatch({ type: 'update', payload: { dropCode: val } })} />
                 </div>
-                <p className={'text-lg font-bold my-3 mx-1'}>Order  Details</p>
+                <p className={'text-lg font-semibold my-3 mx-1'}>Order  Details</p>
                 <div className={'md:flex md:items-center'}>
                     <DefaultSelect label="Category" options={[{ label: 'Food', value: 'F&B' }, { label: 'Grocery', value: 'Grocery' }, { label: 'Pharmacy', value: 'Pharma' }]}
                         onChange={val => {

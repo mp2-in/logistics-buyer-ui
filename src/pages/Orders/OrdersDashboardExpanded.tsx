@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useReducer } from "react";
 
-import TopBar from "./TopBar";
+import TopBar from "@components/TopBar";
 import AddOrder from "./AddOrder";
 
 import { useAppConfigStore } from "stores/appConfig";
@@ -124,6 +124,7 @@ export default () => {
                     }
                 })
             }}
+            title="Orders"
         />
         <ExpandedOrderList
             onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })}

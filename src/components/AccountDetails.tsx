@@ -34,7 +34,7 @@ export default ({ open, onClose, onLogout, selectedAccount, accountIds, phoneNum
                                 switchAccount(eachAccount)
                             }
                         }}>
-                            <p className={`flex-[7] font-semibold ${selectedAccount === eachAccount?'cursor-default':'cursor-pointer'}`}>{eachAccount}</p>
+                            <p className={`flex-[7] font-normal ${selectedAccount === eachAccount?'cursor-default':'cursor-pointer'}`}>{eachAccount}</p>
                             <div className="flex-[2] flex justify-center pl-5">
                                 {selectedAccount === eachAccount ? <img src={checkIcon} className="w-6" /> : <span />}
                             </div>
