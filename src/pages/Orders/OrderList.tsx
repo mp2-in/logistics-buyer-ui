@@ -137,7 +137,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 <HeaderField cssClass='w-[85px] bg-blue-300 py-2' label='Delivery' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} />
                 <p className={`w-[130px] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
             </div>
-            <div className={`absolute flex items-center flex-col left-0 right-0 bottom-0 top-[35px] lg:right-5 md:top-[40px] w-full xl:overflow-auto`}>
+            <div className={`absolute flex items-center flex-col left-0 right-0 bottom-0 top-[35px] lg:right-5 md:top-[35px] w-full xl:overflow-auto border-t`}>
                 {[...orders].sort(sortOrders).map(eachOrder => {
                     return <div key={eachOrder.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center lg:text-sm xl:*:mx-[5px] 2xl:*:mx-[10px] ${rowBackground(eachOrder.orderState)}  *:flex-shrink-0 h-[40px] w-full`}>
                         <p className={`w-[90px] ml-0 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
