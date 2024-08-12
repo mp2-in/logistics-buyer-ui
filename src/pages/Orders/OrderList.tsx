@@ -6,6 +6,7 @@ import cancelIcon from "@assets/cancel.png"
 import moreIcon from "@assets/info.png"
 import warningIcon from "@assets/warning.png"
 import refreshIcon from "@assets/refresh.png"
+import driverSearch from "@assets/driver_search.png"
 import sortBlackDownIcon from "@assets/sort_black_down.png"
 import sortBlackUpIcon from "@assets/sort_black_up.png"
 import sortGreyDownIcon from "@assets/sort_grey_down.png"
@@ -30,7 +31,7 @@ const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: str
     </div>
 }
 
-export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail, token }: {
+export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail, token, onOrderFulfillment }: {
     onAddOrder: () => void,
     onRefresh: () => void,
     onCancelOrder: (orderId: string) => void,
@@ -42,6 +43,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     onIssueReport: (orderId: string) => void
     isRetail: boolean
     token?: string
+    onOrderFulfillment: (orderId: string) => void
 }) => {
 
     const [sortOrder, setSortOrder] = useState<'asc' | 'dsc'>('dsc')
@@ -64,20 +66,12 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
         }
     }
 
-    const getPrice = (order: Order) => {
-        if (order.totalDeliveryCharge || order.platformFee) {
-            return (order.totalDeliveryCharge || 0) + (order.platformFee || 0)
-        }
-
-        return 0
-    }
-
     const sortOrders = (a: Order, b: Order) => {
         return (a[sortField] || '') > (b[sortField] || '') ? sortOrder === 'asc' ? 1 : -1 : (a[sortField] || '') < (b[sortField] || '') ? sortOrder === 'asc' ? -1 : 1 : 0
     }
 
     const updateSortField = (field: keyof Order) => {
-        if(field === sortField) {
+        if (field === sortField) {
             setSortOrder(sortOrder === 'asc' ? 'dsc' : 'asc')
         } else {
             setSortField(field)
@@ -95,30 +89,30 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => changeDate(val)} />
             </div>
         </div>
-        <div className={`flex items-center py-2 px-1 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-semibold  xl:*:mx-2 *:text-xs md:*:text-base`}>
+        <div className={`flex items-center py-2 px-1 bg-blue-300 rounded-tl-lg rounded-tr-lg *:text-center *:font-medium  xl:*:mx-2 *:text-xs md:*:text-base`}>
             <HeaderField cssClass='flex-[4] ml-0' label='Creation' sort={sortField === 'createdAt' ? sortOrder : undefined} onClick={() => updateSortField('createdAt')} />
             <HeaderField cssClass='flex-[4]' label='Order Id' hidden sort={sortField === 'orderId' ? sortOrder : undefined} onClick={() => updateSortField('orderId')} />
             <HeaderField cssClass='flex-[4]' label='LSP' hidden sort={sortField === 'providerId' ? sortOrder : undefined} onClick={() => updateSortField('providerId')} />
             <p className={`flex-[2] hidden xl:block`}>PCC</p>
             <p className={`flex-[2] hidden xl:block`}>DCC</p>
             <HeaderField cssClass='flex-[5] xl:flex[3]' label='Status' sort={sortField === 'orderState' ? sortOrder : undefined} onClick={() => updateSortField('orderState')} />
-            <HeaderField cssClass='flex-[4]' label='Customer' sort={sortField === 'dropName' ? sortOrder : undefined} onClick={() => updateSortField('dropName')} hidden/>
+            <HeaderField cssClass='flex-[4]' label='Customer' sort={sortField === 'dropName' ? sortOrder : undefined} onClick={() => updateSortField('dropName')} hidden />
             <p className={`flex-[4]`}>Rider</p>
-            <HeaderField cssClass='flex-[3]' label='Distance' sort={sortField === 'distance' ? sortOrder : undefined} onClick={() => updateSortField('distance')} hidden/>
-            <HeaderField cssClass='flex-[3]' label='Price' sort={sortField === 'totalDeliveryCharge' ? sortOrder : undefined} onClick={() => updateSortField('totalDeliveryCharge')} hidden/>
-            <HeaderField cssClass='flex-[4]' label='Delivery' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} hidden/>
-            <p className={`flex-[4] hidden xl:block mr-0`}>Actions</p>
-            <p className={`flex-[3] xl:hidden`}></p>
+            <HeaderField cssClass='flex-[3]' label='Distance' sort={sortField === 'distance' ? sortOrder : undefined} onClick={() => updateSortField('distance')} hidden />
+            <HeaderField cssClass='flex-[3]' label='Price' sort={sortField === 'totalDeliveryCharge' ? sortOrder : undefined} onClick={() => updateSortField('totalDeliveryCharge')} hidden />
+            <HeaderField cssClass='flex-[4]' label='Delivery' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} hidden />
+            <p className={`flex-[5] hidden md:block mr-0`}>Actions</p>
+            <p className={`flex-[3] md:hidden`}></p>
         </div>
-        <div className={`absolute flex items-center flex-col left-2 right-2 bottom-2 top-[140px] overflow-auto lg:left-5 lg:right-5 lg:top-[123px] md:top-[110px]`}>
+        <div className={`absolute flex items-center flex-col left-2 right-2 bottom-2 top-[140px] overflow-auto lg:left-5 lg:right-5 lg:top-[123px] md:top-[110px] sm:top-[88px]`}>
             {[...orders].sort(sortOrders).map(eachOrder => {
                 return <div key={eachOrder.orderId} className={`flex items-center w-full py-1 px-1 border-b border-l border-r text-xs relative *:text-center lg:text-sm xl:*:mx-2 ${rowBackground(eachOrder.orderState)}`}>
                     <p className={`flex-[4] ml-0`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
-                    <input className={`flex-[4] hidden xl:block  border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderId} />
-                    <input className={`flex-[4] hidden xl:block  border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.providerId} />
+                    <input className={`flex-[4] hidden xl:block  border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderId || ''} />
+                    <input className={`flex-[4] hidden xl:block  border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.providerId || ''} />
                     <p className={`flex-[2] hidden xl:block`} >{eachOrder.pcc}</p>
                     <p className={`flex-[2] hidden xl:block`} >{eachOrder.dcc}</p>
-                    <input className={`flex-[5] xl:flex[3] border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderState} />
+                    <input className={`flex-[5] xl:flex[3] border-none outline-none w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderState || ''} />
                     <div className={`flex-[4] xl:block  hidden`}>
                         <p className='text-xs'>{eachOrder.dropName}</p>
                         <p className='text-xs'>{eachOrder.dropPhone}</p>
@@ -131,9 +125,15 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                     </a> : <p className={`flex-[4]`}>{eachOrder.riderName}</p>}
                     {eachOrder.distance ? <a className={`flex-[3] hidden xl:block text-blue-600 underline font-semibold`} href={mapLink(eachOrder) || ''} target='_blank'>{`${eachOrder.distance.toFixed(2)} km`}</a> :
                         <p className={`flex-[3] hidden xl:block`}>0</p>}
-                    <p className={`flex-[3] hidden xl:block`}>{getPrice(eachOrder) ? `₹ ${getPrice(eachOrder).toFixed(2)}` : 0}</p>
+                    <p className={`flex-[3] hidden xl:block`}>{eachOrder.priceWithGST ? `₹ ${eachOrder.priceWithGST.toFixed(2)}` : 0}</p>
                     <p className={`flex-[4] hidden xl:block`}>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
-                    <div className={`flex-[3] xl:flex-[4] flex justify-around md:justify-between items-center xl:justify-evenly mx-0`}>
+                    <div className={`flex-[3] xl:flex-[5] flex justify-between md:justify-between items-center xl:justify-evenly mx-0`}>
+                        <img src={driverSearch} onClick={e => {
+                            if(/unfulfilled/i.test(eachOrder.orderState)) {
+                                onOrderFulfillment(eachOrder.orderId)
+                            }
+                            e.stopPropagation()
+                        }} title='Assign Rider' className={`w-5 ${/unfulfilled/i.test(eachOrder.orderState) ? 'cursor-pointer' : 'opacity-30'}`} />
                         {eachOrder.trackingUrl ? <a href={eachOrder.trackingUrl} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-5' onClick={e => e.stopPropagation()}>
                             <img src={trackIcon} title='Track Shipment' className='w-5' />
                         </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-5'>
@@ -142,13 +142,13 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                         <img src={warningIcon} onClick={e => {
                             onIssueReport(eachOrder.orderId)
                             e.stopPropagation()
-                        }} title='Raise Issue' className={`w-5 cursor-pointer hidden xl:block`} />
+                        }} title='Raise Issue' className={`w-5 cursor-pointer hidden md:block`} />
                         <img src={cancelIcon} onClick={e => {
                             if (cancellable(eachOrder.orderState)) {
                                 onCancelOrder(eachOrder.orderId)
                             }
                             e.stopPropagation()
-                        }} title='Cancel Order' className={`w-5 hidden xl:block ${cancellable(eachOrder.orderState) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
+                        }} title='Cancel Order' className={`w-5 hidden md:block ${cancellable(eachOrder.orderState) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
                         <img src={moreIcon} onClick={e => {
                             chooseOrder(eachOrder.orderId)
                             e.stopPropagation()

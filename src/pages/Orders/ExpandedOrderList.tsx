@@ -6,6 +6,7 @@ import cancelIcon from "@assets/cancel.png"
 import moreIcon from "@assets/info.png"
 import warningIcon from "@assets/warning.png"
 import refreshIcon from "@assets/refresh.png"
+import driverSearch from "@assets/driver_search.png"
 import trackIcon from "@assets/track.png"
 import ActivityIndicator from '@components/ActivityIndicator';
 import sortBlackDownIcon from "@assets/sort_black_down.png"
@@ -31,7 +32,7 @@ const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: str
 }
 
 
-export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail }: {
+export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail, onOrderFulfillment }: {
     onAddOrder: () => void,
     onRefresh: () => void,
     onCancelOrder: (orderId: string) => void,
@@ -42,6 +43,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     chooseOrder: (orderId: string) => void,
     onIssueReport: (orderId: string) => void
     isRetail: boolean
+    onOrderFulfillment: (orderId: string) => void
 }) => {
 
     const [sortOrder, setSortOrder] = useState<'asc' | 'dsc'>('dsc')
@@ -64,20 +66,12 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
         }
     }
 
-    const getPrice = (order: Order) => {
-        if (order.totalDeliveryCharge || order.platformFee) {
-            return (order.totalDeliveryCharge || 0) + (order.platformFee || 0)
-        }
-
-        return 0
-    }
-
     const sortOrders = (a: Order, b: Order) => {
         return (a[sortField] || '') > (b[sortField] || '') ? sortOrder === 'asc' ? 1 : -1 : (a[sortField] || '') < (b[sortField] || '') ? sortOrder === 'asc' ? -1 : 1 : 0
     }
 
     const updateSortField = (field: keyof Order) => {
-        if(field === sortField) {
+        if (field === sortField) {
             setSortOrder(sortOrder === 'asc' ? 'dsc' : 'asc')
         } else {
             setSortField(field)
@@ -108,7 +102,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 <HeaderField cssClass='w-[100px] bg-blue-300 py-2' label='Distance' sort={sortField === 'distance' ? sortOrder : undefined} onClick={() => updateSortField('distance')} />
                 <HeaderField cssClass='w-[100px] bg-blue-300 py-2' label='Price' sort={sortField === 'totalDeliveryCharge' ? sortOrder : undefined} onClick={() => updateSortField('totalDeliveryCharge')} />
                 <HeaderField cssClass='w-[100px] bg-blue-300 py-2' label='Delivered At' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} />
-                <p className={`w-[160px] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
+                <p className={`w-[170px] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
             </div>
             <div className={`absolute flex items-center flex-col left-0 right-0 bottom-0 top-[30px] lg:left-5 lg:right-5 lg:top-[123px] md:top-[110px] w-full`}>
                 {[...orders].sort(sortOrders).map(eachOrder => {
@@ -139,9 +133,15 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                         </a> : <p className={`w-[150px] h-full py-1 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.riderName}</p>}
                         {eachOrder.distance ? <a className={`w-[100px] text-blue-600 underline font-semibold py-3 h-full ${rowBackground(eachOrder.orderState)}`} href={mapLink(eachOrder) || ''} target='_blank'>{`${eachOrder.distance.toFixed(2)} km`}</a> :
                             <p className={`w-[100px] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>0</p>}
-                        <p className={`w-[100px] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{getPrice(eachOrder) ? `₹ ${getPrice(eachOrder).toFixed(2)}` : 0}</p>
+                        <p className={`w-[100px] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.priceWithGST ? `₹ ${eachOrder.priceWithGST.toFixed(2)}` : 0}</p>
                         <p className={`w-[100px] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
-                        <div className={`w-[160px] flex justify-around md:justify-between items-center xl:justify-evenly mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
+                        <div className={`w-[170px] flex justify-around md:justify-between items-center xl:justify-evenly mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
+                            <img src={driverSearch} onClick={e => {
+                                if(/unfulfilled/i.test(eachOrder.orderState)) {
+                                    onOrderFulfillment(eachOrder.orderId)
+                                }
+                                e.stopPropagation()
+                            }} title='Search Rider' className={`w-5 ${/unfulfilled/i.test(eachOrder.orderState) ? 'cursor-pointer' : 'opacity-30'}`} />
                             {eachOrder.trackingUrl ? <a href={eachOrder.trackingUrl} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-5' onClick={e => e.stopPropagation()}>
                                 <img src={trackIcon} title='Track Shipment' className='w-5' />
                             </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-5'>

@@ -38,7 +38,7 @@ interface State {
 
 const initialValue: State = {
     placesResponse: [], billNumber: '', address: '', placeId: '', name: '', phoneNumber: '', orderAmount: '', pincode: '',
-    rto: false, storeId: '', category: 'F&B', addrLine1: '', addrLine2: '', city: '', state: '', geoLocation: '', dropCode: ''
+    rto: false, storeId: '', category: '', addrLine1: '', addrLine2: '', city: '', state: '', geoLocation: '', dropCode: ''
 }
 
 const reducer = (state: State, action: { type: 'reset', payload: Partial<State> } | { type: 'update', payload: Partial<State> }) => {
@@ -68,7 +68,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
 }) => {
     const [state, dispatch] = useReducer(reducer, initialValue)
 
-    const retrieveSavedOutlet = () => {
+    const retrieveSavedData = () => {
         let outlet = localStorage.getItem('storeDetails')
         let payload: Partial<State> = {}
         if (outlet) {
@@ -77,6 +77,9 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
             payload.city = storeDetails.city
             payload.state = storeDetails.state
         }
+
+        let category = localStorage.getItem('category')
+        payload.category = category || 'F&B'
         dispatch({ type: 'reset', payload })
     }
 
@@ -90,10 +93,10 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
     useEffect(() => {
         if (open && pickupStores.length === 0) {
             getPickupList(() => {
-                retrieveSavedOutlet()
+                retrieveSavedData()
             })
         } else {
-            retrieveSavedOutlet()
+            retrieveSavedData()
         }
     }, [open])
 
@@ -177,7 +180,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 <div>
                     <Input label="Bill Number" value={state.billNumber} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} />
                 </div>
-                <p className={'text-lg font-bold my-3 mx-1'}>Drop</p>
+                <p className={'text-lg font-semibold my-3 mx-1'}>Drop</p>
                 <div className={'md:flex md:items-center *:mb-3 md:*:mb-0'}>
                     <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => {
                         if (/^[0-9]*$/.test(val)) {
@@ -198,9 +201,13 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 <div className="mt-2">
                     <Input label="Code" size="small" type='number' value={state.dropCode} onChange={val => /^\d{0,4}$/.test(val) && dispatch({ type: 'update', payload: { dropCode: val } })} />
                 </div>
-                <p className={'text-lg font-bold my-3 mx-1'}>Order  Details</p>
+                <p className={'text-lg font-semibold my-3 mx-1'}>Order  Details</p>
                 <div className={'md:flex md:items-center'}>
-                    <DefaultSelect label="Category" options={[{ label: 'Food', value: 'F&B' }, { label: 'Grocery', value: 'Grocery' }]} onChange={val => dispatch({ type: 'update', payload: ({ category: val }) })} value={state.category} />
+                    <DefaultSelect label="Category" options={[{ label: 'Food', value: 'F&B' }, { label: 'Grocery', value: 'Grocery' }, { label: 'Pharmacy', value: 'Pharma' }]}
+                        onChange={val => {
+                            dispatch({ type: 'update', payload: ({ category: val }) })
+                            saveInStorage('category', val)
+                        }} value={state.category} />
                     <div className="md:ml-3 mt-4 md:mt-0">
                         <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { orderAmount: val } })} />
                     </div>

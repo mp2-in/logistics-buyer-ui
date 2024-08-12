@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useReducer } from "react";
 
 import OrderList from "./OrderList";
-import TopBar from "./TopBar";
+import TopBar from "@components/TopBar";
 import AddOrder from "./AddOrder";
 
 import { useAppConfigStore } from "stores/appConfig";
@@ -14,6 +14,7 @@ import dayjs from "dayjs";
 import OrderInfo from "./OrderInfo";
 import CancelOrder from "./CancelOrder";
 import RaiseIssue from "./RaiseIssue";
+import OrderFulfillment from "./OrderFulfillment";
 
 
 interface State {
@@ -23,6 +24,7 @@ interface State {
     orderInfoDisplay: boolean
     cancelOrderDisplay: boolean
     raiseIssueDisplay: boolean
+    fulfillOrderDisplay: boolean
     billNumber?: string
     storeId?: string
     drop?: LocationAddress
@@ -34,11 +36,12 @@ interface State {
     chosenStoreId?: string
     chosenOrder?: string
     reportedOrderIssue?: string
+    toBeFulfilledOrder?: string
 }
 
 const initialValue: State = {
     addOrderDisplay: false, priceQuotesDisplay: false, orderInfoDisplay: false, raiseIssueDisplay: false,
-    addOutletDisplay: false, cancelOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD')
+    addOutletDisplay: false, cancelOrderDisplay: false, fulfillOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD')
 }
 
 
@@ -67,7 +70,7 @@ export default () => {
         role: state.role
     }))
 
-    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder,
+    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, assignAgent,
         getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, orderPriceQuote, getCustomerInfo, raiseIssue } = useOrdersStore(state => ({
             orders: state.orders,
             getOrders: state.getOrders,
@@ -83,7 +86,8 @@ export default () => {
             saveInStorage: state.saveInStorage,
             googlePlaceDetailsApi: state.googlePlaceDetailsApi,
             getCustomerInfo: state.getCustomerInfo,
-            raiseIssue: state.raiseIssue
+            raiseIssue: state.raiseIssue,
+            assignAgent: state.assignAgent
         }))
 
     const navigate = useNavigate()
@@ -120,6 +124,7 @@ export default () => {
                     }
                 })
             }}
+            title="Orders"
         />
         <OrderList
             onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })}
@@ -136,6 +141,9 @@ export default () => {
             }}
             onIssueReport={orderId => {
                 dispatch({ type: 'update', payload: { reportedOrderIssue: orderId, raiseIssueDisplay: true } })
+            }}
+            onOrderFulfillment={orderId => {
+                dispatch({ type: 'update', payload: { toBeFulfilledOrder: orderId, fulfillOrderDisplay: true } })
             }}
             isRetail={isRetail || false}
             token={token}
@@ -253,5 +261,15 @@ export default () => {
                     setToast(message || 'Error registering issue', 'error')
                 }
             })} loading={activity.raiseIssue} />
+        <OrderFulfillment open={state.fulfillOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { fulfillOrderDisplay: false } })} assignRider={() => {
+            assignAgent(token || '', state.toBeFulfilledOrder || '', orders.find(e => e.orderId === state.toBeFulfilledOrder)?.pcc || '', (success, message) => {
+                if (success) {
+                    setToast(message || 'Agent successfully assigned', 'success')
+                    dispatch({ type: 'update', payload: { fulfillOrderDisplay: false } })
+                } else {
+                    setToast(message || 'Error proceeding with fulfillment of the order', 'error')
+                }
+            })
+        }} loading={activity.assignAgent} />
     </div>
 }       
