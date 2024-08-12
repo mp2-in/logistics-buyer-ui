@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useReducer } from "react";
 
-import OrderList from "./OrderList";
 import TopBar from "@components/TopBar";
 import AddOrder from "./AddOrder";
 
@@ -15,6 +14,7 @@ import OrderInfo from "./OrderInfo";
 import CancelOrder from "./CancelOrder";
 import RaiseIssue from "./RaiseIssue";
 import OrderFulfillment from "./OrderFulfillment";
+import ExpandedOrderList from "./OrderList";
 
 
 interface State {
@@ -126,7 +126,7 @@ export default () => {
             }}
             title="Orders"
         />
-        <OrderList
+        <ExpandedOrderList
             onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })}
             onRefresh={() => token ? getOrders(token, state.orderFilterDate) : null}
             onCancelOrder={orderId => {
