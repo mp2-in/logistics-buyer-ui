@@ -23,11 +23,11 @@ export default ({ open, onClose, onLogout, selectedAccount, accountIds, phoneNum
             <div>
                 <img src={closeIcon} onClick={onClose} className="w-6 absolute top-1 right-1 cursor-pointer" />
             </div>
-            <div className={'w-full flex flex-col items-center'}>
+            <div className={'w-full flex flex-col items-center h-[400px] relative'}>
                 <div>
                     <p className="font-bold"><span>Phone : </span>{phoneNumber}</p>
                 </div>
-                <div className="mt-6">
+                <div className="mt-6 overflow-auto absolute top-5 bottom-12">
                     {accountIds.map(eachAccount => {
                         return <div className="flex flex-row-reverse h-8 w-[250px] items-center justify-evenly hover:bg-slate-200" key={eachAccount} onClick={() => {
                             if(selectedAccount !== eachAccount) {
@@ -69,7 +69,7 @@ export default ({ open, onClose, onLogout, selectedAccount, accountIds, phoneNum
                         rzp1.open();
                     }} disabled={!rechargeAmount}/>
                 </div> */}
-                <div className="flex justify-end w-full mt-8">
+                <div className="absolute bottom-1 right-1">
                     <Button title="Logout" onClick={onLogout} variant="secondary" />
                 </div>
             </div>
