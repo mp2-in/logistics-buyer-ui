@@ -4,8 +4,11 @@ import mp2Icon from "@assets/mp2_logo.png"
 import userIcon from "@assets/user.png"
 import accountIcon from "@assets/account.png"
 import walletIcon from "@assets/wallet.png"
+import orderIcon from "@assets/orders.png"
+import logout from "@assets/logout.png"
 import AccountDetails from "./AccountDetails"
 import { useNavigate } from "react-router-dom"
+import LogoutConfirmation from "./LogoutConfirmation"
 
 
 export default ({ selectedAccount, clearAuth, accountIds, phoneNumber, switchAccount, title }: {
@@ -20,6 +23,7 @@ export default ({ selectedAccount, clearAuth, accountIds, phoneNumber, switchAcc
 
     const [showMenu, setMenuDisplay] = useState(false)
     const [showAccountInfo, setAccountInfoDisplay] = useState(false)
+    const [showLogoutConfirmation, setLogoutConfirmationDisplay] = useState(false)
 
     const handleClickOutside = (event: MouseEvent) => {
         if (
@@ -50,6 +54,20 @@ export default ({ selectedAccount, clearAuth, accountIds, phoneNumber, switchAcc
                 <p className="font-medium text-lg hidden md:block">{selectedAccount}</p>
                 {showMenu ? <div className="absolute top-5 border  bg-gray-100 cursor-pointer z-20 w-40 right-10 md:top-12 md:right-0 md:bg-gray-100">
                     <div className="flex items-center justify-evenly py-1 border-b border-gray-200 hover:bg-blue-200" onClick={() => {
+                        navigate('/u/orders')
+                        setMenuDisplay(false)
+                    }}>
+                        <img src={orderIcon} className="w-7" />
+                        <p className="hover:bg-blue-200 cursor-pointer font-semibold">Orders</p>
+                    </div>
+                    <div className="flex items-center justify-evenly py-1 border-b border-gray-200 hover:bg-blue-200" onClick={() => {
+                        navigate('/u/wallet')
+                        setMenuDisplay(false)
+                    }}>
+                        <img src={walletIcon} className="w-7" />
+                        <p className="hover:bg-blue-200 cursor-pointer font-semibold">Wallet</p>
+                    </div>
+                    <div className="flex items-center justify-evenly py-1 border-b border-gray-200 hover:bg-blue-200" onClick={() => {
                         setAccountInfoDisplay(true)
                         setMenuDisplay(false)
                     }}>
@@ -57,11 +75,10 @@ export default ({ selectedAccount, clearAuth, accountIds, phoneNumber, switchAcc
                         <p className="font-semibold">Profile</p>
                     </div>
                     <div className="flex items-center justify-evenly py-1 hover:bg-blue-200" onClick={() => {
-                        navigate('/u/wallet')
-                        setMenuDisplay(false)
+                        setLogoutConfirmationDisplay(true)
                     }}>
-                        <img src={walletIcon} className="w-7" />
-                        <p className="hover:bg-blue-200 cursor-pointer font-semibold">Wallet</p>
+                        <img src={logout} className="w-7" />
+                        <p className="hover:bg-blue-200 cursor-pointer font-semibold">Logout</p>
                     </div>
                 </div> : null}
             </div>
@@ -70,7 +87,7 @@ export default ({ selectedAccount, clearAuth, accountIds, phoneNumber, switchAcc
             open={showAccountInfo}
             onClose={() => setAccountInfoDisplay(false)}
             selectedAccount={selectedAccount || ''}
-            onLogout={clearAuth}
+            onLogout={() => setLogoutConfirmationDisplay(true)}
             accountIds={accountIds}
             phoneNumber={phoneNumber}
             switchAccount={(accountId) => switchAccount(accountId, () => {
@@ -79,5 +96,6 @@ export default ({ selectedAccount, clearAuth, accountIds, phoneNumber, switchAcc
                 }, 200)
             })}
         />
+        <LogoutConfirmation open={showLogoutConfirmation} onClose={() => setLogoutConfirmationDisplay(false)} logout={clearAuth} loading={false}/>
     </div>
 }
