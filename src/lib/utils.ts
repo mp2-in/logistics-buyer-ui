@@ -151,3 +151,16 @@ export const cancellationIdReasonMapping:{[k: string]: string} = {
 export const cancellable = (orderState: string) => {
   return ['Pending', 'Accepted', 'UnFulFilled', 'Searching-for-Agent', 'Agent-assigned', 'At-pickup', 'UnFulfilled'].includes(orderState)
 }
+
+export const trimTextValue = (value: string, limit?: number) => {
+  if(value) {
+    const splitValue = value.split(/\s+/)
+    let trimmedValue:string[] = []
+    for(let i= 0;i<splitValue.length;i++) {
+      if(trimmedValue.length === 0 || ((trimmedValue.join(' ').length + splitValue[i].length) < (limit || 15))) {
+        trimmedValue.push(splitValue[i])
+      }
+    }
+    return trimmedValue.join(' ')
+  }
+}
