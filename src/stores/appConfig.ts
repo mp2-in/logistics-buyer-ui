@@ -8,6 +8,7 @@ interface Attributes {
     role?: string
     isRetail?: boolean
     phone?: string
+    email?: string
     accountIds: string[]
     loggedIn: boolean
     toastMessage: string
@@ -24,6 +25,7 @@ interface State extends Attributes {
     sendOtp: (phoneNumber: string, callback: (success: boolean) => void) => void,
     verifyOtp: (phoneNumber: string, otp: string, callback: (success: boolean) => void) => void
     switchAccount: (token: string, accountId: string, callback: (success: boolean, token: string) => void) => void
+    verifyGmail: (emailId: string, tokenId: string, callback: (success: boolean) => void) => void
 }
 
 const initialState: Attributes = { loggedIn: false, activity: {}, toastMessage: '', toastVisibility: false, accountIds: [] };
@@ -34,15 +36,17 @@ export const useAppConfigStore = create<State>()((set) => ({
         const token = localStorage.getItem("token");
         const selectedAccount = localStorage.getItem("selectedAccount");
         const phone = localStorage.getItem("phone");
+        const email = localStorage.getItem("email");
         const accountIds = localStorage.getItem("accountIds");
         const role = localStorage.getItem("role");
         const isRetail = localStorage.getItem("isRetail");
 
-        if (token && selectedAccount && phone && accountIds && role) {
+        if (token && selectedAccount && accountIds && role && (email || phone)) {
             set(produce((state: State) => {
                 state.token = token
                 state.selectedAccount = selectedAccount
-                state.phone = phone
+                state.phone = phone || undefined
+                state.email = email || undefined
                 state.loggedIn = true
                 state.role = role
                 state.isRetail = (isRetail === 'true')
@@ -55,6 +59,7 @@ export const useAppConfigStore = create<State>()((set) => ({
         localStorage.removeItem('token')
         localStorage.removeItem('selectedAccount')
         localStorage.removeItem('phone')
+        localStorage.removeItem('email')
         localStorage.removeItem('accountIds')
 
         set(produce((state: State) => {
@@ -110,7 +115,8 @@ export const useAppConfigStore = create<State>()((set) => ({
                         state.selectedAccount = res.selected_account.id
                         state.role = res.selected_account.role
                         state.isRetail = res.selected_account.is_retail
-                        state.phone = phoneNumber
+                        state.phone = res.phone_number
+                        state.email = res.mail_id
                         state.accountIds = res.account_ids
                         state.loggedIn = true
                         state.activity.verifyOtp = false
@@ -118,7 +124,8 @@ export const useAppConfigStore = create<State>()((set) => ({
                     localStorage.setItem("token", res.access_token);
                     localStorage.setItem("accountIds", JSON.stringify(res.account_ids));
                     localStorage.setItem("selectedAccount", res.selected_account.id);
-                    localStorage.setItem("phone", phoneNumber);
+                    localStorage.setItem("phone", res.phone_number);
+                    localStorage.setItem("email", res.mail_id);
                     localStorage.setItem("role", res.selected_account.role);
                     localStorage.setItem("isRetail", res.selected_account.is_retail);
 
@@ -171,6 +178,49 @@ export const useAppConfigStore = create<State>()((set) => ({
                     state.activity.switchAccount = false
                 }))
                 callback(false, '')
+            })
+    },
+    verifyGmail: async (emailId, tokenId, callback) => {
+        set(produce((state: State) => {
+            state.activity.verifyGmail = true
+        }))
+
+        Api('/webui/verifyGmail', { method: 'post', headers: { 'Content-Type': 'application/json' }, data: { mail_id: emailId, token_id: tokenId } })
+            .then(res => {
+                if (res.status === 1) {
+                    set(produce((state: State) => {
+                        state.token = res.access_token
+                        state.selectedAccount = res.selected_account.id
+                        state.role = res.selected_account.role
+                        state.isRetail = res.selected_account.is_retail
+                        state.phone = res.phone_number
+                        state.email = res.mail_id
+                        state.accountIds = res.account_ids
+                        state.loggedIn = true
+                        state.activity.verifyGmail = false
+                    }))
+                    localStorage.setItem("token", res.access_token);
+                    localStorage.setItem("accountIds", JSON.stringify(res.account_ids));
+                    localStorage.setItem("selectedAccount", res.selected_account.id);
+                    localStorage.setItem("phone", res.phone_number);
+                    localStorage.setItem("email", res.mail_id);
+                    localStorage.setItem("role", res.selected_account.role);
+                    localStorage.setItem("isRetail", res.selected_account.is_retail);
+
+                    callback(true)
+                } else {
+                    callback(false)
+                    set(produce((state: State) => {
+                        state.loggedIn = false
+                        state.activity.verifyGmail = false
+                    }))
+                }
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.activity.verifyGmail = false
+                }))
+                callback(false)
             })
     },
 }))

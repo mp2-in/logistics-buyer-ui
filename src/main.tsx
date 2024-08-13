@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import { BrowserRouter } from "react-router-dom";
 import * as Sentry from "@sentry/react";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 // import './index.css'
 
 if (!window.location.href.includes("localhost")) {
@@ -21,8 +22,10 @@ if (!window.location.href.includes("localhost")) {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <GoogleOAuthProvider clientId="394159506264-2ua1tunsun8aptmv66evo4k14fk06qhe.apps.googleusercontent.com">
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   </React.StrictMode>,
 )

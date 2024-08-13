@@ -10,12 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.12.1",
     "@sentry/react": "^8.17.0",
     "@types/react-transition-group": "^4.4.10",
     "axios": "^1.7.2",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.11",
     "immer": "^10.1.1",
+    "jwt-decode": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.1",
