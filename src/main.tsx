@@ -26,7 +26,7 @@ if (!window.location.href.includes("localhost")) {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId="1001576031657-kv1b7ao0517tuovf95ubo5hfrth9m8sr.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId="394159506264-2ua1tunsun8aptmv66evo4k14fk06qhe.apps.googleusercontent.com">
       <BrowserRouter>
         <App />
       </BrowserRouter>

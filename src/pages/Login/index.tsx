@@ -107,7 +107,7 @@ export default () => {
                     });
                 }}
                 onError={() => {
-                    console.log('Login Failed');
+                    setErrMsg('Login Failed')
                 }}
             /></div> : <div className='flex flex-col items-center mt-8'>
                 <p className='text-gray-500 font-medium'>Didn't receive any code?</p>
