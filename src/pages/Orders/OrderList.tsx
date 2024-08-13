@@ -27,7 +27,7 @@ import { Order } from '@lib/interfaces'
 
 import Input from '@components/Input';
 import Button from '@components/Button';
-import { cancellable } from '@lib/utils';
+import { cancellable, trimTextValue } from '@lib/utils';
 
 
 const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: string, label: string, sort?: 'asc' | 'dsc', hidden?: boolean, onClick: () => void }) => {
@@ -109,7 +109,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 return mp2
             default:
                 return ''
-        }       
+        }
     }
 
     return <div className={`absolute left-0 right-0 top-12 bottom-3 lg:px-5 px-2 sm:top-12 md:top-[70px]`}>
@@ -122,56 +122,55 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => changeDate(val)} />
             </div>
         </div>
-        <div className='absolute top-[100px] left-2 right-2 bottom-1 overflow-auto sm:top-[50px] md:top-[70px]'>
-            <div className={`flex items-center bg-blue-300 *:text-center *:font-medium  xl:*:mx-[5px] 2xl:*:mx-[10px] *:text-sm xl:*:text-sm *:flex-shrink-0 w-full`}>
-                <HeaderField cssClass='w-[90px] ml-0 bg-blue-300 py-2 pl-1' label='Creation' sort={sortField === 'createdAt' ? sortOrder : undefined} onClick={() => updateSortField('createdAt')} />
-                <HeaderField cssClass='w-[165px] bg-blue-300 py-2' label='Order Id' sort={sortField === 'orderId' ? sortOrder : undefined} onClick={() => updateSortField('orderId')} />
-                <HeaderField cssClass='w-[31px] ml-0 bg-blue-300 py-2 pl-1' label='LSP' sort={sortField === 'providerId' ? sortOrder : undefined} onClick={() => updateSortField('providerId')} />
-                <p className={`w-[60px] bg-blue-300 py-2`}>PCC</p>
-                <p className={`w-[60px] bg-blue-300 py-2`}>DCC</p>
-                <HeaderField cssClass='w-[140px] bg-blue-300 py-2' label='Status' sort={sortField === 'orderState' ? sortOrder : undefined} onClick={() => updateSortField('orderState')} />
-                <HeaderField cssClass='w-[115px] bg-blue-300 py-2' label='Customer' sort={sortField === 'dropName' ? sortOrder : undefined} onClick={() => updateSortField('dropName')} />
-                <p className={`w-[115px] bg-blue-300 py-2`}>Rider</p>
-                <HeaderField cssClass='w-[80px] bg-blue-300 py-2' label='Distance' sort={sortField === 'distance' ? sortOrder : undefined} onClick={() => updateSortField('distance')} />
-                <HeaderField cssClass='w-[70px] bg-blue-300 py-2' label='Price' sort={sortField === 'totalDeliveryCharge' ? sortOrder : undefined} onClick={() => updateSortField('totalDeliveryCharge')} />
-                <HeaderField cssClass='w-[85px] bg-blue-300 py-2' label='Delivery' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} />
-                <p className={`w-[130px] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
+        <div className='absolute top-[100px] left-2 right-2 bottom-1 overflow-auto sm:top-[50px] md:top-[70px] border'>
+            <div className={`flex items-center bg-blue-300 *:text-center *:font-medium  *:text-sm xl:*:text-sm w-[1265px] xl:w-full`}>
+                <HeaderField cssClass='flex-[3] ml-0 bg-blue-300 py-2 pl-1' label='Creation' sort={sortField === 'createdAt' ? sortOrder : undefined} onClick={() => updateSortField('createdAt')} />
+                <HeaderField cssClass='flex-[6] bg-blue-300 py-2' label='Order Id' sort={sortField === 'orderId' ? sortOrder : undefined} onClick={() => updateSortField('orderId')} />
+                <HeaderField cssClass='flex-[2] bg-blue-300 py-2' label='LSP' sort={sortField === 'providerId' ? sortOrder : undefined} onClick={() => updateSortField('providerId')} />
+                <p className={`flex-[2] bg-blue-300 py-2`}>PCC</p>
+                <p className={`flex-[2] bg-blue-300 py-2`}>DCC</p>
+                <HeaderField cssClass='flex-[5] bg-blue-300 py-2' label='Status' sort={sortField === 'orderState' ? sortOrder : undefined} onClick={() => updateSortField('orderState')} />
+                <HeaderField cssClass='flex-[4] bg-blue-300 py-2' label='Customer' sort={sortField === 'dropName' ? sortOrder : undefined} onClick={() => updateSortField('dropName')} />
+                <p className={`flex-[4] bg-blue-300 py-2`}>Rider</p>
+                <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Distance' sort={sortField === 'distance' ? sortOrder : undefined} onClick={() => updateSortField('distance')} />
+                <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Price' sort={sortField === 'totalDeliveryCharge' ? sortOrder : undefined} onClick={() => updateSortField('totalDeliveryCharge')} />
+                <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Delivery' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} />
+                <p className={`flex-[4] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
             </div>
-            <div className={`absolute flex items-center flex-col left-0 right-0 bottom-0 top-[35px] lg:right-5 md:top-[35px] w-full xl:overflow-auto border-t`}>
+            <div className={`absolute  top-[35px] bottom-0 lg:right-5 left-0 w-[1265px] xl:w-full xl:overflow-auto`}>
                 {[...orders].sort(sortOrders).map(eachOrder => {
-                    return <div key={eachOrder.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center lg:text-sm xl:*:mx-[5px] 2xl:*:mx-[10px] ${rowBackground(eachOrder.orderState)}  *:flex-shrink-0 h-[40px] w-full`}>
-                        <p className={`w-[90px] ml-0 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
-                        <div className={`w-[165px] ${rowBackground(eachOrder.orderState)}`}>
-                            <input className={`w-full outline-none  border-none ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderId} />
+                    return <div key={eachOrder.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center lg:text-sm ${rowBackground(eachOrder.orderState)} h-[40px]`}>
+                        <p className={`flex-[3] ml-0 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
+                        <div className={`flex-[6] ${rowBackground(eachOrder.orderState)}`}>
+                            <input className={`w-full outline-none  border-none ${rowBackground(eachOrder.orderState)} text-center`} readOnly value={eachOrder.orderId} />
                         </div>
-                        {/* <div className={`w-[90px] h-full flex justify-center items-center ${rowBackground(eachOrder.orderState)}`}>
-                            <input className={`w-[90px]  outline-none ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.providerId} />
-                        </div> */}
-                        <img src={getLogo(eachOrder.providerId)} className='w-[31px]' alt={eachOrder.providerId} title={eachOrder.providerId} />
-                        <div className={`flex justify-center items-center h-full w-[60px] ${rowBackground(eachOrder.orderState)} `}>
+                        <div className='flex-[2] flex justify-center items-center'>
+                            <img src={getLogo(eachOrder.providerId)} className='w-7' alt={eachOrder.providerId} title={eachOrder.providerId} />
+                        </div>
+                        <div className={`flex justify-center items-center h-full flex-[2] ${rowBackground(eachOrder.orderState)} `}>
                             <p>{eachOrder.pcc || ' '}</p>
                         </div>
-                        <div className={`flex justify-center items-center h-[40px] w-[60px] ${rowBackground(eachOrder.orderState)} `}>
+                        <div className={`flex justify-center items-center h-full flex-[2] ${rowBackground(eachOrder.orderState)} `}>
                             <p>{eachOrder.dcc || ' '}</p>
                         </div>
-                        <div className={`flex justify-center items-center h-full w-[140px] ${rowBackground(eachOrder.orderState)} `}>
+                        <div className={`flex justify-center items-center h-full flex-[5] ${rowBackground(eachOrder.orderState)} `}>
                             <input className={`border-none outline-none text-center w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderState} />
                         </div>
-                        <div className={`flex-col justify-center items-center h-full w-[115px] pt-1 ${rowBackground(eachOrder.orderState)} `}>
-                            <p className='text-xs'>{eachOrder.dropName}</p>
+                        <div className={`flex-col justify-center items-center h-full flex-[4] pt-1 ${rowBackground(eachOrder.orderState)} `}>
+                            <p className='text-xs'>{trimTextValue(eachOrder.dropName, 12)}</p>
                             <p className='text-xs'>{eachOrder.dropPhone}</p>
                         </div>
-                        {eachOrder.riderNumber ? <a className={`w-[115px] underline cursor-pointer font-semibold text-blue-400`} href={`tel:${eachOrder.riderNumber}`}>
+                        {eachOrder.riderNumber ? <a className={`flex-[4] underline cursor-pointer font-semibold text-blue-400`} href={`tel:${eachOrder.riderNumber}`}>
                             <div className={`flex-col justify-center items-center h-full py-1 ${rowBackground(eachOrder.orderState)}`}>
-                                <p className='text-xs'>{eachOrder.riderName}</p>
+                                <p className='text-xs'>{trimTextValue(eachOrder.riderName, 12)}</p>
                                 <p className='text-xs'>{eachOrder.riderNumber}</p>
                             </div>
-                        </a> : <p className={`w-[115px] h-full py-1 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.riderName}</p>}
-                        {eachOrder.distance ? <a className={`w-[80px] text-blue-600 underline font-semibold py-3 h-full ${rowBackground(eachOrder.orderState)}`} href={mapLink(eachOrder) || ''} target='_blank'>{`${eachOrder.distance.toFixed(2)} km`}</a> :
-                            <p className={`w-[80px] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>0</p>}
-                        <p className={`w-[70px] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.priceWithGST ? `₹ ${eachOrder.priceWithGST.toFixed(2)}` : 0}</p>
-                        <p className={`w-[85px] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
-                        <div className={`w-[130px] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
+                        </a> : <p className={`flex-[4] h-full py-1 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.riderName}</p>}
+                        {eachOrder.distance ? <a className={`flex-[3] text-blue-600 underline font-semibold py-3 h-full ${rowBackground(eachOrder.orderState)}`} href={mapLink(eachOrder) || ''} target='_blank'>{`${eachOrder.distance.toFixed(2)} km`}</a> :
+                            <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>0</p>}
+                        <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.priceWithGST ? `₹ ${eachOrder.priceWithGST.toFixed(2)}` : 0}</p>
+                        <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
+                        <div className={`flex-[4] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
                             <img src={driverSearch} onClick={e => {
                                 if (/unfulfilled/i.test(eachOrder.orderState)) {
                                     onOrderFulfillment(eachOrder.orderId)
