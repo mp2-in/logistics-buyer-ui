@@ -166,8 +166,9 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                                 <p className='text-xs'>{eachOrder.riderNumber}</p>
                             </div>
                         </a> : <p className={`flex-[4] h-full py-1 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.riderName}</p>}
-                        {eachOrder.distance ? <a className={`flex-[3] text-blue-600 underline font-semibold py-3 h-full ${rowBackground(eachOrder.orderState)}`} href={mapLink(eachOrder) || ''} target='_blank'>{`${eachOrder.distance.toFixed(2)} km`}</a> :
-                            <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>0</p>}
+                        {eachOrder.distance && mapLink(eachOrder) ? <a className={`flex-[3] text-blue-600 underline font-semibold py-3 h-full ${rowBackground(eachOrder.orderState)}`}
+                            href={mapLink(eachOrder)} target='_blank'>{`${eachOrder.distance.toFixed(2)} km`}</a> :
+                            <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.distance ? `${eachOrder.distance.toFixed(2)} km` : 0}</p>}
                         <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.priceWithGST ? `₹ ${eachOrder.priceWithGST.toFixed(2)}` : 0}</p>
                         <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
                         <div className={`flex-[4] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>

@@ -8,15 +8,11 @@ import Button from '@components/Button'
 
 export default () => {
 
-    const { token, selectedAccount, clearAuth, setToast, accountIds, phone, switchAccount, email } = useAppConfigStore(state => ({
+    const { token, selectedAccount, phone, email } = useAppConfigStore(state => ({
         token: state.token,
         selectedAccount: state.selectedAccount,
-        clearAuth: state.clearAuth,
-        setToast: state.setToast,
-        accountIds: state.accountIds,
         phone: state.phone,
         email: state.email,
-        switchAccount: state.switchAccount,
         isRetail: state.isRetail,
         role: state.role
     }))
@@ -34,23 +30,7 @@ export default () => {
     console.log(walletLink, activity.getWalletDashboardLink)
 
     return <div>
-        <TopBar
-            selectedAccount={selectedAccount || ''}
-            clearAuth={clearAuth}
-            accountIds={accountIds}
-            phoneNumber={phone}
-            switchAccount={(accountId, callback) => {
-                switchAccount(token || '', accountId, (success) => {
-                    if (success) {
-                        setToast('Account switched successfully', 'success')
-                        callback()
-                    } else {
-                        setToast('Error switching account', 'error')
-                    }
-                })
-            }}
-            title='Wallet'
-        />
+        <TopBar title='Wallet' />
         <div className={`absolute left-0 right-0 md:top-[80px] top-[50px] bottom-3 md:px-5 md:py-3 px-2`}>
             <div className={`flex flex-row-reverse sm:items-end items-start justify-between p-2 sm:flex-row-reverse  mb-2`}>
                 <a href={`https://pages.razorpay.com/mp2-wallet-recharge?phone=${phone || ''}&email=${email || ''}&mp2_accountid=${selectedAccount}`} target='_blank'>
