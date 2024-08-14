@@ -26,6 +26,7 @@ interface State extends Attributes {
     verifyOtp: (phoneNumber: string, otp: string, callback: (success: boolean) => void) => void
     switchAccount: (token: string, accountId: string, callback: (success: boolean, token: string) => void) => void
     verifyGmail: (emailId: string, tokenId: string, callback: (success: boolean) => void) => void
+    createAccount: (token: string, accountName: string, gstId: string, autoSelectMode: string, contacts: string, plan: string, rtoRequired: boolean, callback: (sucess: boolean, message: string) => void) => void
 }
 
 const initialState: Attributes = { loggedIn: false, activity: {}, toastMessage: '', toastVisibility: false, accountIds: [] };
@@ -221,6 +222,36 @@ export const useAppConfigStore = create<State>()((set) => ({
                     state.activity.verifyGmail = false
                 }))
                 callback(false)
+            })
+    },
+    createAccount: async (token, accountName, gstId, autoSelectMode, contacts, plan, rtoRequired, callback) => {
+        set(produce((state: State) => {
+            state.activity.createAccount = true
+        }))
+
+        Api('/webui/create_account', {
+            method: 'post', headers: { 'Content-Type': 'application/json', token },
+            data: { account_name: accountName, gst_number: gstId, auto_select_mode: autoSelectMode, phone_numbers: contacts.split(/\s*,\s*/), plan, rto_required: rtoRequired }
+        })
+            .then(res => {
+                if (res.status === 1) {
+                    set(produce((state: State) => {
+                        // state.accountIds = [...state.accountIds, res.account_info.accountId]
+                        state.activity.createAccount = false
+                    }))
+                    callback(true, res.message || 'Account created succesfully')
+                } else {
+                    callback(false, res.message || 'Error: Account creation failed')
+                    set(produce((state: State) => {
+                        state.activity.createAccount = false
+                    }))
+                }
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.activity.createAccount = false
+                }))
+                callback(false, 'Error: Account creation failed')
             })
     },
 }))

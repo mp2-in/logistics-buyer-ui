@@ -58,14 +58,9 @@ export default () => {
 
     const [state, dispatch] = useReducer(reducer, initialValue)
 
-    const { token, selectedAccount, clearAuth, setToast, accountIds, phone, switchAccount, isRetail, role } = useAppConfigStore(state => ({
+    const { token, setToast, isRetail, role } = useAppConfigStore(state => ({
         token: state.token,
-        selectedAccount: state.selectedAccount,
-        clearAuth: state.clearAuth,
         setToast: state.setToast,
-        accountIds: state.accountIds,
-        phone: state.phone,
-        switchAccount: state.switchAccount,
         isRetail: state.isRetail,
         role: state.role
     }))
@@ -107,25 +102,7 @@ export default () => {
     }, [state.orderFilterDate])
 
     return <div>
-        <TopBar
-            selectedAccount={selectedAccount || ''}
-            clearAuth={clearAuth}
-            accountIds={accountIds}
-            phoneNumber={phone}
-            switchAccount={(accountId, callback) => {
-                switchAccount(token || '', accountId, (success, newToken) => {
-                    if (success) {
-                        setToast('Account switched successfully', 'success')
-                        getOrders(newToken, state.orderFilterDate)
-                        getPickupList(newToken, () => null)
-                        callback()
-                    } else {
-                        setToast('Error switching account', 'error')
-                    }
-                })
-            }}
-            title="Orders"
-        />
+        <TopBar title="Orders" />
         <ExpandedOrderList
             onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })}
             onRefresh={() => token ? getOrders(token, state.orderFilterDate) : null}
