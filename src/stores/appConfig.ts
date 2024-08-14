@@ -236,7 +236,7 @@ export const useAppConfigStore = create<State>()((set) => ({
             .then(res => {
                 if (res.status === 1) {
                     set(produce((state: State) => {
-                        // state.accountIds = [...state.accountIds, res.account_info.accountId]
+                        state.accountIds = res.account_ids
                         state.activity.createAccount = false
                     }))
                     callback(true, res.message || 'Account created succesfully')
