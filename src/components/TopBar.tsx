@@ -17,12 +17,12 @@ import AddAccount from "./AddAccount"
 const MenuItem = ({ title, icon, onClick }: { title: string, icon: React.ReactNode, onClick: () => void }) => {
     return <div className="flex items-center justify-evenly py-1 border-b border-gray-200 hover:bg-blue-200 last:border-none" onClick={onClick}>
         {icon}
-        <p className="hover:bg-blue-200 cursor-pointer font-semibold w-20">{title}</p>
+        <p className="hover:bg-blue-200 cursor-pointer font-medium w-20">{title}</p>
     </div>
 }
 
 
-export default ({ title }: { title: string }) => {
+export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (token: string) => void }) => {
     const { token, selectedAccount, clearAuth, accountIds, phone, switchAccount, createAccount, setToast, email } = useAppConfigStore(state => ({
         selectedAccount: state.selectedAccount,
         clearAuth: state.clearAuth,
@@ -100,10 +100,13 @@ export default ({ title }: { title: string }) => {
             onLogout={() => setLogoutConfirmationDisplay(true)}
             accountIds={accountIds}
             phoneNumber={phone}
-            switchAccount={(accountId) => switchAccount(token || '', accountId, () => {
-                setTimeout(() => {
-                    setAccountInfoDisplay(false)
-                }, 200)
+            switchAccount={(accountId) => switchAccount(token || '', accountId, (success, newToken) => {
+                if(success) {
+                    onAccountSwitch && onAccountSwitch(newToken)
+                    setTimeout(() => {
+                        setAccountInfoDisplay(false)
+                    }, 200)
+                }
             })}
         />
         <LogoutConfirmation open={showLogoutConfirmation} onClose={() => setLogoutConfirmationDisplay(false)} logout={clearAuth} loading={false} />

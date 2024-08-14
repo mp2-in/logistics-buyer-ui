@@ -155,16 +155,18 @@ export const useAppConfigStore = create<State>()((set) => ({
         Api('/webui/switchaccount', { method: 'post', headers: { 'Content-Type': 'application/json', token }, data: { switch_account_id: accountId } })
             .then(res => {
                 if (res.status === 1) {
-                    localStorage.setItem("selectedAccount", res.selected_account.id);
-                    localStorage.setItem("token", res.access_token);
-                    localStorage.setItem("role", res.selected_account.role);
-                    localStorage.setItem("isRetail", res.selected_account.is_retail);
+                    localStorage.setItem("selectedAccount", res.selected_account.id)
+                    localStorage.setItem("token", res.access_token)
+                    localStorage.setItem("role", res.selected_account.role)
+                    localStorage.setItem("isRetail", res.selected_account.is_retail)
+                    localStorage.setItem("accountIds", JSON.stringify(res.account_ids))
                     set(produce((state: State) => {
                         state.selectedAccount = res.selected_account.id
                         state.token = res.access_token
                         state.role = res.selected_account.role
                         state.isRetail = res.selected_account.is_retail
                         state.activity.switchAccount = false
+                        state.accountIds = res.account_ids
                     }))
                     callback(true, res.access_token)
                 } else {

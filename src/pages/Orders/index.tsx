@@ -102,7 +102,7 @@ export default () => {
     }, [state.orderFilterDate])
 
     return <div>
-        <TopBar title="Orders" />
+        <TopBar title="Orders" onAccountSwitch={(newToken) => getOrders(newToken, state.orderFilterDate)}/>
         <ExpandedOrderList
             onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })}
             onRefresh={() => token ? getOrders(token, state.orderFilterDate) : null}

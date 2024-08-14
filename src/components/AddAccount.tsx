@@ -4,7 +4,7 @@ import Input from "./Input"
 import Switch from "./Switch"
 import Select from "./DefaultSelect"
 import Button from "./Button"
-import { useReducer } from "react"
+import { useEffect, useReducer } from "react"
 
 interface State {
     accountName: string
@@ -16,7 +16,7 @@ interface State {
 }
 
 const initialValue: State = {
-    accountName: '', gstId: '', autoSelectMode: 'preferred_lsp', contactNumbers: '', plan: 'flat-5-manual-dashboard', rtoRequired: false
+    accountName: '', gstId: '', autoSelectMode: 'fastest_agent', contactNumbers: '', plan: 'flat-5-manual-dashboard', rtoRequired: false
 }
 
 const reducer = (state: State, action: { type: 'reset' | 'update', payload: Partial<State> }) => {
@@ -28,8 +28,13 @@ const reducer = (state: State, action: { type: 'reset' | 'update', payload: Part
     }
 }
 
+
 export default ({ open, onClose, createAccount }: { open: boolean, onClose: () => void, createAccount: (accountName: string, gstId: string, autoSelectMode: string, contacts: string, plan: string, rtoRequired: boolean) => void }) => {
     const [state, dispatch] = useReducer(reducer, initialValue)
+
+    useEffect(() => {
+        dispatch({ type: 'reset', payload: initialValue })
+    }, [open])
 
     return <Modal open={open} onClose={onClose}>
         <div className={`bg-white rounded flex flex-col items-center py-3 px-5  w-[370px] h-[390px] relative md:w-[650px] md:h-[410px]`} onMouseDown={e => e.stopPropagation()}>
@@ -42,9 +47,8 @@ export default ({ open, onClose, createAccount }: { open: boolean, onClose: () =
                 <div className="md:flex  md:items-center" >
                     <Input label={'GST Id'} size="small" value={state.gstId || ''} onChange={val => /^[a-z0-9]{0,15}$/i.test(val) && dispatch({ type: 'update', payload: { gstId: val.toUpperCase() } })} />
                     <div className="md:ml-2 mt-4 md:mt-0">
-                        <Select label={'Autoselect Mode'} options={[{ label: 'Preferred LSP', value: 'preferred_lsp' }, { label: 'Lowest Price', value: 'lowest_price' },
-                        { label: 'Lowest SLA', value: 'lowest_sla' }, { label: 'Fastest Agent', value: 'fastest_agent' }]} value={state.autoSelectMode || undefined}
-                            onChange={val => dispatch({ type: 'update', payload: { autoSelectMode: val } })} />
+                        <Select label={'Autoselect Mode'} options={[{ label: 'Fastest Agent', value: 'fastest_agent' }, { label: 'Lowest Price', value: 'lowest_price' }]}
+                            value={state.autoSelectMode || undefined} onChange={val => dispatch({ type: 'update', payload: { autoSelectMode: val } })} />
                     </div>
                 </div>
                 <Input label={'Contact Numbers'} value={state.contactNumbers || ''} onChange={val => /^[0-9, \-]*$/.test(val) && dispatch({ type: 'update', payload: { contactNumbers: val } })} />
