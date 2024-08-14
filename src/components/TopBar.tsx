@@ -23,7 +23,7 @@ const MenuItem = ({ title, icon, onClick }: { title: string, icon: React.ReactNo
 
 
 export default ({ title }: { title: string }) => {
-    const { token, selectedAccount, clearAuth, accountIds, phone, switchAccount , createAccount, setToast} = useAppConfigStore(state => ({
+    const { token, selectedAccount, clearAuth, accountIds, phone, switchAccount, createAccount, setToast, email } = useAppConfigStore(state => ({
         selectedAccount: state.selectedAccount,
         clearAuth: state.clearAuth,
         setToast: state.setToast,
@@ -70,26 +70,26 @@ export default ({ title }: { title: string }) => {
                 <img src={userIcon} className="w-10 mr-1" />
                 <p className="font-medium text-lg hidden md:block">{selectedAccount}</p>
                 {showMenu ? <div className="absolute top-5 bg-gray-100 cursor-pointer z-20 w-44 right-10 md:top-12 md:right-0 md:bg-gray-100">
-                    <MenuItem icon={<img src={addAccount} className="w-7" />} title="Account" onClick={() => {
+                    {/mp2\.in$/.test(email || '') ? <MenuItem icon={<img src={addAccount} className="w-7" />} title="Account" onClick={() => {
                         setAddAccountDisplay(true)
                         setMenuDisplay(false)
-                    }}/>
+                    }} /> : null}
                     <MenuItem icon={<img src={orderIcon} className="w-7" />} title="Orders" onClick={() => {
                         navigate('/u/orders')
                         setMenuDisplay(false)
-                    }}/>
+                    }} />
                     <MenuItem icon={<img src={walletIcon} className="w-7" />} title="Wallet" onClick={() => {
                         navigate('/u/wallet')
                         setMenuDisplay(false)
-                    }}/>
+                    }} />
                     <MenuItem icon={<img src={accountIcon} className="w-7" />} title="Profile" onClick={() => {
                         setAccountInfoDisplay(true)
                         setMenuDisplay(false)
-                    }}/>
+                    }} />
                     <MenuItem icon={<img src={logout} className="w-7" />} title="Logout" onClick={() => {
                         setLogoutConfirmationDisplay(true)
                         setMenuDisplay(false)
-                    }}/>
+                    }} />
                 </div> : null}
             </div>
         </div>
@@ -116,6 +116,6 @@ export default ({ title }: { title: string }) => {
                     setToast(message || 'Error creating account', 'error')
                 }
             })
-        }}/>
+        }} />
     </div>
 }

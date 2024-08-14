@@ -231,7 +231,7 @@ export const useAppConfigStore = create<State>()((set) => ({
 
         Api('/webui/create_account', {
             method: 'post', headers: { 'Content-Type': 'application/json', token },
-            data: { account_name: accountName, gst_number: gstId, auto_select_mode: autoSelectMode, phone_numbers: contacts.split(/\s*,\s*/), plan, rto_required: rtoRequired }
+            data: { account_name: accountName, gst_number: gstId, auto_select_mode: autoSelectMode, phone_numbers: contacts.trim().split(/\s*,\s*/), plan, rto_required: rtoRequired }
         })
             .then(res => {
                 if (res.status === 1) {
