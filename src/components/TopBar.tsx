@@ -23,7 +23,7 @@ const MenuItem = ({ title, icon, onClick }: { title: string, icon: React.ReactNo
 
 
 export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (token: string) => void }) => {
-    const { token, selectedAccount, clearAuth, accountIds, phone, switchAccount, createAccount, setToast, email } = useAppConfigStore(state => ({
+    const { token, selectedAccount, clearAuth, accountIds, phone, switchAccount, createAccount, setToast, email, validateGst } = useAppConfigStore(state => ({
         selectedAccount: state.selectedAccount,
         clearAuth: state.clearAuth,
         setToast: state.setToast,
@@ -32,7 +32,8 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
         email: state.email,
         switchAccount: state.switchAccount,
         token: state.token,
-        createAccount: state.createAccount
+        createAccount: state.createAccount,
+        validateGst: state.validateGst
     }))
 
     let divRef = createRef<HTMLInputElement>();
@@ -101,7 +102,7 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
             accountIds={accountIds}
             phoneNumber={phone}
             switchAccount={(accountId) => switchAccount(token || '', accountId, (success, newToken) => {
-                if(success) {
+                if (success) {
                     onAccountSwitch && onAccountSwitch(newToken)
                     setTimeout(() => {
                         setAccountInfoDisplay(false)
@@ -110,13 +111,19 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
             })}
         />
         <LogoutConfirmation open={showLogoutConfirmation} onClose={() => setLogoutConfirmationDisplay(false)} logout={clearAuth} loading={false} />
-        <AddAccount open={showAddAccount} onClose={() => setAddAccountDisplay(false)} createAccount={(accountName, gstId, autoSelectMode, contacts, plan, rtoRequired) => {
-            createAccount(token || '', accountName, gstId, autoSelectMode, contacts, plan, rtoRequired, (success, message) => {
-                if (success) {
-                    setAddAccountDisplay(false)
-                    setToast(message, 'success')
+        <AddAccount open={showAddAccount} onClose={() => setAddAccountDisplay(false)} createAccount={(accountName, gstin, autoSelectMode, contacts, plan, rtoRequired) => {
+            validateGst(token || '', gstin, (isValid) => {
+                if (isValid) {
+                    createAccount(token || '', accountName, gstin, autoSelectMode, contacts, plan, rtoRequired, (success, message) => {
+                        if (success) {
+                            setAddAccountDisplay(false)
+                            setToast(message, 'success')
+                        } else {
+                            setToast(message || 'Error creating account', 'error')
+                        }
+                    })
                 } else {
-                    setToast(message || 'Error creating account', 'error')
+                    setToast('Invalid GSTIN', 'error')
                 }
             })
         }} />

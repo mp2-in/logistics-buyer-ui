@@ -26,7 +26,8 @@ interface State extends Attributes {
     verifyOtp: (phoneNumber: string, otp: string, callback: (success: boolean) => void) => void
     switchAccount: (token: string, accountId: string, callback: (success: boolean, token: string) => void) => void
     verifyGmail: (emailId: string, tokenId: string, callback: (success: boolean) => void) => void
-    createAccount: (token: string, accountName: string, gstId: string, autoSelectMode: string, contacts: string, plan: string, rtoRequired: boolean, callback: (sucess: boolean, message: string) => void) => void
+    createAccount: (token: string, accountName: string, gstin: string, autoSelectMode: string, contacts: string, plan: string, rtoRequired: boolean, callback: (sucess: boolean, message: string) => void) => void
+    validateGst: (token: string, gstIn: string, callback: (valid: boolean) => void) => void
 }
 
 const initialState: Attributes = { loggedIn: false, activity: {}, toastMessage: '', toastVisibility: false, accountIds: [] };
@@ -226,14 +227,14 @@ export const useAppConfigStore = create<State>()((set) => ({
                 callback(false)
             })
     },
-    createAccount: async (token, accountName, gstId, autoSelectMode, contacts, plan, rtoRequired, callback) => {
+    createAccount: async (token, accountName, gstin, autoSelectMode, contacts, plan, rtoRequired, callback) => {
         set(produce((state: State) => {
             state.activity.createAccount = true
         }))
 
         Api('/webui/create_account', {
             method: 'post', headers: { 'Content-Type': 'application/json', token },
-            data: { account_name: accountName, gst_number: gstId, auto_select_mode: autoSelectMode, phone_numbers: contacts.trim().split(/\s*,\s*/), plan, rto_required: rtoRequired }
+            data: { account_name: accountName, gst_number: gstin, auto_select_mode: autoSelectMode, phone_numbers: contacts.trim().split(/\s*,\s*/), plan, rto_required: rtoRequired }
         })
             .then(res => {
                 if (res.status === 1) {
@@ -254,6 +255,28 @@ export const useAppConfigStore = create<State>()((set) => ({
                     state.activity.createAccount = false
                 }))
                 callback(false, 'Error: Account creation failed')
+            })
+    },
+    validateGst: async (token, gstin, callback) => {
+        set(produce((state: State) => {
+            state.activity.validateGst = true
+        }))
+
+        Api('/webui/validate_gst', {
+            method: 'post', headers: { 'Content-Type': 'application/json', token },
+            data: { gst_number: gstin }
+        })
+            .then(res => {
+                set(produce((state: State) => {
+                    state.activity.validateGst = false
+                }))
+                callback(!!res.is_valid)
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.activity.validateGst = false
+                }))
+                callback(false)
             })
     },
 }))

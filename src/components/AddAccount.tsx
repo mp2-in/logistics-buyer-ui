@@ -8,7 +8,7 @@ import { useEffect, useReducer } from "react"
 
 interface State {
     accountName: string
-    gstId: string
+    gstin: string
     autoSelectMode: string
     contactNumbers: string
     plan: string
@@ -16,7 +16,7 @@ interface State {
 }
 
 const initialValue: State = {
-    accountName: '', gstId: '', autoSelectMode: 'fastest_agent', contactNumbers: '', plan: 'flat-5-manual-dashboard', rtoRequired: false
+    accountName: '', gstin: '', autoSelectMode: 'fastest_agent', contactNumbers: '', plan: 'flat-5-manual-dashboard', rtoRequired: false
 }
 
 const reducer = (state: State, action: { type: 'reset' | 'update', payload: Partial<State> }) => {
@@ -29,7 +29,7 @@ const reducer = (state: State, action: { type: 'reset' | 'update', payload: Part
 }
 
 
-export default ({ open, onClose, createAccount }: { open: boolean, onClose: () => void, createAccount: (accountName: string, gstId: string, autoSelectMode: string, contacts: string, plan: string, rtoRequired: boolean) => void }) => {
+export default ({ open, onClose, createAccount }: { open: boolean, onClose: () => void, createAccount: (accountName: string, gstin: string, autoSelectMode: string, contacts: string, plan: string, rtoRequired: boolean) => void }) => {
     const [state, dispatch] = useReducer(reducer, initialValue)
 
     useEffect(() => {
@@ -45,7 +45,7 @@ export default ({ open, onClose, createAccount }: { open: boolean, onClose: () =
             <div className="*:my-2">
                 <Input label={'Account Name'} value={state.accountName || ''} onChange={val => dispatch({ type: 'update', payload: { accountName: val } })} />
                 <div className="md:flex  md:items-center" >
-                    <Input label={'GST Id'} size="small" value={state.gstId || ''} onChange={val => /^[a-z0-9]{0,15}$/i.test(val) && dispatch({ type: 'update', payload: { gstId: val.toUpperCase() } })} />
+                    <Input label={'GST Id'} size="small" value={state.gstin || ''} onChange={val => /^[a-z0-9]{0,15}$/i.test(val) && dispatch({ type: 'update', payload: { gstin: val.toUpperCase() } })} />
                     <div className="md:ml-2 mt-4 md:mt-0">
                         <Select label={'Autoselect Mode'} options={[{ label: 'Fastest Agent', value: 'fastest_agent' }, { label: 'Lowest Price', value: 'lowest_price' }]}
                             value={state.autoSelectMode || undefined} onChange={val => dispatch({ type: 'update', payload: { autoSelectMode: val } })} />
@@ -58,9 +58,9 @@ export default ({ open, onClose, createAccount }: { open: boolean, onClose: () =
                     <Switch on={state.rtoRequired} onClick={() => dispatch({ type: 'update', payload: { rtoRequired: !state.rtoRequired } })} />
                 </div>
                 <div className="flex justify-center pt-4 ">
-                    <Button title="Create Account" onClick={() => createAccount(state.accountName, state.gstId, state.autoSelectMode, state.contactNumbers, state.plan, state.rtoRequired)}
+                    <Button title="Create Account" onClick={() => createAccount(state.accountName, state.gstin, state.autoSelectMode, state.contactNumbers, state.plan, state.rtoRequired)}
                         variant="primary" disabled={!state.accountName || !state.autoSelectMode
-                            || !state.contactNumbers || !/^[0-9]{2}[A-Z]{3}[ABCFGHLJPTF]{1}[A-Z]{1}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/i.test(state.gstId)} />
+                            || !state.contactNumbers || !/^[0-9]{2}[A-Z]{3}[ABCFGHLJPTF]{1}[A-Z]{1}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/i.test(state.gstin)} />
                 </div>
             </div>
         </div>
