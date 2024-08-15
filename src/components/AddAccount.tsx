@@ -29,7 +29,12 @@ const reducer = (state: State, action: { type: 'reset' | 'update', payload: Part
 }
 
 
-export default ({ open, onClose, createAccount }: { open: boolean, onClose: () => void, createAccount: (accountName: string, gstin: string, autoSelectMode: string, contacts: string, plan: string, rtoRequired: boolean) => void }) => {
+export default ({ open, onClose, createAccount, loading }: {
+    open: boolean,
+    onClose: () => void,
+    createAccount: (accountName: string, gstin: string, autoSelectMode: string, contacts: string, plan: string, rtoRequired: boolean) => void
+    loading: boolean
+}) => {
     const [state, dispatch] = useReducer(reducer, initialValue)
 
     useEffect(() => {
@@ -60,7 +65,8 @@ export default ({ open, onClose, createAccount }: { open: boolean, onClose: () =
                 <div className="flex justify-center pt-4 ">
                     <Button title="Create Account" onClick={() => createAccount(state.accountName, state.gstin, state.autoSelectMode, state.contactNumbers, state.plan, state.rtoRequired)}
                         variant="primary" disabled={!state.accountName || !state.autoSelectMode
-                            || !state.contactNumbers || !/^[0-9]{2}[A-Z]{3}[ABCFGHLJPTF]{1}[A-Z]{1}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/i.test(state.gstin)} />
+                            || !state.contactNumbers || !/^[0-9]{2}[A-Z]{3}[ABCFGHLJPTF]{1}[A-Z]{1}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/i.test(state.gstin)}
+                        loading={loading} />
                 </div>
             </div>
         </div>

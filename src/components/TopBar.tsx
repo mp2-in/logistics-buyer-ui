@@ -23,7 +23,7 @@ const MenuItem = ({ title, icon, onClick }: { title: string, icon: React.ReactNo
 
 
 export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (token: string) => void }) => {
-    const { token, selectedAccount, clearAuth, accountIds, phone, switchAccount, createAccount, setToast, email, validateGst } = useAppConfigStore(state => ({
+    const { token, selectedAccount, clearAuth, accountIds, phone, switchAccount, createAccount, setToast, email, validateGst, activity } = useAppConfigStore(state => ({
         selectedAccount: state.selectedAccount,
         clearAuth: state.clearAuth,
         setToast: state.setToast,
@@ -33,7 +33,8 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
         switchAccount: state.switchAccount,
         token: state.token,
         createAccount: state.createAccount,
-        validateGst: state.validateGst
+        validateGst: state.validateGst,
+        activity: state.activity
     }))
 
     let divRef = createRef<HTMLInputElement>();
@@ -126,6 +127,6 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
                     setToast('Invalid GSTIN', 'error')
                 }
             })
-        }} />
+        }} loading={activity.createAccount || activity.validateGst}/>
     </div>
 }
