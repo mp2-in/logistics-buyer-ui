@@ -103,7 +103,9 @@ export default () => {
                     verifyGmail(decoded.email || '', decoded.jti || '', (success) => {
                         if (success) {
                             navigate('/u/orders')
-                        } 
+                        } else {
+                            setErrMsg('Unregistered email id')
+                        }
                     });
                 }}
                 onError={() => {

@@ -3,16 +3,19 @@ import closeIcon from '@assets/close.png'
 
 import Button from "@components/Button"
 import checkIcon from "@assets/check.png"
+import phoneIcon from "@assets/phone.png"
+import emailIcon from "@assets/email.png"
 // import Input from "@components/Input"
 
 
-export default ({ open, onClose, onLogout, selectedAccount, accountIds, phoneNumber, switchAccount }: {
+export default ({ open, onClose, onLogout, selectedAccount, accountIds, phoneNumber, switchAccount, email }: {
     open: boolean,
     onClose: () => void,
     onLogout: () => void,
     selectedAccount: string,
     accountIds: string[],
     phoneNumber?: string
+    email?: string
     switchAccount: (accountId: string) => void
 }) => {
 
@@ -24,17 +27,24 @@ export default ({ open, onClose, onLogout, selectedAccount, accountIds, phoneNum
                 <img src={closeIcon} onClick={onClose} className="w-6 absolute top-1 right-1 cursor-pointer" />
             </div>
             <div className={'w-full flex flex-col items-center h-[400px] relative'}>
-                <div>
-                    <p className="font-bold"><span>Phone : </span>{phoneNumber}</p>
+                <div className="flex flex-col py-2">
+                    <div className="flex">
+                        <img src={phoneIcon} alt="Phone" className="w-6 mr-2" />
+                        <p className="font-medium">{phoneNumber}</p>
+                    </div>
+                    <div className="flex mt-2">
+                        <img src={emailIcon} alt="Email" className="w-6 mr-2" />
+                        <p className="font-medium">{email}</p>
+                    </div>
                 </div>
-                <div className="mt-6 overflow-auto absolute top-5 bottom-12">
+                <div className="mt-6 overflow-auto absolute top-14 bottom-12">
                     {accountIds.map(eachAccount => {
                         return <div className="flex flex-row-reverse h-8 w-[250px] items-center justify-evenly hover:bg-slate-200" key={eachAccount} onClick={() => {
-                            if(selectedAccount !== eachAccount) {
+                            if (selectedAccount !== eachAccount) {
                                 switchAccount(eachAccount)
                             }
                         }}>
-                            <p className={`flex-[7] font-normal ${selectedAccount === eachAccount?'cursor-default':'cursor-pointer'}`}>{eachAccount}</p>
+                            <p className={`flex-[7] font-normal ${selectedAccount === eachAccount ? 'cursor-default' : 'cursor-pointer'}`}>{eachAccount}</p>
                             <div className="flex-[2] flex justify-center pl-5">
                                 {selectedAccount === eachAccount ? <img src={checkIcon} className="w-6" /> : <span />}
                             </div>

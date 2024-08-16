@@ -110,6 +110,7 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
                     }, 200)
                 }
             })}
+            email={email}
         />
         <LogoutConfirmation open={showLogoutConfirmation} onClose={() => setLogoutConfirmationDisplay(false)} logout={clearAuth} loading={false} />
         <AddAccount open={showAddAccount} onClose={() => setAddAccountDisplay(false)} createAccount={(accountName, gstin, autoSelectMode, contacts, plan, rtoRequired) => {

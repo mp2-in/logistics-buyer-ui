@@ -160,7 +160,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                             <p className='text-xs'>{trimTextValue(eachOrder.dropName, 12)}</p>
                             <p className='text-xs'>{eachOrder.dropPhone}</p>
                         </div>
-                        {eachOrder.riderNumber ? <a className={`flex-[4] underline cursor-pointer font-semibold text-blue-400`} href={`tel:${eachOrder.riderNumber}`}>
+                        {eachOrder.riderNumber ? <a className={`flex-[4] underline cursor-pointer font-medium text-blue-600`} href={`tel:${eachOrder.riderNumber}`}>
                             <div className={`flex-col justify-center items-center h-full py-1 ${rowBackground(eachOrder.orderState)}`}>
                                 <p className='text-xs'>{trimTextValue(eachOrder.riderName, 12)}</p>
                                 <p className='text-xs'>{eachOrder.riderNumber}</p>
