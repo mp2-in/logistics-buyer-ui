@@ -172,7 +172,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                         <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.priceWithGST ? `₹ ${eachOrder.priceWithGST.toFixed(2)}` : 0}</p>
                         <div className={`flex-[4] h-full flex flex-col justify-center items-center ${rowBackground(eachOrder.orderState)}`}>
                             <p className='text-xs'>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
-                            {eachOrder.deliveredAt && eachOrder.rtsAt ?<p className='text-xs font-medium'>{`(${dayjs(eachOrder.deliveredAt).diff(eachOrder.rtsAt, 'minute')} minutes)`}</p>:null}
+                            {eachOrder.deliveredAt && eachOrder.rtsAt ?<p className='text-xs font-medium'>{`(${dayjs(eachOrder.deliveredAt).diff(eachOrder.rtsAt, 'minute')} min)`}</p>:null}
                         </div>
                         <div className={`flex-[4] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
                             <img src={driverSearch} onClick={e => {
