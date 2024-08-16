@@ -111,7 +111,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 return ''
         }
     }
-
+    
     return <div className={`absolute left-0 right-0 top-12 bottom-3 lg:px-5 px-2 sm:top-12 md:top-[70px]`}>
         <div className={`flex sm:items-end items-start justify-between p-2 sm:flex-row-reverse flex-col mb-2`}>
             <div className={`flex flex-row-reverse w-full mb-3 sm:mb-0`}>
@@ -134,7 +134,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 <p className={`flex-[4] bg-blue-300 py-2`}>Rider</p>
                 <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Distance' sort={sortField === 'distance' ? sortOrder : undefined} onClick={() => updateSortField('distance')} />
                 <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Price' sort={sortField === 'totalDeliveryCharge' ? sortOrder : undefined} onClick={() => updateSortField('totalDeliveryCharge')} />
-                <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Delivery' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} />
+                <HeaderField cssClass='flex-[4] bg-blue-300 py-2' label='Delivery' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} />
                 <p className={`flex-[4] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
             </div>
             <div className={`absolute  top-[35px] bottom-0 lg:right-5 left-0 w-[1265px] xl:w-full xl:overflow-auto`}>
@@ -170,7 +170,10 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                             href={mapLink(eachOrder)} target='_blank'>{`${eachOrder.distance.toFixed(2)} km`}</a> :
                             <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.distance ? `${eachOrder.distance.toFixed(2)} km` : 0}</p>}
                         <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.priceWithGST ? `₹ ${eachOrder.priceWithGST.toFixed(2)}` : 0}</p>
-                        <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
+                        <div className={`flex-[4] h-full flex flex-col justify-center items-center ${rowBackground(eachOrder.orderState)}`}>
+                            <p className='text-xs'>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
+                            {eachOrder.deliveredAt && eachOrder.rtsAt ?<p className='text-xs font-medium'>{`(${dayjs(eachOrder.deliveredAt).diff(eachOrder.rtsAt, 'minute')} minutes)`}</p>:null}
+                        </div>
                         <div className={`flex-[4] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
                             <img src={driverSearch} onClick={e => {
                                 if (/unfulfilled/i.test(eachOrder.orderState)) {
