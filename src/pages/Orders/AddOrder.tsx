@@ -83,7 +83,6 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
         payload.category =  orderDetails?.orderCategory || category || 'F&B'
         if(orderDetails) {
             payload.billNumber = orderDetails.clientOrderId
-            payload.storeId = orderDetails.storeId
             payload.phoneNumber = orderDetails.dropPhone
             payload.name = orderDetails.dropName
             payload.addrLine1 = orderDetails.dropAddress?.line1
@@ -92,6 +91,17 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
             payload.dropCode = orderDetails.dcc
             payload.orderAmount = orderDetails.orderAmount.toString()
             payload.geoLocation = `${orderDetails.dropLatitude}, ${orderDetails.dropLongitude}`
+
+            const store = pickupStores.find(e => e.storeId === orderDetails.storeId)
+            if(store) {
+                payload.storeId = orderDetails.storeId
+                payload.city = store.address.city
+                payload.state = store.address.state
+            } else {
+                payload.storeId = ''
+                payload.city = ''
+                payload.state = ''
+            }
         }
 
         dispatch({ type: 'reset', payload })
