@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 import addIcon from "@assets/add.png"
 import cancelIcon from "@assets/cancel.png"
+import retryIcon from "@assets/retry.png"
 import moreIcon from "@assets/info.png"
 import warningIcon from "@assets/warning.png"
 import refreshIcon from "@assets/refresh.png"
@@ -42,7 +43,7 @@ const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: str
 
 
 export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail, onOrderFulfillment, token }: {
-    onAddOrder: () => void,
+    onAddOrder: (orderId?: string) => void,
     onRefresh: () => void,
     onCancelOrder: (orderId: string) => void,
     orders: Order[],
@@ -135,11 +136,11 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Distance' sort={sortField === 'distance' ? sortOrder : undefined} onClick={() => updateSortField('distance')} />
                 <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Price' sort={sortField === 'totalDeliveryCharge' ? sortOrder : undefined} onClick={() => updateSortField('totalDeliveryCharge')} />
                 <HeaderField cssClass='flex-[4] bg-blue-300 py-2' label='Delivery' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} />
-                <p className={`flex-[4] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
+                <p className={`flex-[5] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
             </div>
             <div className={`absolute  top-[35px] bottom-0 lg:right-5 left-0 w-[1265px] xl:w-full xl:overflow-auto`}>
                 {[...orders].sort(sortOrders).map(eachOrder => {
-                    return <div key={eachOrder.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center lg:text-sm ${rowBackground(eachOrder.orderState)} h-[40px]`}>
+                    return <div key={eachOrder.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center xl:text-sm ${rowBackground(eachOrder.orderState)} h-[40px]`}>
                         <p className={`flex-[3] ml-0 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
                         <div className={`flex-[6] ${rowBackground(eachOrder.orderState)}`}>
                             <input className={`w-full outline-none  border-none ${rowBackground(eachOrder.orderState)} text-center`} readOnly value={eachOrder.orderId} />
@@ -174,7 +175,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                             <p className='text-xs'>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
                             {eachOrder.deliveredAt && eachOrder.rtsAt ?<p className='text-xs font-medium'>{`(${dayjs(eachOrder.deliveredAt).diff(eachOrder.rtsAt, 'minute')} min)`}</p>:null}
                         </div>
-                        <div className={`flex-[4] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
+                        <div className={`flex-[5] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
                             <img src={driverSearch} onClick={e => {
                                 if (/unfulfilled/i.test(eachOrder.orderState)) {
                                     onOrderFulfillment(eachOrder.orderId)
@@ -196,6 +197,12 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                                 }
                                 e.stopPropagation()
                             }} title='Cancel Order' className={`w-5 ${cancellable(eachOrder.orderState) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
+                            <img src={retryIcon} onClick={e => {
+                                if (eachOrder.orderState === 'Cancelled') {
+                                    onAddOrder(eachOrder.orderId)
+                                }
+                                e.stopPropagation()
+                            }} title='Re-Book' className={`w-5 ${eachOrder.orderState === 'Cancelled' ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
                             <img src={moreIcon} onClick={e => {
                                 chooseOrder(eachOrder.orderId)
                                 e.stopPropagation()

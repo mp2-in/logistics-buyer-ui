@@ -9,7 +9,7 @@ import Select from "@components/Select"
 import Input from "@components/Input"
 import Button from "@components/Button"
 
-import { PlaceAutoComplete, PlaceDetails, PickupStore, LocationAddress } from '@lib/interfaces'
+import { PlaceAutoComplete, PlaceDetails, PickupStore, LocationAddress, Order } from '@lib/interfaces'
 
 import SpecifyAddress from "./SpecifyAddress"
 import DefaultSelect from "@components/DefaultSelect"
@@ -50,7 +50,7 @@ const reducer = (state: State, action: { type: 'reset', payload: Partial<State> 
     }
 }
 
-export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, checkPrice, showNewOutletForm, saveInStorage, onPlaceChoose, activity, pickupStores, getCustomerInfo, role }: {
+export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, checkPrice, showNewOutletForm, saveInStorage, onPlaceChoose, activity, pickupStores, getCustomerInfo, role, orderDetails }: {
     open: boolean,
     onClose: () => void,
     onPlacesSearch: (searchText: string, callback: (data: PlaceAutoComplete[]) => void,
@@ -65,10 +65,11 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
     saveInStorage: (keyName: string, value: string) => void
     getCustomerInfo: (phone: string, callback: (info: LocationAddress) => void) => void
     role: string
+    orderDetails?: Order
 }) => {
     const [state, dispatch] = useReducer(reducer, initialValue)
 
-    const retrieveSavedData = () => {
+    const retrieveSavedData = (orderDetails?: Order) => {
         let outlet = localStorage.getItem('storeDetails')
         let payload: Partial<State> = {}
         if (outlet) {
@@ -79,7 +80,20 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
         }
 
         let category = localStorage.getItem('category')
-        payload.category = category || 'F&B'
+        payload.category =  orderDetails?.orderCategory || category || 'F&B'
+        if(orderDetails) {
+            payload.billNumber = orderDetails.clientOrderId
+            payload.storeId = orderDetails.storeId
+            payload.phoneNumber = orderDetails.dropPhone
+            payload.name = orderDetails.dropName
+            payload.addrLine1 = orderDetails.dropAddress?.line1
+            payload.addrLine2 = orderDetails.dropAddress?.line2
+            payload.pincode = orderDetails.dropPincode
+            payload.dropCode = orderDetails.dcc
+            payload.orderAmount = orderDetails.orderAmount.toString()
+            payload.geoLocation = `${orderDetails.dropLatitude}, ${orderDetails.dropLongitude}`
+        }
+
         dispatch({ type: 'reset', payload })
     }
 
@@ -93,10 +107,10 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
     useEffect(() => {
         if (open && pickupStores.length === 0) {
             getPickupList(() => {
-                retrieveSavedData()
+                retrieveSavedData(orderDetails)
             })
         } else {
-            retrieveSavedData()
+            retrieveSavedData(orderDetails)
         }
     }, [open])
 
@@ -152,7 +166,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
     }
 
     return <Modal open={open} onClose={onClose} loading={activity.getPickupList || activity.getCustomerInfo}>
-        <div className={`bg-white rounded flex flex-col items-center py-3 px-5  w-[370px] h-[500px] relative md:w-[650px] md:h-[600px] lg:h-[650px] xl:h[700px] 2xl:h-[800px]`} onMouseDown={e => e.stopPropagation()}>
+        <div className={`bg-white rounded flex flex-col items-center py-3 px-5  w-[370px] h-[500px] relative md:w-[650px] md:h-[600px] xl:h[700px] 2xl:h-[800px]`} onMouseDown={e => e.stopPropagation()}>
             <div className={`flex justify-between w-full items-center mb-3`}>
                 <p className="text-xl font-semibold">Add Order</p>
                 <img src={closeIcon} onClick={onClose} className="w-6 cursor-pointer absolute right-1 top-1" />
@@ -178,12 +192,12 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                     </div>
                 </div>
                 <div>
-                    <Input label="Bill Number" value={state.billNumber} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} />
+                    <Input label="Bill Number" value={state.billNumber || ''} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} />
                 </div>
                 <p className={'text-lg font-semibold my-3 mx-1'}>Drop</p>
                 <div className={'md:flex md:items-center *:mb-3 md:*:mb-0'}>
-                    <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => {
-                        if (/^[0-9]*$/.test(val)) {
+                    <Input label="Phone Number" size="small" value={state.phoneNumber || ''} onChange={val => {
+                        if (/^[0-9]{0,10}$/.test(val)) {
                             dispatch({ type: 'update', payload: { phoneNumber: val } })
                             if (val.length === 10) {
                                 getCustomerInfo(val, (info) => {
@@ -193,13 +207,13 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                         }
                     }} />
                     <div className="md:ml-3">
-                        <Input label="Name" value={state.name} onChange={val => dispatch({ type: 'update', payload: { name: val } })} />
+                        <Input label="Name" value={state.name || ''} onChange={val => dispatch({ type: 'update', payload: { name: val } })} />
                     </div>
                 </div>
                 <SpecifyAddress onPlacesSearch={onPlacesSearch} onUpdate={payload => dispatch({ type: 'update', payload })} payload={state} onPlaceChoose={onPlaceChoose}
                     module="addOrder" storeLocation={storeGeolocation()} />
                 <div className="mt-2">
-                    <Input label="Code" size="small" type='number' value={state.dropCode} onChange={val => /^\d{0,4}$/.test(val) && dispatch({ type: 'update', payload: { dropCode: val } })} />
+                    <Input label="Code" size="small" type='number' value={state.dropCode || ''} onChange={val => /^\d{0,4}$/.test(val) && dispatch({ type: 'update', payload: { dropCode: val } })} />
                 </div>
                 <p className={'text-lg font-semibold my-3 mx-1'}>Order  Details</p>
                 <div className={'md:flex md:items-center'}>

@@ -14,7 +14,7 @@ import OrderInfo from "./OrderInfo";
 import CancelOrder from "./CancelOrder";
 import RaiseIssue from "./RaiseIssue";
 import OrderFulfillment from "./OrderFulfillment";
-import ExpandedOrderList from "./OrderList";
+import OrderList from "./OrderList";
 
 
 interface State {
@@ -37,6 +37,7 @@ interface State {
     chosenOrder?: string
     reportedOrderIssue?: string
     toBeFulfilledOrder?: string
+    toBeRebookedOrder?: string
 }
 
 const initialValue: State = {
@@ -103,8 +104,8 @@ export default () => {
 
     return <div>
         <TopBar title="Orders" onAccountSwitch={(newToken) => getOrders(newToken, state.orderFilterDate)}/>
-        <ExpandedOrderList
-            onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })}
+        <OrderList
+            onAddOrder={(orderId) => dispatch({ type: 'update', payload: { addOrderDisplay: true, toBeRebookedOrder: orderId } })}
             onRefresh={() => token ? getOrders(token, state.orderFilterDate) : null}
             onCancelOrder={orderId => {
                 dispatch({ type: 'update', payload: { toBeCancelledOrder: orderId, cancelOrderDisplay: true } })
@@ -161,6 +162,7 @@ export default () => {
             saveInStorage={(keyName, value) => saveInStorage(keyName, value)}
             getCustomerInfo={(phone, callback) => getCustomerInfo(token || '', phone, callback)}
             role={role || ''}
+            orderDetails={orders.find(e => e.orderId === state.toBeRebookedOrder)}
         />
         <ShowPriceQuotes
             open={state.priceQuotesDisplay}

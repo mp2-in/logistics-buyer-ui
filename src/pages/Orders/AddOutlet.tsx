@@ -115,7 +115,7 @@ export default ({ open, onClose, onPlacesSearch, addOutlet, onPlaceChoose, activ
             </div>
             <div className="md:*:mb-2 *:mb-4">
                 <div>
-                    <Input label="Store Id" value={state.storeId} onChange={val => dispatch({ type: 'update', payload: { storeId: val } })} readOnly={!!chosenStore}/>
+                    <Input label="Store Id" value={state.storeId} onChange={val => /^[0-9a-z-_]*$/i.test(val) && dispatch({ type: 'update', payload: { storeId: val } })} readOnly={!!chosenStore}/>
                 </div>
                 <div className={`md:flex items-center`}>
                     <Input label="Phone Number" size="small" value={state.phoneNumber} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { phoneNumber: val } })} />
