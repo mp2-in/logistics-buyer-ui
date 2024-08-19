@@ -5,6 +5,7 @@ import userIcon from "@assets/user.png"
 import addAccount from "@assets/add_account.png"
 import accountIcon from "@assets/account.png"
 import walletIcon from "@assets/wallet.png"
+import billingIcon from "@assets/billing.png"
 import orderIcon from "@assets/orders.png"
 import logout from "@assets/logout.png"
 import AccountDetails from "./AccountDetails"
@@ -82,6 +83,10 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
                     }} />
                     <MenuItem icon={<img src={walletIcon} className="w-7" />} title="Wallet" onClick={() => {
                         navigate('/u/wallet')
+                        setMenuDisplay(false)
+                    }} />
+                    <MenuItem icon={<img src={billingIcon} className="w-7" />} title="Billing" onClick={() => {
+                        navigate('/u/billing')
                         setMenuDisplay(false)
                     }} />
                     <MenuItem icon={<img src={accountIcon} className="w-7" />} title="Profile" onClick={() => {

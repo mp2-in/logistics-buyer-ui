@@ -8,6 +8,7 @@ interface Attributes {
 
 interface State extends Attributes {
     getWalletDashboardLink: (token: string, callback: (link: string) => void) => void
+    getBillingInfoLink: (token: string, callback: (link: string) => void) => void
 }
 
 const initialState: Attributes = { activity: {} };
@@ -32,6 +33,27 @@ export const useWalletState = create<State>()((set) => ({
             .catch(() => {
                 set(produce((state: State) => {
                     state.activity.getWalletDashboardLink = false
+                }))
+            })
+    },
+    getBillingInfoLink: async (token, callback) => {
+        set(produce((state: State) => {
+            state.activity.getBillingInfoLink = true
+        }))
+        Api('/webui/billing_info', {
+            method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {}
+        })
+            .then(res => {
+                set(produce((state: State) => {
+                    if (res.status === 1) {
+                        callback(res.embed_link)
+                    }
+                    state.activity.getBillingInfoLink = false
+                }))
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.activity.getBillingInfoLink = false
                 }))
             })
     }
