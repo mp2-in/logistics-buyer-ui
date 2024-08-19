@@ -85,7 +85,7 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
                         navigate('/u/wallet')
                         setMenuDisplay(false)
                     }} />
-                    <MenuItem icon={<img src={billingIcon} className="w-7" />} title="Billing" onClick={() => {
+                    <MenuItem icon={<img src={billingIcon} className="w-7" />} title="Reports" onClick={() => {
                         navigate('/u/billing')
                         setMenuDisplay(false)
                     }} />
