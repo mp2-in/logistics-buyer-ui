@@ -66,7 +66,7 @@ export default () => {
     }))
 
     const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, assignAgent,
-        getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, orderPriceQuote, getCustomerInfo, raiseIssue } = useOrdersStore(state => ({
+        getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, orderPriceQuote, getCustomerInfo, raiseIssue, clearPickupList } = useOrdersStore(state => ({
             orders: state.orders,
             getOrders: state.getOrders,
             googlePlacesApi: state.googlePlacesApi,
@@ -82,7 +82,8 @@ export default () => {
             googlePlaceDetailsApi: state.googlePlaceDetailsApi,
             getCustomerInfo: state.getCustomerInfo,
             raiseIssue: state.raiseIssue,
-            assignAgent: state.assignAgent
+            assignAgent: state.assignAgent,
+            clearPickupList: state.clearPickupList
         }))
 
     const navigate = useNavigate()
@@ -102,7 +103,10 @@ export default () => {
     }, [state.orderFilterDate])
 
     return <div>
-        <TopBar title="Orders" onAccountSwitch={(newToken) => getOrders(newToken, state.orderFilterDate)}/>
+        <TopBar title="Orders" onAccountSwitch={(newToken) => {
+            getOrders(newToken, state.orderFilterDate)
+            clearPickupList()
+        }}/>
         <OrderList
             onAddOrder={(orderId) => dispatch({ type: 'update', payload: { addOrderDisplay: true, toBeRebookedOrder: orderId } })}
             onRefresh={() => token ? getOrders(token, state.orderFilterDate) : null}

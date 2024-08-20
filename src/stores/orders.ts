@@ -13,6 +13,7 @@ interface Attributes {
 interface State extends Attributes {
     getOrders: (token: string, forDate: string) => void,
     getPickupList: (token: string, callback: () => void) => void,
+    clearPickupList: () => void,
     googlePlacesApi: (searchText: string, callback: (data: PlaceAutoComplete[]) => void, latitude?: number, longitude?: number) => void
     googlePlaceDetailsApi: (placeId: string, callback: (data: PlaceDetails) => void) => void
     createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, lspId: string | undefined, quoteId: string | undefined, callback: (success: boolean, message?: string) => void) => void
@@ -63,6 +64,11 @@ export const useOrdersStore = create<State>()((set, get) => ({
                     state.activity.getPickupList = false
                 }))
             })
+    },
+    clearPickupList: async () => {
+        set(produce((state: State) => {
+            state.pickupStores = []
+        }))
     },
     googlePlacesApi: async (searchText, callback, latitude, longitude) => {
         GooglePlacesApi(searchText, latitude, longitude)

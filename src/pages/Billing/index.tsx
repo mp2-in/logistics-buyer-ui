@@ -3,6 +3,7 @@ import { useAppConfigStore } from 'stores/appConfig'
 import { useWalletState } from 'stores/wallet'
 import ActivityIndicator from '@components/ActivityIndicator'
 import TopBar from '@components/TopBar'
+import { useOrdersStore } from 'stores/orders'
 
 export default () => {
 
@@ -11,6 +12,7 @@ export default () => {
     }))
 
     const { activity, getBillingInfoLink } = useWalletState(state => ({ getBillingInfoLink: state.getBillingInfoLink, activity: state.activity }))
+    const { clearPickupList } = useOrdersStore(state => ({ clearPickupList: state.clearPickupList }))
 
     const [billingInfoLink, setBillingInfoLink] = useState<string | undefined>(undefined)
 
@@ -23,7 +25,7 @@ export default () => {
     console.log(billingInfoLink, activity.getWalletDashboardLink)
 
     return <div>
-        <TopBar title='Reports' />
+        <TopBar title='Reports' onAccountSwitch={() => clearPickupList()}/>
         <div className={`absolute left-0 right-0 md:top-[80px] top-[50px] bottom-3 md:px-5 md:py-3 px-2`}>
             <div className={`absolute left-2 right-2 bottom-2 top-[60px] overflow-auto lg:left-5 lg:right-5 md:top-[85px]`}>
                 {billingInfoLink ? <div onMouseDown={e => e.stopPropagation()}>

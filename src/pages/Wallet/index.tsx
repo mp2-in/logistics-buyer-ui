@@ -5,6 +5,7 @@ import addIcon from "@assets/add.png"
 import ActivityIndicator from '@components/ActivityIndicator'
 import TopBar from '@components/TopBar'
 import Button from '@components/Button'
+import { useOrdersStore } from 'stores/orders'
 
 export default () => {
 
@@ -18,6 +19,7 @@ export default () => {
     }))
 
     const { activity, getWalletDashboardLink } = useWalletState(state => ({ getWalletDashboardLink: state.getWalletDashboardLink, activity: state.activity }))
+    const { clearPickupList } = useOrdersStore(state => ({ clearPickupList: state.clearPickupList }))
 
     const [walletLink, setWalletLink] = useState<string | undefined>(undefined)
 
@@ -30,7 +32,7 @@ export default () => {
     console.log(walletLink, activity.getWalletDashboardLink)
 
     return <div>
-        <TopBar title='Wallet' />
+        <TopBar title='Wallet' onAccountSwitch={() => clearPickupList()}/>
         <div className={`absolute left-0 right-0 md:top-[80px] top-[50px] bottom-3 md:px-5 md:py-3 px-2`}>
             <div className={`flex flex-row-reverse sm:items-end items-start justify-between p-2 sm:flex-row-reverse  mb-2`}>
                 <a href={`https://pages.razorpay.com/mp2-wallet-recharge?phone=${phone || ''}&email=${email || ''}&mp2_accountid=${selectedAccount}`} target='_blank'>
