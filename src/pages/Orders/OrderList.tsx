@@ -161,12 +161,10 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                             <p className='text-xs'>{trimTextValue(eachOrder.dropName, 12)}</p>
                             <p className='text-xs'>{eachOrder.dropPhone}</p>
                         </div>
-                        {eachOrder.riderNumber ? <a className={`flex-[4] underline cursor-pointer font-medium text-blue-600`} href={`tel:${eachOrder.riderNumber}`}>
-                            <div className={`flex-col justify-center items-center h-full py-1 ${rowBackground(eachOrder.orderState)}`}>
+                        {eachOrder.riderNumber ?<div className={`flex-col justify-center items-center h-full py-1 flex-[4] ${rowBackground(eachOrder.orderState)}`}>
                                 <p className='text-xs'>{trimTextValue(eachOrder.riderName, 12)}</p>
                                 <p className='text-xs'>{eachOrder.riderNumber}</p>
-                            </div>
-                        </a> : <p className={`flex-[4] h-full py-1 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.riderName}</p>}
+                            </div> : <p className={`flex-[4] h-full py-1 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.riderName}</p>}
                         {eachOrder.distance && mapLink(eachOrder) ? <a className={`flex-[3] text-blue-600 underline font-semibold py-3 h-full ${rowBackground(eachOrder.orderState)}`}
                             href={mapLink(eachOrder)} target='_blank'>{`${eachOrder.distance.toFixed(2)} km`}</a> :
                             <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.distance ? `${eachOrder.distance.toFixed(2)} km` : 0}</p>}

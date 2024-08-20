@@ -29,7 +29,6 @@ interface State {
     storeId?: string
     drop?: LocationAddress
     orderAmount?: string
-    category?: string
     orderFilterDate: string
     toBeCancelledOrder?: string
     quoteId?: string
@@ -138,8 +137,8 @@ export default () => {
             getPickupList={callback => token ? getPickupList(token, callback) : null}
             activity={activity}
             pickupStores={pickupStores}
-            createOrder={(billNumber, storeId, amount, category, drop) => {
-                createOrder(token || '', billNumber, storeId, drop, amount, category, undefined, undefined, (success, message) => {
+            createOrder={(billNumber, storeId, amount, drop) => {
+                createOrder(token || '', billNumber, storeId, drop, amount, undefined, undefined, (success, message) => {
                     if (success) {
                         dispatch({ type: 'update', payload: { addOrderDisplay: false } })
                         getOrders(token || '', state.orderFilterDate)
@@ -149,10 +148,10 @@ export default () => {
                     }
                 })
             }}
-            checkPrice={(billNumber, storeId, orderAmount, category, drop) => {
-                getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), category, (success, quoteId, message) => {
+            checkPrice={(billNumber, storeId, orderAmount, drop) => {
+                getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), (success, quoteId, message) => {
                     if (success) {
-                        dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, category, drop, quoteId } })
+                        dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, drop, quoteId } })
                     } else {
                         setToast(message || 'Error fetching price quotes', 'error')
                     }
@@ -168,8 +167,8 @@ export default () => {
             open={state.priceQuotesDisplay}
             onClose={() => dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })}
             priceQuotes={orderPriceQuote} createOrder={(chosenLsp) => {
-                if (state.billNumber && state.storeId && state.orderAmount && state.drop && state.category) {
-                    createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, state.category, chosenLsp, state.quoteId, (success, message) => {
+                if (state.billNumber && state.storeId && state.orderAmount && state.drop) {
+                    createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, chosenLsp, state.quoteId, (success, message) => {
                         if (success) {
                             dispatch({ type: 'update', payload: { addOrderDisplay: false, priceQuotesDisplay: false } })
                             getOrders(token || '', state.orderFilterDate)
