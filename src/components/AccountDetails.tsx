@@ -22,7 +22,7 @@ export default ({ open, onClose, onLogout, selectedAccount, accountIds, phoneNum
     // const [rechargeAmount, setRechargeAmount] = useState('')
 
     return <Modal open={open} onClose={onClose}>
-        <div className={'bg-white rounded flex flex-col items-center p-5 w-[300px] relative md:w-[400px]'} onMouseDown={e => e.stopPropagation()}>
+        <div className={'bg-white rounded flex flex-col items-center p-5 w-[350px] relative md:w-[400px]'} onMouseDown={e => e.stopPropagation()}>
             <div>
                 <img src={closeIcon} onClick={onClose} className="w-6 absolute top-1 right-1 cursor-pointer" />
             </div>
@@ -37,17 +37,18 @@ export default ({ open, onClose, onLogout, selectedAccount, accountIds, phoneNum
                         <p className="font-medium">{email}</p>
                     </div>
                 </div>
-                <div className="mt-6 overflow-auto absolute top-14 bottom-12">
+                <div className="mt-6 overflow-auto absolute top-14 bottom-12 flex flex-col items-start">
+                    <p className="font-medium mb-2">Accounts</p>
                     {accountIds.map(eachAccount => {
-                        return <div className="flex flex-row-reverse h-8 w-[250px] items-center justify-evenly hover:bg-slate-200" key={eachAccount} onClick={() => {
+                        return <div className="flex flex-row h-8 w-[320px] items-center hover:bg-slate-200" key={eachAccount} onClick={() => {
                             if (selectedAccount !== eachAccount) {
                                 switchAccount(eachAccount)
                             }
                         }}>
-                            <p className={`flex-[7] font-normal ${selectedAccount === eachAccount ? 'cursor-default' : 'cursor-pointer'}`}>{eachAccount}</p>
-                            <div className="flex-[2] flex justify-center pl-5">
+                            <div className="flex-[2] flex justify-center">
                                 {selectedAccount === eachAccount ? <img src={checkIcon} className="w-6" /> : <span />}
                             </div>
+                            <p className={`flex-[10] font-normal ${selectedAccount === eachAccount ? 'cursor-default' : 'cursor-pointer'}`}>{eachAccount}</p>
                         </div>
                     })}
                 </div>
