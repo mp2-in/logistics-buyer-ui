@@ -227,11 +227,11 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
             </div>
             <div className="absolute flex justify-end mt-5 *:ml-3 pt-2 md:mb-0 md:bottom-5 bottom-2">
                 <Button title="Check Price" onClick={() => processOrder('checkPrice')} disabled={!state.billNumber || !state.storeId ||
-                    (!/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation) && (!state.latitude || !state.longitude)) || !state.phoneNumber || !state.orderAmount || activity.getPriceQuote || state.dropCode.length !== 4}
+                    (!/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation) && (!state.latitude || !state.longitude)) || !state.phoneNumber || !state.orderAmount || activity.getPriceQuote}
                     loading={activity.getPriceQuote} variant="info" />
                 <Button title="Create Order" variant="primary" onClick={() => processOrder('createOrder')}
                     disabled={!state.billNumber || !state.storeId || (!/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation) && (!state.latitude || !state.longitude)) || !state.phoneNumber ||
-                        !state.orderAmount || activity.getPriceQuote || state.dropCode.length !== 4} loading={activity.createOrder} />
+                        !state.orderAmount || activity.getPriceQuote} loading={activity.createOrder} />
             </div>
         </div>
     </Modal>
