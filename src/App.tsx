@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import ActivityIndicator from "@components/ActivityIndicator";
 import Toast from "@components/Toast";
 import Wallet from "@pages/Wallet";
-import Billing from "@pages/Billing";
+import Reports from "@pages/Reports";
 
 
 const RequireAuth = ({ children, loggedIn }: { children: React.ReactNode, loggedIn: boolean }) => {
@@ -42,7 +42,7 @@ export default function App() {
       <Route path="/u/" element={<RequireAuth loggedIn={loggedIn}><><Outlet /></></RequireAuth>}>
         <Route path="orders" element={<Orders />} />
         <Route path="wallet" element={<Wallet />} />
-        <Route path="billing" element={<Billing />} />
+        <Route path="reports" element={<Reports />} />
       </Route>
     </Routes> : <ActivityIndicator />}
     <Toast />
