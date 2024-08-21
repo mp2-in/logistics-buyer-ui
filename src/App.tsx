@@ -15,6 +15,7 @@ import ActivityIndicator from "@components/ActivityIndicator";
 import Toast from "@components/Toast";
 import Wallet from "@pages/Wallet";
 import Reports from "@pages/Reports";
+import Issues from "@pages/Issues";
 
 
 const RequireAuth = ({ children, loggedIn }: { children: React.ReactNode, loggedIn: boolean }) => {
@@ -43,6 +44,7 @@ export default function App() {
         <Route path="orders" element={<Orders />} />
         <Route path="wallet" element={<Wallet />} />
         <Route path="reports" element={<Reports />} />
+        <Route path="issues" element={<Issues />} />
       </Route>
     </Routes> : <ActivityIndicator />}
     <Toast />

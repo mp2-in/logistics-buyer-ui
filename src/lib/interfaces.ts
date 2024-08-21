@@ -144,3 +144,25 @@ export interface PriceQuote {
     logistics_seller: string
     price_with_gst: number
 }
+
+export interface Issue {
+    issueId: string,
+    networkOrderId: string,
+    orderId: string,
+    clientOrderId: string,
+    accountId: string,
+    issueStatus: string,
+    resolutionStatus: string,
+    createdat: string,
+    statusUpdatedat: string,
+    relayedat: string,
+    closedat: string,
+    updatedat: string,
+    category: string,
+    subCategory: string,
+    shortDescription: string,
+    longDescription: string,
+    resolutionAction: string,
+    resolutionDescription: string,
+    refundAmount: number
+}

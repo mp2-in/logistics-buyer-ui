@@ -15,9 +15,10 @@ export default ({ open, onClose, raiseIssue, loading }: {
     loading: boolean
 }) => {
     const issuesList = [
-        "Rider ran away with the item without closing the order",
+        "Delay in delivery",
+        "Rider ran away with the item",
         "Food spillage",
-        "Rider marked delivered but did not deliver"
+        "Marked delivered without delivering"
     ]
     const [issue, setIssue] = useState('')
     const [description, setDescription] = useState('')
