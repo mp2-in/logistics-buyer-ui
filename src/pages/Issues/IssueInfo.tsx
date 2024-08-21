@@ -67,7 +67,7 @@ export default ({ open, onClose, issueDetails }: {
                     <ShowValue label="Sub Category" value={issueDetails?.subCategory} />
                 </div>
                 <div className="md:flex justify-between">
-                    <ShowValue label="Short Desc" value={issueDetails?.shortDescription} large />
+                    <ShowValue label="Short Description" value={issueDetails?.shortDescription} large />
                 </div>
                 <div className="md:flex justify-between">
                     <ShowValue label="Long Description" value={issueDetails?.longDescription || ''} textArea large/>
@@ -77,7 +77,7 @@ export default ({ open, onClose, issueDetails }: {
                     <ShowValue label="Refund Amount" value={issueDetails?.refundAmount} />
                 </div>
                 <div className="md:flex justify-between">
-                    <ShowValue label="Resolution Desc" value={issueDetails?.resolutionDescription} large />
+                    <ShowValue label="Resolution Description" value={issueDetails?.resolutionDescription} large />
                 </div>
             </div>
         </div>
