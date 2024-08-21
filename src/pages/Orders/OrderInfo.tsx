@@ -8,22 +8,10 @@ import advancedFormat from 'dayjs/plugin/advancedFormat'
 import { Order } from "@lib/interfaces"
 import dayjs from "dayjs"
 import { cancellable, cancellationIdReasonMapping } from "@lib/utils"
+import ShowValue from "@components/ShowValue"
 
 dayjs.extend(advancedFormat)
 
-
-const ShowValue = ({ label, value, isDate, large, small }: {
-    label: string,
-    value: string | number | undefined,
-    isDate?: boolean,
-    large?: boolean,
-    small?: boolean
-}) => {
-    return <div className={`relative border border-gray-100 my-3 py-[4px] px-3 ${large ? `md:w-[500px] w-[290px]` : small ? `md:w-[150px] w-[100px]` : 'md:w-[260px] w-[290px]'} rounded-md`}>
-        <p className="absolute -top-2 px-2 bg-white text-xs left-3 text-gray-500">{label}</p>
-        <input className="font-normal outline-none border-none w-full text-sm" readOnly value={value === undefined || value === '' || !value ? '--' : isDate ? dayjs(value).format('MMM Do, hh:mm A') : value} />
-    </div>
-}
 
 export default ({ open, onClose, orderInfo, onCancelOrder, onIssueReport }: {
     open: boolean,

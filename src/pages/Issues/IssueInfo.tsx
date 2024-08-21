@@ -4,26 +4,10 @@ import advancedFormat from 'dayjs/plugin/advancedFormat'
 
 import { Issue } from "@lib/interfaces"
 import dayjs from "dayjs"
+import ShowValue from "@components/ShowValue"
 
 dayjs.extend(advancedFormat)
 
-
-const ShowValue = ({ label, value, isDate, large, small, textArea }: {
-    label: string,
-    value: string | number | undefined,
-    isDate?: boolean,
-    large?: boolean,
-    small?: boolean,
-    textArea?: boolean
-}) => {
-    return <div className={`relative border border-gray-100 my-3 py-[4px] px-3 ${large ? `md:w-[530px] w-[290px]` : small ? `md:w-[150px] w-[100px]` : 'md:w-[260px] w-[290px]'} rounded-md`}>
-        <p className="absolute -top-2 px-2 bg-white text-xs left-3 text-gray-500">{label}</p>
-        {textArea?<div className="overflow-auto">
-            <p className="w-full h-[80px] text-sm">{value}</p>
-        </div>
-        :<input className="font-normal outline-none border-none w-full text-sm" readOnly value={value === undefined || value === '' || !value ? '--' : isDate ? dayjs(value).format('MMM Do, hh:mm A') : value} />}
-    </div>
-}
 
 export default ({ open, onClose, issueDetails }: {
     open: boolean,
@@ -70,11 +54,11 @@ export default ({ open, onClose, issueDetails }: {
                     <ShowValue label="Short Description" value={issueDetails?.shortDescription} large />
                 </div>
                 <div className="md:flex justify-between">
-                    <ShowValue label="Long Description" value={issueDetails?.longDescription || ''} textArea large/>
+                    <ShowValue label="Long Description" value={issueDetails?.longDescription || ''} textArea large />
                 </div>
                 <div className="md:flex justify-between">
                     <ShowValue label="Resolution Action" value={issueDetails?.resolutionAction} />
-                    <ShowValue label="Refund Amount" value={issueDetails?.refundAmount} />
+                    <ShowValue label="Refund Amount" value={issueDetails?.refundAmount} number/>
                 </div>
                 <div className="md:flex justify-between">
                     <ShowValue label="Resolution Description" value={issueDetails?.resolutionDescription} large />
