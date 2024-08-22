@@ -1,5 +1,5 @@
 import ActivityIndicator from "@components/ActivityIndicator"
-import { useEffect, useState } from "react"
+import { useEffect, useReducer } from "react"
 import { useAppConfigStore } from "stores/appConfig"
 import { useIssuesStore } from "stores/issues"
 import sortBlackDownIcon from "@assets/sort_black_down.png"
@@ -11,7 +11,10 @@ import dayjs from "dayjs"
 import TopBar from "@components/TopBar"
 import Input from "@components/Input"
 import moreIcon from "@assets/info.png"
+import closeIcon from "@assets/cancel.png"
+import retryIcon from "@assets/retry.png"
 import IssueInfo from "./IssueInfo"
+import CloseIssueConfirmation from "./CloseIssueConfirmation"
 
 
 const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: string, label: string, sort?: 'asc' | 'dsc', hidden?: boolean, onClick: () => void }) => {
@@ -24,93 +27,125 @@ const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: str
     </div>
 }
 
+interface State {
+    sortOrder: 'asc' | 'dsc'
+    sortField: keyof Issue
+    filterDate?: string
+    chosenIssue?: string
+    closeIssue?: string
+    showIssueDetails: boolean
+}
+
+const initialValue: State = {
+    sortOrder: 'dsc', sortField: 'createdat', showIssueDetails: false
+}
+
+const reducer = (state: State, action: { type: 'reset', payload: Partial<State> } | { type: 'update', payload: Partial<State> }) => {
+    switch (action.type) {
+        case "update":
+            return { ...state, ...action.payload }
+        case "reset":
+            return { ...initialValue, ...action.payload }
+    }
+}
+
 export default () => {
-    const { token } = useAppConfigStore(state => ({ token: state.token }))
-    const { getIssues, activity, issues } = useIssuesStore(state => ({
+    const { token, setToast } = useAppConfigStore(state => ({ token: state.token, setToast: state.setToast }))
+    const { getIssues, activity, issues, closeIssue, refreshIssue } = useIssuesStore(state => ({
         getIssues: state.getIssues,
         activity: state.activity,
-        issues: state.issues
+        issues: state.issues,
+        closeIssue: state.closeIssue,
+        refreshIssue: state.refreshIssue
     }))
 
-    const [sortOrder, setSortOrder] = useState<'asc' | 'dsc'>('dsc')
-    const [sortField, setSortField] = useState<keyof Issue>('createdat')
-    const [filterDate, setFilterDate] = useState(dayjs().format('YYYY-MM-DD'))
-    const [chosenIssue, setChosenIssue] = useState<string|undefined>(undefined)
-    const [showIssueDetails, setIssueDetailsDisplay] = useState(false)
+    const [state, dispatch] = useReducer(reducer, initialValue)
 
     useEffect(() => {
-        getIssues(token || '', filterDate)
-    }, [filterDate])
+        getIssues(token || '', state.filterDate)
+    }, [state.filterDate])
 
     const updateSortField = (field: keyof Issue) => {
-        if (field === sortField) {
-            setSortOrder(sortOrder === 'asc' ? 'dsc' : 'asc')
+        if (field === state.sortField) {
+            dispatch({ type: 'update', payload: { sortOrder: (state.sortOrder === 'asc' ? 'dsc' : 'asc') } })
         } else {
-            setSortField(field)
-            setSortOrder('dsc')
+            dispatch({ type: 'update', payload: { sortField: field, sortOrder: 'dsc' } })
         }
     }
 
     const sortOrders = (a: Issue, b: Issue) => {
-        return (a[sortField] || '') > (b[sortField] || '') ? sortOrder === 'asc' ? 1 : -1 : (a[sortField] || '') < (b[sortField] || '') ? sortOrder === 'asc' ? -1 : 1 : 0
+        return (a[state.sortField] || '') > (b[state.sortField] || '') ? state.sortOrder === 'asc' ? 1 : -1 : (a[state.sortField] || '') < (b[state.sortField] || '') ? state.sortOrder === 'asc' ? -1 : 1 : 0
     }
 
     return <div>
         <TopBar title='Issues' />
         <div className={`absolute left-0 right-0 md:top-[70px] top-[60px] bottom-3 md:px-5 md:py-3 px-2`}>
             <div className={`flex sm:items-end items-start justify-between p-2  mb-2`}>
-                <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => setFilterDate(val)} />
+                <Input label='For Date' type='date' size='small' value={state.filterDate} onChange={val => dispatch({ type: 'update', payload: { filterDate: val } })} />
             </div>
             <div className='absolute top-[50px] left-2 right-2 bottom-1 overflow-auto sm:top-[50px] md:top-[80px]'>
-                <div className={`flex items-center bg-blue-300 *:text-center *:font-medium  *:text-sm xl:*:text-sm w-[1265px] xl:w-full`}>
-                    <HeaderField cssClass='flex-[3] ml-0 bg-blue-300 pl-1' label='Creation' sort={sortField === 'createdat' ? sortOrder : undefined} onClick={() => updateSortField('createdat')} />
+                <div className={`flex items-center bg-blue-300 *:text-center *:font-medium  *:text-sm  w-[1700px]`}>
+                    <HeaderField cssClass='flex-[4] ml-0 bg-blue-300 pl-1' label='Creation' sort={state.sortField === 'createdat' ? state.sortOrder : undefined} onClick={() => updateSortField('createdat')} />
                     <p className="flex-[5] bg-blue-300 py-2">Issue Id</p>
                     <p className="flex-[5] bg-blue-300 py-2">Bill Num</p>
-                    <HeaderField cssClass='flex-[4] bg-blue-300' label='Status Updated' sort={sortField === 'statusUpdatedat' ? sortOrder : undefined} onClick={() => updateSortField('statusUpdatedat')} />
-                    <HeaderField cssClass='flex-[3] bg-blue-300' label='Status' sort={sortField === 'resolutionStatus' ? sortOrder : undefined} onClick={() => updateSortField('resolutionStatus')} />
-                    <p className="flex-[6] bg-blue-300 py-2">Description</p>
+                    <HeaderField cssClass='flex-[5] bg-blue-300' label='Status Updated' sort={state.sortField === 'statusUpdatedat' ? state.sortOrder : undefined} onClick={() => updateSortField('statusUpdatedat')} />
+                    <HeaderField cssClass='flex-[3] bg-blue-300' label='Status' sort={state.sortField === 'resolutionStatus' ? state.sortOrder : undefined} onClick={() => updateSortField('resolutionStatus')} />
+                    <p className="flex-[5] bg-blue-300 py-2">Description</p>
                     <p className="flex-[3] bg-blue-300 py-2">Action</p>
                     <p className="flex-[5] bg-blue-300 py-2">Resolution</p>
-                    <HeaderField cssClass='flex-[2] bg-blue-300' label='Refund' sort={sortField === 'refundAmount' ? sortOrder : undefined} onClick={() => updateSortField('refundAmount')} />
-                    <p className="flex-[1] bg-blue-300 py-2"></p>
+                    <HeaderField cssClass='flex-[2] bg-blue-300' label='Refund' sort={state.sortField === 'refundAmount' ? state.sortOrder : undefined} onClick={() => updateSortField('refundAmount')} />
+                    <p className="flex-[2] bg-blue-300 py-2">Actions</p>
                 </div>
-                <div className={`absolute  top-[35px] bottom-0 lg:right-5 left-0 w-[1265px] xl:w-full xl:overflow-auto`}>
+                <div className={`absolute  top-[35px] bottom-0 lg:right-5 left-0 w-[1700px]`}>
                     {[...issues].sort(sortOrders).map(eachIssue => {
                         return <div key={eachIssue.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center xl:text-sm h-[40px]`}>
-                            <p className={`flex-[3] ml-0`}>{eachIssue.createdat ? dayjs(eachIssue.createdat).format('hh:mm A') : '--'}</p>
+                            <p className={`flex-[4] ml-0`}>{eachIssue.createdat ? dayjs(eachIssue.createdat).format('MMM Do,hh:mm A') : '--'}</p>
                             <div className={`flex-[5]`}>
                                 <input className={`w-full outline-none  border-none text-center`} readOnly value={eachIssue.issueId} />
                             </div>
                             <div className={`flex-[5]`}>
                                 <input className={`w-full outline-none  border-none text-center`} readOnly value={eachIssue.clientOrderId} />
                             </div>
-                            <div className={`flex justify-center items-center h-full flex-[4]`}>
+                            <div className={`flex justify-center items-center h-full flex-[5]`}>
                                 <p>{eachIssue.statusUpdatedat ? dayjs(eachIssue.statusUpdatedat).format('MMM Do,hh:mm A') : ''}</p>
                             </div>
                             <div className={`flex justify-center items-center h-full flex-[3]`}>
                                 <input className={`border-none outline-none text-center w-full`} readOnly value={eachIssue.resolutionStatus} />
                             </div>
-                            <div className={`justify-center items-center h-full flex-[6] pt-1 flex`}>
-                                <p className='text-xs text-center'>{eachIssue.shortDescription}</p>
-                            </div>
+                            <textarea className="h-[35px] flex-[5] py-1 text-xs resize-none" value={eachIssue.shortDescription}/>
                             <p className={`flex-[3] h-full py-1`}>{eachIssue.resolutionAction}</p>
-                            <p className={`flex-[5] h-full py-1 text-xs`}>{eachIssue.resolutionDescription}</p>
+                            <textarea className="h-[35px] flex-[5] py-1 text-xs resize-none" value={eachIssue.resolutionDescription}/>
                             <div className={`flex justify-center items-center h-full flex-[2]`}>
                                 <p className={`text-center w-full`}>{eachIssue.refundAmount}</p>
                             </div>
-                            <div className={`flex-[1] h-full py-1 flex justify-center items-center`}>
-                                <img src={moreIcon} onClick={e => {
-                                    setChosenIssue(eachIssue.issueId)
-                                    setIssueDetailsDisplay(true)
+                            <div className={`flex-[2] h-full py-1 flex justify-between items-center`}>
+                                <img src={closeIcon} onClick={e => {
+                                    dispatch({ type: 'update', payload: { closeIssue: eachIssue.issueId } })
                                     e.stopPropagation()
-                                }} title='Order Details' className={'cursor-pointer w-5 hover:shadow-md'} />
+                                }} title='Close Issue' className={'cursor-pointer w-5'} />
+                                <img src={retryIcon} onClick={e => {
+                                    refreshIssue(token || '', eachIssue.issueId)
+                                    e.stopPropagation()
+                                }} title='Refresh Status' className={'cursor-pointer w-5'} />
+                                <img src={moreIcon} onClick={e => {
+                                    dispatch({ type: 'update', payload: { chosenIssue: eachIssue.issueId, showIssueDetails: true } })
+                                    e.stopPropagation()
+                                }} title='Issue Details' className={'cursor-pointer w-5'} />
                             </div>
                         </div>
                     })}
                 </div>
             </div>
         </div>
-        {activity.getIssues ? <ActivityIndicator /> : null}
-        <IssueInfo open={showIssueDetails} onClose={() => setIssueDetailsDisplay(false)} issueDetails={issues.find(e => e.issueId === chosenIssue)}/>
+        {activity.getIssues || activity.refreshIssue ? <ActivityIndicator /> : null}
+        <IssueInfo open={state.showIssueDetails} onClose={() => dispatch({ type: 'update', payload: { showIssueDetails: false } })} issueDetails={issues.find(e => e.issueId === state.chosenIssue)} />
+        <CloseIssueConfirmation open={!!state.closeIssue} onClose={() => dispatch({ type: 'update', payload: { closeIssue: undefined } })} closeIssue={() => state.closeIssue && closeIssue(token || '', state.closeIssue, (success, message) => {
+            if (success) {
+                dispatch({ type: 'update', payload: { closeIssue: undefined } })
+                setToast('Issue closed  successfully', 'success')
+            } else {
+                setToast(message, 'error')
+            }
+        })} loading={activity.closeIssue} />
     </div>
 }   
