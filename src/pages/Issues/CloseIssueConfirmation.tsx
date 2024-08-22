@@ -13,7 +13,7 @@ export default ({ open, onClose, closeIssue, loading }: {
     return <Modal open={open} onClose={onClose}>
         <div className={'bg-white rounded py-[10px] px-[20px] md:w-[600px] w-[350px] relative'} onMouseDown={e => e.stopPropagation()}>
             <div className={'flex justify-between w-full items-center mb-[10px]'}>
-                <p className="text-xl font-semibold">Logout</p>
+                <p className="text-xl font-semibold">Close Issue</p>
                 <img src={closeIcon} onClick={onClose} className="w-6 absolute top-1 right-1 cursor-pointer" />
             </div>
             <div className={'mt-1'}>

@@ -108,9 +108,9 @@ export default () => {
                             <div className={`flex justify-center items-center h-full flex-[3]`}>
                                 <input className={`border-none outline-none text-center w-full`} readOnly value={eachIssue.resolutionStatus} />
                             </div>
-                            <textarea className="h-[38px] flex-[5] text-xs resize-none" value={(eachIssue.shortDescription || '').length > 50 ? `${eachIssue.shortDescription.substring(0, 50)}...` : eachIssue.shortDescription} />
+                            <textarea readOnly className="h-[38px] flex-[5] text-xs resize-none" value={(eachIssue.shortDescription || '').length > 50 ? `${eachIssue.shortDescription.substring(0, 50)}...` : (eachIssue.shortDescription || '')} />
                             <p className={`flex-[3] h-full py-1`}>{eachIssue.resolutionAction}</p>
-                            <textarea className="h-[38px] flex-[5] text-xs resize-none" value={(eachIssue.resolutionDescription || '').length > 50 ? `${eachIssue.resolutionDescription.substring(0, 50)}...` : eachIssue.resolutionDescription}/>
+                            <textarea readOnly className="h-[38px] flex-[5] text-xs resize-none" value={(eachIssue.resolutionDescription || '').length > 50 ? `${eachIssue.resolutionDescription.substring(0, 50)}...` : (eachIssue.resolutionDescription || '')}/>
                             <div className={`flex justify-center items-center h-full flex-[3]`}>
                                 <p className={`text-center w-full`}>{eachIssue.refundAmount}</p>
                             </div>
