@@ -58,11 +58,12 @@ export default () => {
 
     const [state, dispatch] = useReducer(reducer, initialValue)
 
-    const { token, setToast, isRetail, role } = useAppConfigStore(state => ({
+    const { token, setToast, isRetail, role, setPage } = useAppConfigStore(state => ({
         token: state.token,
         setToast: state.setToast,
         isRetail: state.isRetail,
-        role: state.role
+        role: state.role,
+        setPage: state.setPage
     }))
 
     const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, assignAgent,
@@ -91,6 +92,7 @@ export default () => {
     useEffect(() => {
         if (token) {
             getOrders(token, state.orderFilterDate)
+            setPage('orders')
         } else {
             navigate('/login')
         }

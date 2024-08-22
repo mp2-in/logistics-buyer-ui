@@ -9,13 +9,14 @@ import { useOrdersStore } from 'stores/orders'
 
 export default () => {
 
-    const { token, selectedAccount, phone, email } = useAppConfigStore(state => ({
+    const { token, selectedAccount, phone, email, setPage } = useAppConfigStore(state => ({
         token: state.token,
         selectedAccount: state.selectedAccount,
         phone: state.phone,
         email: state.email,
         isRetail: state.isRetail,
-        role: state.role
+        role: state.role,
+        setPage: state.setPage
     }))
 
     const { activity, getWalletDashboardLink } = useWalletState(state => ({ getWalletDashboardLink: state.getWalletDashboardLink, activity: state.activity }))
@@ -27,6 +28,7 @@ export default () => {
         getWalletDashboardLink(token || '', (link) => {
             setWalletLink(link)
         })
+        setPage('wallet')
     }, [])
 
     console.log(walletLink, activity.getWalletDashboardLink)

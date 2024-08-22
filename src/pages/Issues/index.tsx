@@ -50,7 +50,7 @@ const reducer = (state: State, action: { type: 'reset', payload: Partial<State> 
 }
 
 export default () => {
-    const { token, setToast } = useAppConfigStore(state => ({ token: state.token, setToast: state.setToast }))
+    const { token, setToast, setPage } = useAppConfigStore(state => ({ token: state.token, setToast: state.setToast, setPage: state.setPage }))
     const { getIssues, activity, issues, closeIssue, refreshIssue } = useIssuesStore(state => ({
         getIssues: state.getIssues,
         activity: state.activity,
@@ -76,6 +76,10 @@ export default () => {
     const sortOrders = (a: Issue, b: Issue) => {
         return (a[state.sortField] || '') > (b[state.sortField] || '') ? state.sortOrder === 'asc' ? 1 : -1 : (a[state.sortField] || '') < (b[state.sortField] || '') ? state.sortOrder === 'asc' ? -1 : 1 : 0
     }
+
+    useEffect(() => {
+        setPage('issues')
+    }, [])
 
     return <div>
         <TopBar title='Issues' onAccountSwitch={(newToken) => {

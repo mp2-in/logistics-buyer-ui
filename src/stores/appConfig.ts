@@ -15,10 +15,12 @@ interface Attributes {
     toastType?: 'success' | 'warning' | 'error'
     toastVisibility: boolean
     activity: { [k: string]: boolean }
+    page?: string
 }
 
 interface State extends Attributes {
     checkLoginStatus: (callback: () => void) => void
+    setPage: (page: 'orders'|'issues'|'wallet'|'reports') => void
     clearAuth: () => void
     setToast: (message: string, type: 'success' | 'warning' | 'error') => void,
     hideToast: () => void,
@@ -75,6 +77,11 @@ export const useAppConfigStore = create<State>()((set) => ({
             state.toastMessage = message
             state.toastType = type
             state.toastVisibility = true
+        }))
+    },
+    setPage: (page) => {
+        set(produce((state: State) => {
+            state.page = page
         }))
     },
     hideToast: () => {

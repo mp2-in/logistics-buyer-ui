@@ -126,7 +126,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
         <div className='absolute top-[100px] left-2 right-2 bottom-1 overflow-auto sm:top-[50px] md:top-[70px]'>
             <div className={`flex items-center bg-blue-300 *:text-center *:font-medium  *:text-sm xl:*:text-sm w-[1265px] xl:w-full`}>
                 <HeaderField cssClass='flex-[3] ml-0 bg-blue-300 py-2 pl-1' label='Creation' sort={sortField === 'createdAt' ? sortOrder : undefined} onClick={() => updateSortField('createdAt')} />
-                <HeaderField cssClass='flex-[6] bg-blue-300 py-2' label='Order Id' sort={sortField === 'orderId' ? sortOrder : undefined} onClick={() => updateSortField('orderId')} />
+                <HeaderField cssClass='flex-[6] bg-blue-300 py-2' label='Bill Number' sort={sortField === 'orderId' ? sortOrder : undefined} onClick={() => updateSortField('orderId')} />
                 <HeaderField cssClass='flex-[2] bg-blue-300 py-2' label='LSP' sort={sortField === 'providerId' ? sortOrder : undefined} onClick={() => updateSortField('providerId')} />
                 <p className={`flex-[2] bg-blue-300 py-2`}>PCC</p>
                 <p className={`flex-[2] bg-blue-300 py-2`}>DCC</p>
@@ -143,7 +143,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                     return <div key={eachOrder.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center xl:text-sm ${rowBackground(eachOrder.orderState)} h-[40px]`}>
                         <p className={`flex-[3] ml-0 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
                         <div className={`flex-[6] ${rowBackground(eachOrder.orderState)}`}>
-                            <input className={`w-full outline-none  border-none ${rowBackground(eachOrder.orderState)} text-center`} readOnly value={eachOrder.orderId} />
+                            <input className={`w-full outline-none  border-none ${rowBackground(eachOrder.orderState)} text-center`} readOnly value={eachOrder.clientOrderId} />
                         </div>
                         <div className='flex-[2] flex justify-center items-center'>
                             <img src={getLogo(eachOrder.providerId)} className='w-7' alt={eachOrder.providerId} title={eachOrder.providerId} />

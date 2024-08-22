@@ -7,8 +7,9 @@ import { useOrdersStore } from 'stores/orders'
 
 export default () => {
 
-    const { token } = useAppConfigStore(state => ({
+    const { token, setPage } = useAppConfigStore(state => ({
         token: state.token,
+        setPage: state.setPage
     }))
 
     const { activity, getBillingInfoLink } = useWalletState(state => ({ getBillingInfoLink: state.getBillingInfoLink, activity: state.activity }))
@@ -20,6 +21,7 @@ export default () => {
         getBillingInfoLink(token || '', (link) => {
             setBillingInfoLink(link)
         })
+        setPage('reports')
     }, [])
 
     return <div>
