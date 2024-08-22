@@ -37,7 +37,7 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus }: {
                 return orderStatus !== 'Order-delivered'
             case "Food spillage":
                 return orderStatus === 'Order-delivered'
-            case "Delay in delivery":
+            case "Marked delivered without delivering":
                 return orderStatus === 'Order-delivered'
         }
     }
