@@ -78,7 +78,9 @@ export default () => {
     }
 
     return <div>
-        <TopBar title='Issues' />
+        <TopBar title='Issues' onAccountSwitch={(newToken) => {
+            getIssues(newToken || '', state.filterDate)
+        }}/>
         <div className={`absolute left-0 right-0 md:top-[70px] top-[60px] bottom-3 md:px-5 md:py-3 px-2`}>
             <div className={`flex sm:items-end items-start justify-between p-2  mb-2`}>
                 <Input label='For Date' type='date' size='small' value={state.filterDate} onChange={val => dispatch({ type: 'update', payload: { filterDate: val } })} />
