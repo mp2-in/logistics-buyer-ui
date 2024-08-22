@@ -242,7 +242,7 @@ export default () => {
                 } else {
                     setToast(message || 'Error registering issue', 'error')
                 }
-            })} loading={activity.raiseIssue} />
+            })} loading={activity.raiseIssue} orderStatus={orders.find(e => e.orderId === state.reportedOrderIssue)?.orderState || ''}/>
         <OrderFulfillment open={state.fulfillOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { fulfillOrderDisplay: false } })} assignRider={() => {
             assignAgent(token || '', state.toBeFulfilledOrder || '', orders.find(e => e.orderId === state.toBeFulfilledOrder)?.pcc || '', (success, message) => {
                 if (success) {

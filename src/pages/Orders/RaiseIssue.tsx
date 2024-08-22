@@ -8,11 +8,12 @@ import Button from "@components/Button"
 import TextArea from "@components/TextArea"
 
 
-export default ({ open, onClose, raiseIssue, loading }: {
+export default ({ open, onClose, raiseIssue, loading, orderStatus }: {
     open: boolean,
     onClose: () => void,
     raiseIssue: (issue: string, description: string) => void,
     loading: boolean
+    orderStatus: string
 }) => {
     const issuesList = [
         "Delay in delivery",
@@ -28,6 +29,19 @@ export default ({ open, onClose, raiseIssue, loading }: {
         setDescription('')
     }, [open])
 
+    const filterIssueReasons = (reason: string) => {
+        switch (reason) {
+            case "Delay in delivery":
+                return !['Order-delivered', 'Cancelled', 'RTO-Initiated', 'RTO-Disposed', 'RTO-Delivered'].includes(orderStatus)
+            case "Rider ran away with the item":
+                return orderStatus !== 'Order-delivered'
+            case "Food spillage":
+                return orderStatus === 'Order-delivered'
+            case "Delay in delivery":
+                return orderStatus === 'Order-delivered'
+        }
+    }
+
     return <Modal open={open} onClose={onClose}>
         <div className={'bg-white rounded flex flex-col items-center py-[10px] px-[20px] md:w-[600px] w-[350px] relative'} onMouseDown={e => e.stopPropagation()}>
             <div className={'flex justify-between w-full items-center mb-[10px]'}>
@@ -35,7 +49,7 @@ export default ({ open, onClose, raiseIssue, loading }: {
                 <img src={closeIcon} onClick={onClose} className="w-6 absolute top-1 right-1 cursor-pointer" />
             </div>
             <div className={'flex flex-col items-center mt-5'}>
-                <Select options={issuesList.map(e => ({ label: e, value: e }))}
+                <Select options={issuesList.filter(filterIssueReasons).map(e => ({ label: e, value: e }))}
                     onChange={val => setIssue(val)} value={issue} label="Issue" size={'large'} />
                 <div className="mt-5">
                     <TextArea label="Description" value={description} onChange={val => setDescription(val)} size="large" />

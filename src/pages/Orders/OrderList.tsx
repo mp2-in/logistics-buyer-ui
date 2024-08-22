@@ -186,9 +186,11 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                                 <img src={trackIcon} title='Track Shipment' className='w-5 opacity-40' />
                             </a>}
                             <img src={warningIcon} onClick={e => {
-                                onIssueReport(eachOrder.orderId)
+                                if(eachOrder.networkOrderId) {
+                                    onIssueReport(eachOrder.orderId)
+                                }
                                 e.stopPropagation()
-                            }} title='Raise Issue' className={`w-5 cursor-pointer`} />
+                            }} title='Raise Issue' className={`w-5 ${eachOrder.networkOrderId ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
                             <img src={cancelIcon} onClick={e => {
                                 if (cancellable(eachOrder.orderState)) {
                                     onCancelOrder(eachOrder.orderId)
