@@ -43,7 +43,7 @@ export default ({ open, onClose, orderInfo, onCancelOrder, onIssueReport }: {
                     <ShowValue label="Order Category" value={orderInfo?.orderCategory} />
                 </div>
                 <div className="md:flex justify-between">
-                    <ShowValue label="Delivery Fee" value={orderInfo?.totalDeliveryCharge ? `₹ ${orderInfo?.totalDeliveryCharge}` : '₹ 0'} />
+                    <ShowValue label="Delivery Fee" value={orderInfo?.deliveryFee ? `₹ ${orderInfo?.deliveryFee}` : '₹ 0'} />
                     <ShowValue label="Platform Fee" value={orderInfo?.platformFee ? `₹ ${orderInfo?.platformFee}` : '₹ 0'} />
                 </div>
                 <div className="md:flex justify-between">
