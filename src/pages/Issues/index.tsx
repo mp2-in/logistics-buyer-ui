@@ -86,7 +86,7 @@ export default () => {
             <div className='absolute top-[50px] left-2 right-2 bottom-1 overflow-auto sm:top-[50px] md:top-[80px]'>
                 <div className={`flex items-center bg-blue-300 *:text-center *:font-medium  *:text-sm  w-[1265px] xl:w-full`}>
                     <HeaderField cssClass='flex-[4] ml-0 bg-blue-300 pl-1' label='Creation' sort={state.sortField === 'createdat' ? state.sortOrder : undefined} onClick={() => updateSortField('createdat')} />
-                    <p className="flex-[6] bg-blue-300 py-2">Bill Num</p>
+                    <p className="flex-[6] bg-blue-300 py-2">Bill Number</p>
                     <HeaderField cssClass='flex-[5] bg-blue-300' label='Status Updated' sort={state.sortField === 'statusUpdatedat' ? state.sortOrder : undefined} onClick={() => updateSortField('statusUpdatedat')} />
                     <HeaderField cssClass='flex-[3] bg-blue-300' label='Status' sort={state.sortField === 'resolutionStatus' ? state.sortOrder : undefined} onClick={() => updateSortField('resolutionStatus')} />
                     <p className="flex-[5] bg-blue-300 py-2">Description</p>
@@ -108,9 +108,9 @@ export default () => {
                             <div className={`flex justify-center items-center h-full flex-[3]`}>
                                 <input className={`border-none outline-none text-center w-full`} readOnly value={eachIssue.resolutionStatus} />
                             </div>
-                            <textarea className="h-[38px] flex-[5] text-xs resize-none" value={eachIssue.shortDescription.length > 50 ? `${eachIssue.shortDescription.substring(0, 50)}...` : eachIssue.shortDescription} />
+                            <textarea className="h-[38px] flex-[5] text-xs resize-none" value={(eachIssue.shortDescription || '').length > 50 ? `${eachIssue.shortDescription.substring(0, 50)}...` : eachIssue.shortDescription} />
                             <p className={`flex-[3] h-full py-1`}>{eachIssue.resolutionAction}</p>
-                            <textarea className="h-[35px] flex-[5] py-1 text-xs resize-none" value={eachIssue.resolutionDescription} />
+                            <textarea className="h-[38px] flex-[5] text-xs resize-none" value={(eachIssue.resolutionDescription || '').length > 50 ? `${eachIssue.resolutionDescription.substring(0, 50)}...` : eachIssue.resolutionDescription}/>
                             <div className={`flex justify-center items-center h-full flex-[3]`}>
                                 <p className={`text-center w-full`}>{eachIssue.refundAmount}</p>
                             </div>
