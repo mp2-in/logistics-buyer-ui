@@ -19,7 +19,7 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus }: {
         "Delay in delivery",
         "Rider ran away with the item",
         "Food spillage",
-        "Marked delivered without delivering"
+        "MDND - Marked delivered without delivering"
     ]
     const [issue, setIssue] = useState('')
     const [description, setDescription] = useState('')
@@ -37,7 +37,7 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus }: {
                 return orderStatus !== 'Order-delivered'
             case "Food spillage":
                 return orderStatus === 'Order-delivered'
-            case "Marked delivered without delivering":
+            case "MDND - Marked delivered without delivering":
                 return orderStatus === 'Order-delivered'
         }
     }
