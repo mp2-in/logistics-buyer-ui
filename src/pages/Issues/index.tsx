@@ -84,26 +84,22 @@ export default () => {
                 <Input label='For Date' type='date' size='small' value={state.filterDate} onChange={val => dispatch({ type: 'update', payload: { filterDate: val } })} />
             </div>
             <div className='absolute top-[50px] left-2 right-2 bottom-1 overflow-auto sm:top-[50px] md:top-[80px]'>
-                <div className={`flex items-center bg-blue-300 *:text-center *:font-medium  *:text-sm  w-[1700px]`}>
+                <div className={`flex items-center bg-blue-300 *:text-center *:font-medium  *:text-sm  w-[1265px] xl:w-full`}>
                     <HeaderField cssClass='flex-[4] ml-0 bg-blue-300 pl-1' label='Creation' sort={state.sortField === 'createdat' ? state.sortOrder : undefined} onClick={() => updateSortField('createdat')} />
-                    <p className="flex-[5] bg-blue-300 py-2">Issue Id</p>
-                    <p className="flex-[5] bg-blue-300 py-2">Bill Num</p>
+                    <p className="flex-[6] bg-blue-300 py-2">Bill Num</p>
                     <HeaderField cssClass='flex-[5] bg-blue-300' label='Status Updated' sort={state.sortField === 'statusUpdatedat' ? state.sortOrder : undefined} onClick={() => updateSortField('statusUpdatedat')} />
                     <HeaderField cssClass='flex-[3] bg-blue-300' label='Status' sort={state.sortField === 'resolutionStatus' ? state.sortOrder : undefined} onClick={() => updateSortField('resolutionStatus')} />
                     <p className="flex-[5] bg-blue-300 py-2">Description</p>
                     <p className="flex-[3] bg-blue-300 py-2">Action</p>
                     <p className="flex-[5] bg-blue-300 py-2">Resolution</p>
-                    <HeaderField cssClass='flex-[2] bg-blue-300' label='Refund' sort={state.sortField === 'refundAmount' ? state.sortOrder : undefined} onClick={() => updateSortField('refundAmount')} />
+                    <HeaderField cssClass='flex-[3] bg-blue-300' label='Refund' sort={state.sortField === 'refundAmount' ? state.sortOrder : undefined} onClick={() => updateSortField('refundAmount')} />
                     <p className="flex-[2] bg-blue-300 py-2">Actions</p>
                 </div>
-                <div className={`absolute  top-[35px] bottom-0 lg:right-5 left-0 w-[1700px]`}>
+                <div className={`absolute  top-[35px] bottom-0 lg:right-5 left-0 w-[1265px] xl:w-full xl:overflow-auto`}>
                     {[...issues].sort(sortOrders).map(eachIssue => {
                         return <div key={eachIssue.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center xl:text-sm h-[40px]`}>
                             <p className={`flex-[4] ml-0`}>{eachIssue.createdat ? dayjs(eachIssue.createdat).format('MMM Do,hh:mm A') : '--'}</p>
-                            <div className={`flex-[5]`}>
-                                <input className={`w-full outline-none  border-none text-center`} readOnly value={eachIssue.issueId} />
-                            </div>
-                            <div className={`flex-[5]`}>
+                            <div className={`flex-[6]`}>
                                 <input className={`w-full outline-none  border-none text-center`} readOnly value={eachIssue.clientOrderId} />
                             </div>
                             <div className={`flex justify-center items-center h-full flex-[5]`}>
@@ -112,17 +108,19 @@ export default () => {
                             <div className={`flex justify-center items-center h-full flex-[3]`}>
                                 <input className={`border-none outline-none text-center w-full`} readOnly value={eachIssue.resolutionStatus} />
                             </div>
-                            <textarea className="h-[35px] flex-[5] py-1 text-xs resize-none" value={eachIssue.shortDescription}/>
+                            <textarea className="h-[38px] flex-[5] text-xs resize-none" value={eachIssue.shortDescription.length > 50 ? `${eachIssue.shortDescription.substring(0, 50)}...` : eachIssue.shortDescription} />
                             <p className={`flex-[3] h-full py-1`}>{eachIssue.resolutionAction}</p>
-                            <textarea className="h-[35px] flex-[5] py-1 text-xs resize-none" value={eachIssue.resolutionDescription}/>
-                            <div className={`flex justify-center items-center h-full flex-[2]`}>
+                            <textarea className="h-[35px] flex-[5] py-1 text-xs resize-none" value={eachIssue.resolutionDescription} />
+                            <div className={`flex justify-center items-center h-full flex-[3]`}>
                                 <p className={`text-center w-full`}>{eachIssue.refundAmount}</p>
                             </div>
                             <div className={`flex-[2] h-full py-1 flex justify-between items-center`}>
                                 <img src={closeIcon} onClick={e => {
-                                    dispatch({ type: 'update', payload: { closeIssue: eachIssue.issueId } })
+                                    if(eachIssue.issueStatus !== 'CLOSED') {
+                                        dispatch({ type: 'update', payload: { closeIssue: eachIssue.issueId } })
+                                    }
                                     e.stopPropagation()
-                                }} title='Close Issue' className={'cursor-pointer w-5'} />
+                                }} title='Close Issue' className={`w-5 ${eachIssue.issueStatus === 'CLOSED'?'opacity-30':'cursor-pointer'}`} />
                                 <img src={retryIcon} onClick={e => {
                                     refreshIssue(token || '', eachIssue.issueId)
                                     e.stopPropagation()
