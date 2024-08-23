@@ -8,7 +8,7 @@ export interface Order {
     createdAt: string
     lastupdatedat: string
     promisedDeliveryTime: string
-    totalDeliveryCharge: number
+    deliveryFee: number
     platformFee: number
     rts: number
     rtsAt: string

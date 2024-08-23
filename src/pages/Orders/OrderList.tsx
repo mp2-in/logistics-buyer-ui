@@ -134,7 +134,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 <HeaderField cssClass='flex-[2] bg-blue-300 py-2' label='LSP' sort={sortField === 'providerId' ? sortOrder : undefined} onClick={() => updateSortField('providerId')} />
                 <p className={`flex-[4] bg-blue-300 py-2`}>Rider</p>
                 <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Distance' sort={sortField === 'distance' ? sortOrder : undefined} onClick={() => updateSortField('distance')} />
-                <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Price' sort={sortField === 'totalDeliveryCharge' ? sortOrder : undefined} onClick={() => updateSortField('totalDeliveryCharge')} />
+                <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Price' sort={sortField === 'deliveryFee' ? sortOrder : undefined} onClick={() => updateSortField('deliveryFee')} />
                 <HeaderField cssClass='flex-[4] bg-blue-300 py-2' label='Delivery' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} />
                 <p className={`flex-[5] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
             </div>
