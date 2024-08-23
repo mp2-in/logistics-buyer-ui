@@ -127,11 +127,11 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             <div className={`flex items-center bg-blue-300 *:text-center *:font-medium  *:text-sm xl:*:text-sm w-[1265px] xl:w-full`}>
                 <HeaderField cssClass='flex-[3] ml-0 bg-blue-300 py-2 pl-1' label='Creation' sort={sortField === 'createdAt' ? sortOrder : undefined} onClick={() => updateSortField('createdAt')} />
                 <HeaderField cssClass='flex-[6] bg-blue-300 py-2' label='Bill Number' sort={sortField === 'orderId' ? sortOrder : undefined} onClick={() => updateSortField('orderId')} />
-                <HeaderField cssClass='flex-[2] bg-blue-300 py-2' label='LSP' sort={sortField === 'providerId' ? sortOrder : undefined} onClick={() => updateSortField('providerId')} />
                 <p className={`flex-[2] bg-blue-300 py-2`}>PCC</p>
                 <p className={`flex-[2] bg-blue-300 py-2`}>DCC</p>
                 <HeaderField cssClass='flex-[5] bg-blue-300 py-2' label='Status' sort={sortField === 'orderState' ? sortOrder : undefined} onClick={() => updateSortField('orderState')} />
                 <HeaderField cssClass='flex-[4] bg-blue-300 py-2' label='Customer' sort={sortField === 'dropName' ? sortOrder : undefined} onClick={() => updateSortField('dropName')} />
+                <HeaderField cssClass='flex-[2] bg-blue-300 py-2' label='LSP' sort={sortField === 'providerId' ? sortOrder : undefined} onClick={() => updateSortField('providerId')} />
                 <p className={`flex-[4] bg-blue-300 py-2`}>Rider</p>
                 <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Distance' sort={sortField === 'distance' ? sortOrder : undefined} onClick={() => updateSortField('distance')} />
                 <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Price' sort={sortField === 'totalDeliveryCharge' ? sortOrder : undefined} onClick={() => updateSortField('totalDeliveryCharge')} />
@@ -145,9 +145,6 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                         <div className={`flex-[6] ${rowBackground(eachOrder.orderState)}`}>
                             <input className={`w-full outline-none  border-none ${rowBackground(eachOrder.orderState)} text-center`} readOnly value={eachOrder.clientOrderId} />
                         </div>
-                        <div className='flex-[2] flex justify-center items-center'>
-                            <img src={getLogo(eachOrder.providerId)} className='w-7' alt={eachOrder.providerId} title={eachOrder.providerId} />
-                        </div>
                         <div className={`flex justify-center items-center h-full flex-[2] ${rowBackground(eachOrder.orderState)} `}>
                             <p>{eachOrder.pcc || ' '}</p>
                         </div>
@@ -160,6 +157,9 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                         <div className={`flex-col justify-center items-center h-full flex-[4] pt-1 ${rowBackground(eachOrder.orderState)} `}>
                             <p className='text-xs'>{trimTextValue(eachOrder.dropName, 12)}</p>
                             <p className='text-xs'>{eachOrder.dropPhone}</p>
+                        </div>
+                        <div className='flex-[2] flex justify-center items-center'>
+                            <img src={getLogo(eachOrder.providerId)} className='w-7' alt={eachOrder.providerId} title={eachOrder.providerId} />
                         </div>
                         {eachOrder.riderNumber ?<div className={`flex-col justify-center items-center h-full py-1 flex-[4] ${rowBackground(eachOrder.orderState)}`}>
                                 <p className='text-xs'>{trimTextValue(eachOrder.riderName, 12)}</p>
