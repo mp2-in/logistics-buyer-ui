@@ -81,7 +81,8 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
                 <p className="font-medium text-2xl hidden md:block">{title}</p>
             </div>
             <div className={'flex items-center cursor-pointer relative'} ref={divRef} onClick={() => setMenuDisplay(!showMenu)}>
-                <img src={userIcon} className="w-10 mr-1" />
+                <p className="font-medium text-xs block md:hidden">{selectedAccount}</p>
+                <img src={userIcon} className="w-10 mx-1" />
                 <p className="font-medium text-lg hidden md:block">{selectedAccount}</p>
                 {showMenu ? <div className="absolute top-5 bg-gray-100 cursor-pointer z-20 w-44 right-10 md:top-12 md:right-0 md:bg-gray-100">
                     {/mp2\.in$/.test(email || '') ? <AccountMenuItem icon={<img src={addAccount} className="w-7" />} title="Account" onClick={() => {
