@@ -15,6 +15,7 @@ import CancelOrder from "./CancelOrder";
 import RaiseIssue from "./RaiseIssue";
 import OrderFulfillment from "./OrderFulfillment";
 import OrderList from "./OrderList";
+import InsufficientBalanceDialog from "./InsufficientBalanceDialog";
 
 
 interface State {
@@ -25,6 +26,7 @@ interface State {
     cancelOrderDisplay: boolean
     raiseIssueDisplay: boolean
     fulfillOrderDisplay: boolean
+    insufficientBalanceDialogDisplay: boolean
     billNumber?: string
     storeId?: string
     drop?: LocationAddress
@@ -37,11 +39,12 @@ interface State {
     reportedOrderIssue?: string
     toBeFulfilledOrder?: string
     toBeRebookedOrder?: string
+    walletBalanceErrorMsg: string
 }
 
 const initialValue: State = {
-    addOrderDisplay: false, priceQuotesDisplay: false, orderInfoDisplay: false, raiseIssueDisplay: false,
-    addOutletDisplay: false, cancelOrderDisplay: false, fulfillOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD')
+    addOrderDisplay: false, priceQuotesDisplay: false, orderInfoDisplay: false, raiseIssueDisplay: false, insufficientBalanceDialogDisplay: false,
+    addOutletDisplay: false, cancelOrderDisplay: false, fulfillOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD'), walletBalanceErrorMsg: ''
 }
 
 
@@ -58,12 +61,15 @@ export default () => {
 
     const [state, dispatch] = useReducer(reducer, initialValue)
 
-    const { token, setToast, isRetail, role, setPage } = useAppConfigStore(state => ({
+    const { token, setToast, isRetail, role, setPage, email, phone, accountId } = useAppConfigStore(state => ({
         token: state.token,
         setToast: state.setToast,
         isRetail: state.isRetail,
         role: state.role,
-        setPage: state.setPage
+        setPage: state.setPage,
+        email: state.email,
+        phone: state.phone,
+        accountId: state.selectedAccount
     }))
 
     const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, assignAgent,
@@ -144,13 +150,17 @@ export default () => {
             activity={activity}
             pickupStores={pickupStores}
             createOrder={(billNumber, storeId, amount, drop) => {
-                createOrder(token || '', billNumber, storeId, drop, amount, undefined, undefined, (success, message) => {
+                createOrder(token || '', billNumber, storeId, drop, amount, undefined, undefined, (success, message, insufficientBalance) => {
                     if (success) {
                         dispatch({ type: 'update', payload: { addOrderDisplay: false } })
                         getOrders(token || '', state.orderFilterDate)
                         setToast('Order created successfully', 'success')
                     } else {
-                        setToast(message || 'Error creating order', 'error')
+                        if(insufficientBalance) {
+                            dispatch({ type: 'update', payload: { insufficientBalanceDialogDisplay: true, walletBalanceErrorMsg: message } })
+                        } else {
+                            setToast(message || 'Error creating order', 'error')
+                        }
                     }
                 })
             }}
@@ -174,13 +184,17 @@ export default () => {
             onClose={() => dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })}
             priceQuotes={orderPriceQuote} createOrder={(chosenLsp) => {
                 if (state.billNumber && state.storeId && state.orderAmount && state.drop) {
-                    createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, chosenLsp, state.quoteId, (success, message) => {
+                    createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, chosenLsp, state.quoteId, (success, message, insufficientBalance) => {
                         if (success) {
                             dispatch({ type: 'update', payload: { addOrderDisplay: false, priceQuotesDisplay: false } })
                             getOrders(token || '', state.orderFilterDate)
                             setToast('Order created successfully', 'success')
                         } else {
-                            setToast(message || 'Error creating order', 'error')
+                            if(insufficientBalance) {
+                                dispatch({ type: 'update', payload: { insufficientBalanceDialogDisplay: true, walletBalanceErrorMsg: message } })
+                            } else {
+                                setToast(message || 'Error creating order', 'error')
+                            }
                         }
                     })
                 }
@@ -255,5 +269,7 @@ export default () => {
                 }
             })
         }} loading={activity.assignAgent} />
+        <InsufficientBalanceDialog open={state.insufficientBalanceDialogDisplay} onClose={() => dispatch({ type: 'update', payload: { insufficientBalanceDialogDisplay: false } })}
+            accountId={accountId} email={email} phone={phone} message={state.walletBalanceErrorMsg}/>
     </div>
 }       
