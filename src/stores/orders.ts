@@ -16,7 +16,8 @@ interface State extends Attributes {
     clearPickupList: () => void,
     googlePlacesApi: (searchText: string, callback: (data: PlaceAutoComplete[]) => void, latitude?: number, longitude?: number) => void
     googlePlaceDetailsApi: (placeId: string, callback: (data: PlaceDetails) => void) => void
-    createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, lspId: string | undefined, quoteId: string | undefined, callback: (success: boolean, message?: string) => void) => void
+    createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, lspId: string | undefined,
+        quoteId: string | undefined, callback: (success: boolean, message?: string, insufficientBalance?: boolean) => void) => void
     cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean, message?: string) => void) => void
     getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, callback: (success: boolean, quoteId: string, message?: string) => void) => void
     addOutlet: (action: 'create' | 'update', token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean, message?: string) => void) => void
@@ -128,7 +129,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 if (res.status === 1) {
                     callback(true)
                 } else {
-                    callback(false, res.message || 'Error creating order')
+                    callback(false, res.message || 'Error creating order', res.error_code === 2)
                 }
             })
             .catch(() => {
