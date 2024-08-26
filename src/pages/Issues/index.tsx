@@ -15,6 +15,7 @@ import closeIcon from "@assets/cancel.png"
 import retryIcon from "@assets/retry.png"
 import IssueInfo from "./IssueInfo"
 import CloseIssueConfirmation from "./CloseIssueConfirmation"
+import parse from 'html-react-parser';
 
 
 const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: string, label: string, sort?: 'asc' | 'dsc', hidden?: boolean, onClick: () => void }) => {
@@ -84,7 +85,7 @@ export default () => {
     return <div>
         <TopBar title='Issues' onAccountSwitch={(newToken) => {
             getIssues(newToken || '', state.filterDate)
-        }}/>
+        }} />
         <div className={`absolute left-0 right-0 md:top-[70px] top-[60px] bottom-3 md:px-5 md:py-3 px-2`}>
             <div className={`flex sm:items-end items-start justify-between p-2  mb-2`}>
                 <Input label='For Date' type='date' size='small' value={state.filterDate} onChange={val => dispatch({ type: 'update', payload: { filterDate: val } })} />
@@ -114,19 +115,22 @@ export default () => {
                             <div className={`flex justify-center items-center h-full flex-[3]`}>
                                 <input className={`border-none outline-none text-center w-full`} readOnly value={eachIssue.resolutionStatus} />
                             </div>
-                            <textarea readOnly className="h-[38px] flex-[5] text-xs resize-none" value={(eachIssue.shortDescription || '').length > 50 ? `${eachIssue.shortDescription.substring(0, 50)}...` : (eachIssue.shortDescription || '')} />
+                            <textarea readOnly className="h-[38px] flex-[5] text-xs resize-none" value={(eachIssue.shortDescription || '').length > 40 ? `${eachIssue.shortDescription.substring(0, 40)}...` : (eachIssue.shortDescription || '')} />
                             <p className={`flex-[3] h-full py-1`}>{eachIssue.resolutionAction}</p>
-                            <textarea readOnly className="h-[38px] flex-[5] text-xs resize-none" value={(eachIssue.resolutionDescription || '').length > 50 ? `${eachIssue.resolutionDescription.substring(0, 50)}...` : (eachIssue.resolutionDescription || '')}/>
+                            <div className={'h-full flex-[5] text-xs'}>
+                                {/<\/?\w+>/.test((eachIssue.resolutionDescription || '').toString()) ? parse(eachIssue.resolutionDescription) : <textarea readOnly className="h-[38px] flex-[5] text-xs resize-none"
+                                    value={(eachIssue.resolutionDescription || '').length > 40 ? `${eachIssue.resolutionDescription.substring(0, 40)}...` : (eachIssue.resolutionDescription || '')} />}
+                            </div>
                             <div className={`flex justify-center items-center h-full flex-[3]`}>
                                 <p className={`text-center w-full`}>{eachIssue.refundAmount}</p>
                             </div>
                             <div className={`flex-[2] h-full py-1 flex justify-between items-center`}>
                                 <img src={closeIcon} onClick={e => {
-                                    if(eachIssue.issueStatus !== 'CLOSED') {
+                                    if (eachIssue.issueStatus !== 'CLOSED') {
                                         dispatch({ type: 'update', payload: { closeIssue: eachIssue.issueId } })
                                     }
                                     e.stopPropagation()
-                                }} title='Close Issue' className={`w-5 ${eachIssue.issueStatus === 'CLOSED'?'opacity-30':'cursor-pointer'}`} />
+                                }} title='Close Issue' className={`w-5 ${eachIssue.issueStatus === 'CLOSED' ? 'opacity-30' : 'cursor-pointer'}`} />
                                 <img src={retryIcon} onClick={e => {
                                     refreshIssue(token || '', eachIssue.issueId)
                                     e.stopPropagation()

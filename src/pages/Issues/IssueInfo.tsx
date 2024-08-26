@@ -61,7 +61,7 @@ export default ({ open, onClose, issueDetails }: {
                     <ShowValue label="Refund Amount" value={issueDetails?.refundAmount} number/>
                 </div>
                 <div className="md:flex justify-between">
-                    <ShowValue label="Resolution Description" value={issueDetails?.resolutionDescription} large />
+                    <ShowValue label="Resolution Description" value={issueDetails?.resolutionDescription} textArea large />
                 </div>
             </div>
         </div>
