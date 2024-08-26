@@ -1,6 +1,5 @@
 import Modal from "@components/Modal"
 import closeIcon from '@assets/close.png'
-import addIcon from "@assets/add.png"
 
 import Button from "@components/Button"
 
@@ -24,7 +23,7 @@ export default ({ open, onClose, accountId, email, phone, message }: {
                 <p>{message}</p>
                 <div className="mt-[25px] mb-[15px]">
                     <a href={`https://pages.razorpay.com/mp2-wallet-recharge?phone=${phone || ''}&email=${email || ''}&mp2_accountid=${accountId}`} target='_blank'>
-                        <Button title="Recharge Wallet" icon={<img src={addIcon} />} variant="primary" onClick={onClose}/>
+                        <Button title="Recharge Wallet" variant="primary" onClick={onClose}/>
                     </a>
                 </div>
             </div>
