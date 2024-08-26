@@ -24,10 +24,10 @@ interface State extends Attributes {
     clearAuth: () => void
     setToast: (message: string, type: 'success' | 'warning' | 'error') => void,
     hideToast: () => void,
-    sendOtp: (phoneNumber: string, callback: (success: boolean) => void) => void,
-    verifyOtp: (phoneNumber: string, otp: string, callback: (success: boolean) => void) => void
+    sendOtp: (phoneNumber: string, callback: (success: boolean, message: string) => void) => void,
+    verifyOtp: (phoneNumber: string, otp: string, callback: (success: boolean, message: string) => void) => void
     switchAccount: (token: string, accountId: string, callback: (success: boolean, token: string) => void) => void
-    verifyGmail: (emailId: string, tokenId: string, callback: (success: boolean) => void) => void
+    verifyGmail: (emailId: string, tokenId: string, callback: (success: boolean, message: string) => void) => void
     createAccount: (token: string, accountName: string, gstin: string, autoSelectMode: string, contacts: string, plan: string, rtoRequired: boolean, callback: (sucess: boolean, message: string) => void) => void
     validateGst: (token: string, gstIn: string, callback: (valid: boolean) => void) => void
 }
@@ -100,16 +100,16 @@ export const useAppConfigStore = create<State>()((set) => ({
                 }))
 
                 if (res.status === 1) {
-                    callback(true)
+                    callback(true, '')
                 } else {
-                    callback(false)
+                    callback(false, res.message || "Phone number is not registered")
                 }
             })
             .catch(() => {
                 set(produce((state: State) => {
                     state.activity.sendOtp = false
                 }))
-                callback(false)
+                callback(false, "Phone number is not registered")
             })
     },
     verifyOtp: async (phoneNumber, otp, callback) => {
@@ -138,9 +138,9 @@ export const useAppConfigStore = create<State>()((set) => ({
                     localStorage.setItem("role", res.selected_account.role);
                     localStorage.setItem("isRetail", res.selected_account.is_retail);
 
-                    callback(true)
+                    callback(true, '')
                 } else {
-                    callback(false)
+                    callback(false, res.message || 'OTP is not valid !')
                     set(produce((state: State) => {
                         state.loggedIn = false
                         state.activity.verifyOtp = false
@@ -152,7 +152,7 @@ export const useAppConfigStore = create<State>()((set) => ({
                     state.loggedIn = false
                     state.activity.verifyOtp = false
                 }))
-                callback(false)
+                callback(false, 'OTP is not valid !')
             })
     },
     switchAccount: async (token, accountId, callback) => {
@@ -218,9 +218,9 @@ export const useAppConfigStore = create<State>()((set) => ({
                     localStorage.setItem("role", res.selected_account.role);
                     localStorage.setItem("isRetail", res.selected_account.is_retail);
 
-                    callback(true)
+                    callback(true, '')
                 } else {
-                    callback(false)
+                    callback(false, res.message || 'Unregistered email id')
                     set(produce((state: State) => {
                         state.loggedIn = false
                         state.activity.verifyGmail = false
@@ -231,7 +231,7 @@ export const useAppConfigStore = create<State>()((set) => ({
                 set(produce((state: State) => {
                     state.activity.verifyGmail = false
                 }))
-                callback(false)
+                callback(false, 'Unregistered email id')
             })
     },
     createAccount: async (token, accountName, gstin, autoSelectMode, contacts, plan, rtoRequired, callback) => {

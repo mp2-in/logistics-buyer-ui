@@ -74,20 +74,20 @@ export default () => {
             <div className='mt-12'>
                 <Button title={showPhone ? 'Send OTP' : 'Verify'} onClick={() => {
                     if (showPhone) {
-                        sendOtp(phoneNumber, (success) => {
+                        sendOtp(phoneNumber, (success, message) => {
                             if (success) {
                                 setPhoneDisplay(false)
                             } else {
-                                setErrMsg('Phone number is not registered')
+                                setErrMsg(message)
                             }
                         })
                     } else {
-                        verifyOtp(phoneNumber, otp, (success) => {
+                        verifyOtp(phoneNumber, otp, (success, message) => {
                             if (success) {
                                 navigate('/u/orders')
                             } else {
                                 setOtp('')
-                                setErrMsg('OTP is not valid !')
+                                setErrMsg(message)
                             }
                         })
                     }
@@ -100,11 +100,11 @@ export default () => {
             {showPhone ? <div className='mt-10'><GoogleLogin
                 onSuccess={credentialResponse => {
                     const decoded = jwtDecode(credentialResponse.credential || '') as IJwtPayload;
-                    verifyGmail(decoded.email || '', decoded.jti || '', (success) => {
+                    verifyGmail(decoded.email || '', decoded.jti || '', (success, message) => {
                         if (success) {
                             navigate('/u/orders')
                         } else {
-                            setErrMsg('Unregistered email id')
+                            setErrMsg(message)
                         }
                     });
                 }}
