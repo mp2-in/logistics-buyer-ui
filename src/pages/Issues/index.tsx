@@ -117,7 +117,7 @@ export default () => {
                             </div>
                             <textarea readOnly className="h-[38px] flex-[5] text-xs resize-none" value={(eachIssue.shortDescription || '').length > 40 ? `${eachIssue.shortDescription.substring(0, 40)}...` : (eachIssue.shortDescription || '')} />
                             <p className={`flex-[3] h-full py-1 text-xs`}>{eachIssue.resolutionAction}</p>
-                            <div className={'h-[36px] flex-[5] text-xs pt-[2px]'}>
+                            <div className={'h-[36px] flex-[5] text-xs pt-[2px] overflow-hidden'}>
                                 {/<\/?\w+>/.test((eachIssue.resolutionDescription || '').toString()) ? parse(eachIssue.resolutionDescription) : <textarea readOnly className="h-full flex-[5] text-xs resize-none"
                                     value={(eachIssue.resolutionDescription || '').length > 40 ? `${eachIssue.resolutionDescription.substring(0, 40)}...` : (eachIssue.resolutionDescription || '')} />}
                             </div>
