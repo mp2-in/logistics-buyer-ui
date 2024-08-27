@@ -16,7 +16,7 @@ export default ({ open, onClose, accountId, email, phone, message }: {
     return <Modal open={open} onClose={onClose}>
         <div className={'bg-white rounded flex flex-col items-center py-[10px] px-[20px] md:w-[600px] w-[320px] relative'} onMouseDown={e => e.stopPropagation()}>
             <div className={'flex justify-between w-full items-center mb-[10px]'}>
-                <p className="text-xl font-semibold">Recharge Wallet</p>
+                <p className="text-lg font-semibold">Insufficient Balance</p>
                 <img src={closeIcon} onClick={onClose} className="w-6 absolute top-1 right-1" />
             </div>
             <div className={'flex flex-col items-center mt-5'}>

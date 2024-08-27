@@ -191,8 +191,9 @@ export default () => {
                             setToast('Order created successfully', 'success')
                         } else {
                             if(insufficientBalance) {
-                                dispatch({ type: 'update', payload: { insufficientBalanceDialogDisplay: true, walletBalanceErrorMsg: message } })
+                                dispatch({ type: 'update', payload: { insufficientBalanceDialogDisplay: true, walletBalanceErrorMsg: message, priceQuotesDisplay: false } })
                             } else {
+                                dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })
                                 setToast(message || 'Error creating order', 'error')
                             }
                         }
