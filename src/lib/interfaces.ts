@@ -71,7 +71,8 @@ export interface Order {
     note1: string,
     note2: string,
     trackingUrl: string,
-    priceWithGST: number
+    priceWithGST: number,
+    "f.distance": number,
 }
 
 export interface PlaceDetails {
