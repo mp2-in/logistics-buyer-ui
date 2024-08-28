@@ -73,7 +73,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
 
     const mapLink = (order: Order): string | undefined => {
         if (order.pickupLatitude && order.pickupLongitude && order.dropLatitude && order.dropLongitude) {
-            return `https://www.google.com/maps/dir/?api=1&origin=${order.pickupLatitude},${order.pickupLongitude}&destination=${order.dropLatitude},${order.dropLongitude}`
+            return `https://www.google.com/maps/dir/?api=1&origin=${order.pickupLatitude},${order.pickupLongitude}&destination=${order.dropLatitude},${order.dropLongitude}&travelmode=driving`
         }
     }
 
