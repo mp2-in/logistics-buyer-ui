@@ -90,13 +90,13 @@ export default ({ onUpdate, onPlacesSearch, onPlaceChoose, payload, module, stor
             <div className={'flex items-center'}>
                 <Input label="Geolocation" value={payload.geoLocation} onChange={val => onUpdate({ geoLocation: val })} />
                 <div className="hidden md:block">
-                    {/^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) && storeLocation ? <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://www.google.com/maps/dir/?api=1&origin=${storeLocation.lat},${storeLocation.lng}&destination=${payload.geoLocation}`} target="_blank">Maps Link</a> :
+                    {/^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) && storeLocation ? <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://www.google.com/maps/dir/?api=1&origin=${storeLocation.lat},${storeLocation.lng}&destination=${payload.geoLocation}&travelmode=driving`} target="_blank">Maps Link</a> :
                         /^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) ? <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://maps.google.com/?q=${payload.geoLocation}`} target="_blank">Maps Link</a> :
                             <a className="ml-3 mt-3 font-bold underline cursor-pointer text-blue-500" href={`https://maps.google.com`} target="_blank">Maps Link</a>}
                 </div>
                 <div className="md:hidden w-6 ml-2">
                     {/^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) && storeLocation ?
-                        <a href={`https://www.google.com/maps/dir/?api=1&origin=${storeLocation.lat},${storeLocation.lng}&destination=${payload.geoLocation}`} target="_blank"><img src={trackIcon} /></a> :
+                        <a href={`https://www.google.com/maps/dir/?api=1&origin=${storeLocation.lat},${storeLocation.lng}&destination=${payload.geoLocation}&travelmode=driving`} target="_blank"><img src={trackIcon} /></a> :
                         /^[0-9.]+\s*,\s*[0-9.]+$/.test(payload.geoLocation) ? <a href={`https://maps.google.com/?q=${payload.geoLocation}`} target="_blank"><img src={trackIcon} /></a> :
                             <a href={`https://maps.google.com`} target="_blank"><img src={trackIcon} /></a>}
                 </div>
