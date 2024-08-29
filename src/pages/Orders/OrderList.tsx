@@ -33,8 +33,8 @@ import { cancellable, trimTextValue } from '@lib/utils';
 
 const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: string, label: string, sort?: 'asc' | 'dsc', hidden?: boolean, onClick: () => void }) => {
     return <div className={`${cssClass} ${hidden ? 'hidden xl:flex' : 'flex'} items-center cursor-pointer justify-center`} onClick={onClick}>
-        <p>{label}</p>
-        <div className={'flex-col items-center ml-2'}>
+        <p className='mx-2'>{label}</p>
+        <div className={'flex-col items-center'}>
             <img src={sort === 'asc' ? sortBlackUpIcon : sortGreyUpIcon} className='w-2 mb-1' />
             <img src={sort === 'dsc' ? sortBlackDownIcon : sortGreyDownIcon} className='w-2' />
         </div>
