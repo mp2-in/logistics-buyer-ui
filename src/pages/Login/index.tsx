@@ -55,12 +55,13 @@ export default () => {
                 }
 
                 navigator.credentials.get(o).then(otp => {
+                    console.log(otp)
+                    console.log(otp?.id)
+                    console.log(otp?.type)
                     if(otp) {
                         setOtp(otp.id)
                     }
-                }).catch(err => {
-                    alert(`err: ${err}`)
-                })
+                }).catch(err => console.log(err))
             }
         }
     }, [showPhone])
