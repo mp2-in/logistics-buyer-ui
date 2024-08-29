@@ -63,6 +63,7 @@ export default () => {
 
     useEffect(() => {
         inputRef.current?.focus()
+        setOtp('')
         if (!showPhone) {
             if ("OTPCredential" in window) {
                 getPassCode()
@@ -88,7 +89,7 @@ export default () => {
                         setPhoneNumber(val)
                     }
                     setErrMsg(undefined)
-                }} />
+                }} type='number'/>
             </div> : <div className='mt-12 flex' onClick={() => inputRef.current?.focus()}>
                 <OtpBox val={otp.length > 0 ? otp[0] : ' '} hightlight={otp.length === 0} />
                 <OtpBox val={otp.length > 1 ? otp[1] : ' '} hightlight={otp.length === 1} />

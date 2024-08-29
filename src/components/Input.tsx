@@ -68,7 +68,7 @@ const Input = ({ label, type, value, onChange, size, placeholder, readOnly, onBl
     return <div className={`relative inline-flex flex-col justify-end ${label ? 'h-[30px] md:h-[46px]' : 'md:h-[35px]'}`}>
         <div className={`flex flex-col border border-gray-300 rounded relative h-[35px] justify-center py-0 px-[8px] bg-white group focus-within:border-blue-500
                                     ${size === 'small' ? `w-[150px] md:w-[196px]` : size === 'medium' || !size ? 'w-[300px] md:w-[400px]' : size === 'large' ? 'w-[500px]' : 'w-[620px]'} ${readOnly ? 'opacity-60' : ''}`}>
-            <input className={`outline-none border-none font-sans text-sm bg-white`}
+            <input className={`outline-none border-none font-sans text-sm bg-white appearance-none`}
                 placeholder={placeholder}
                 type={getType()}
                 readOnly={readOnly}
