@@ -3,14 +3,24 @@ import { useNavigate } from 'react-router-dom'
 import backIcon from "@assets/back.png"
 import Input from '@components/Input'
 import Button from '@components/Button'
-import { GoogleLogin,  } from '@react-oauth/google';
+import { GoogleLogin, } from '@react-oauth/google';
 import { jwtDecode, JwtPayload } from "jwt-decode";
 
 import { useAppConfigStore } from 'stores/appConfig'
 
 interface IJwtPayload extends JwtPayload {
     email: string;
-  }
+}
+
+
+interface iCredentialRequestOptions extends CredentialRequestOptions {
+    otp: { transport: string[] }
+}
+
+interface iCredential extends Credential {
+    code?: string
+}
+
 
 const OtpBox = ({ val, hightlight }: { val: string, hightlight?: boolean }) => {
     return <div className={`border mr-2 last:mr-0 w-10 h-10 flex items-center justify-center ${hightlight ? 'border-blue-500 border-2' : ''}`}>{val}</div>
@@ -40,8 +50,25 @@ export default () => {
         }
     }, [loggedIn])
 
+    const getPassCode = async () => {
+        const ac = new AbortController()
+        let o: iCredentialRequestOptions = {
+            otp: { transport: ['sms'] },
+            signal: ac.signal
+        }
+
+        const pass: iCredential | null = await navigator.credentials.get(o)
+        setOtp(pass?.code || '')
+    }
+
     useEffect(() => {
         inputRef.current?.focus()
+        setOtp('')
+        if (!showPhone) {
+            if ("OTPCredential" in window) {
+                getPassCode()
+            }
+        }
     }, [showPhone])
 
     return <div className='fixed left-0 right-0 top-0 bottom-0 flex justify-center items-center' onClick={() => !showPhone && inputRef.current?.focus()}>
@@ -62,7 +89,7 @@ export default () => {
                         setPhoneNumber(val)
                     }
                     setErrMsg(undefined)
-                }} />
+                }} type='number'/>
             </div> : <div className='mt-12 flex' onClick={() => inputRef.current?.focus()}>
                 <OtpBox val={otp.length > 0 ? otp[0] : ' '} hightlight={otp.length === 0} />
                 <OtpBox val={otp.length > 1 ? otp[1] : ' '} hightlight={otp.length === 1} />
