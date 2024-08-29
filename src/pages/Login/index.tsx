@@ -12,14 +12,20 @@ interface IJwtPayload extends JwtPayload {
     email: string;
 }
 
-const OtpBox = ({ val, hightlight }: { val: string, hightlight?: boolean }) => {
-    return <div className={`border mr-2 last:mr-0 w-10 h-10 flex items-center justify-center ${hightlight ? 'border-blue-500 border-2' : ''}`}>{val}</div>
-}
-
 
 interface iCredentialRequestOptions extends CredentialRequestOptions {
     otp: { transport: string[] }
 }
+
+interface iCredential extends Credential {
+    code?: string
+}
+
+
+const OtpBox = ({ val, hightlight }: { val: string, hightlight?: boolean }) => {
+    return <div className={`border mr-2 last:mr-0 w-10 h-10 flex items-center justify-center ${hightlight ? 'border-blue-500 border-2' : ''}`}>{val}</div>
+}
+
 
 export default () => {
     const [phoneNumber, setPhoneNumber] = useState('')
@@ -44,24 +50,22 @@ export default () => {
         }
     }, [loggedIn])
 
+    const getPassCode = async () => {
+        const ac = new AbortController()
+        let o: iCredentialRequestOptions = {
+            otp: { transport: ['sms'] },
+            signal: ac.signal
+        }
+
+        const pass: iCredential | null = await navigator.credentials.get(o)
+        setOtp(pass?.code || '')
+    }
+
     useEffect(() => {
         inputRef.current?.focus()
         if (!showPhone) {
             if ("OTPCredential" in window) {
-                const ac = new AbortController()
-                let o: iCredentialRequestOptions = {
-                    otp: { transport: ['sms'] },
-                    signal: ac.signal
-                }
-
-                navigator.credentials.get(o).then(otp => {
-                    console.log(otp)
-                    console.log(otp?.id)
-                    console.log(otp?.type)
-                    if(otp) {
-                        setOtp(otp.id)
-                    }
-                }).catch(err => console.log(err))
+                getPassCode()
             }
         }
     }, [showPhone])
