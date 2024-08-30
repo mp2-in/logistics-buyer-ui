@@ -59,6 +59,7 @@ export interface Order {
     distance: number
     assignedAt: string,
     atpickupAt: string,
+    atdeliveryAt: string,
     pickedupAt: string,
     deliveredAt: string,
     cancelledAt: string,
