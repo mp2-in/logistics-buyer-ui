@@ -55,7 +55,11 @@ export default ({ open, onClose, orderInfo, onCancelOrder, onIssueReport }: {
                     <ShowValue label="Assigned At" value={orderInfo?.assignedAt} isDate />
                 </div>
                 <div className="md:flex justify-between">
+                    <ShowValue label="Reached Pickup At" value={orderInfo?.atpickupAt} isDate />
                     <ShowValue label="Picked At" value={orderInfo?.pickedupAt} isDate />
+                </div>
+                <div className="md:flex justify-between">
+                    <ShowValue label="Reached Delivery At" value={orderInfo?.atdeliveryAt} isDate />
                     <ShowValue label="Delivered At" value={orderInfo?.deliveredAt} isDate />
                 </div>
                 <div className="md:flex justify-between">
