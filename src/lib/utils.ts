@@ -36,8 +36,8 @@ export const Api = (url: string, options: { method: 'post' | 'put' | 'delete' | 
 export const GooglePlacesApi = (searchText: string, latitude?: number, longitude?: number) => {
   let data = {};
 
-  if(latitude && longitude) {
-    data = { input: searchText, locationBias: {circle: {center: {latitude, longitude}, radius: 20000}} };
+  if (latitude && longitude) {
+    data = { input: searchText, locationBias: { circle: { center: { latitude, longitude }, radius: 20000 } } };
   } else {
     data = { input: searchText, includedRegionCodes: ["in"] }
   }
@@ -110,7 +110,7 @@ export const formatAddress = (address: string, components: { longText: string, t
     }
   }
 
-  const modifiedAddress = address.replace(/,\s*india/i,'').replace(new RegExp(`,\\s*${state}`, 'i'),'').replace(new RegExp(`,\\s*${city}`, 'i'),'')
+  const modifiedAddress = address.replace(/,\s*india/i, '').replace(new RegExp(`,\\s*${state}`, 'i'), '').replace(new RegExp(`,\\s*${city}`, 'i'), '')
   const addressSplit = modifiedAddress.split(/\s*,\s*/)
   let addrLine1: string[] = []
   let addrLine2: string[] = []
@@ -140,12 +140,22 @@ export const getStates = () => {
 }
 
 
-export const cancellationIdReasonMapping:{[k: string]: string} = {
-  "002": 'One or more items in the Order not available',
-  "005": 'Merchant rejected the order',
-  "006": 'Order not shipped as per buyer app SLA',
-  "010": 'Buyer wants to modify details',
-  "012": 'Buyer does not want product any more',
+export const cancellationIdReasonMapping: { [k: string]: string } = {
+  "001": "Price of one or more items have changed due to which buyer was asked to make additional payment",
+  "002": "One or more items in the Order not available",
+  "003": "Product available at lower than order price",
+  "005": "Merchant rejected the order",
+  "006": "Order not shipped as per buyer app SLA",
+  "008": "Order / fulfillment not ready for pickup",
+  "010": "Buyer wants to modify details",
+  "011": "Buyer not found or cannot be contacted",
+  "012": "Buyer does not want product any more",
+  "013": "Buyer refused to accept delivery",
+  "014": "Address not found",
+  "015": "Buyer not available at location",
+  "016": "Accident / rain / strike / vehicle issues",
+  "017": "Order delivery delayed or not possible",
+  "018": "Delivery delayed or not possible"
 }
 
 export const cancellable = (orderState: string) => {
@@ -153,11 +163,11 @@ export const cancellable = (orderState: string) => {
 }
 
 export const trimTextValue = (value: string, limit?: number) => {
-  if(value) {
+  if (value) {
     const splitValue = value.split(/\s+/)
-    let trimmedValue:string[] = []
-    for(let i= 0;i<splitValue.length;i++) {
-      if(trimmedValue.length === 0 || ((trimmedValue.join(' ').length + splitValue[i].length) < (limit || 15))) {
+    let trimmedValue: string[] = []
+    for (let i = 0; i < splitValue.length; i++) {
+      if (trimmedValue.length === 0 || ((trimmedValue.join(' ').length + splitValue[i].length) < (limit || 15))) {
         trimmedValue.push(splitValue[i])
       }
     }
