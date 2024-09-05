@@ -16,6 +16,7 @@ import Toast from "@components/Toast";
 import Wallet from "@pages/Wallet";
 import Reports from "@pages/Reports";
 import Issues from "@pages/Issues";
+import RedirectOldLink from "@components/RedirectOldLink";
 
 
 const RequireAuth = ({ children, loggedIn }: { children: React.ReactNode, loggedIn: boolean }) => {
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="wallet" element={<Wallet />} />
         <Route path="reports" element={<Reports />} />
         <Route path="issues" element={<Issues />} />
+        <Route path="u/:component" element={<RedirectOldLink />} />
       </Route>
     </Routes> : <ActivityIndicator />}
     <Toast />

@@ -31,8 +31,6 @@ export default () => {
         setPage('wallet')
     }, [])
 
-    console.log(walletLink, activity.getWalletDashboardLink)
-
     return <div>
         <TopBar title='Wallet' onAccountSwitch={() => clearPickupList()}/>
         <div className={`absolute left-0 right-0 md:top-[80px] top-[50px] bottom-3 md:px-5 md:py-3 px-2`}>
