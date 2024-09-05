@@ -139,19 +139,19 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
                 <img src={mp2Icon} className="w-10 cursor-pointer scale-1 min-w-10 lg:min-w-16 lg:w-16" />
                 <div className={`mt-8 *:py-1 *:my-2`}>
                     <MainMenuItem title="Orders" icon={<img src={orderIcon} className="w-9 lg:w-8" />} onClick={() => {
-                        navigate('/u/orders')
+                        navigate('/orders')
                         setMenuDisplay(false)
                     }} selected={page === 'orders'} />
                     <MainMenuItem title="Wallet" icon={<img src={walletIcon} className="w-9 lg:w-8" />} onClick={() => {
-                        navigate('/u/wallet')
+                        navigate('/wallet')
                         setMenuDisplay(false)
                     }} selected={page === 'wallet'}/>
                     <MainMenuItem title="Reports" icon={<img src={billingIcon} className="w-9 lg:w-8" />} onClick={() => {
-                        navigate('/u/reports')
+                        navigate('/reports')
                         setMenuDisplay(false)
                     }} selected={page === 'reports'}/>
                     <MainMenuItem title="Issues" icon={<img src={warningIcon} className="w-9 lg:w-8" />} onClick={() => {
-                        navigate('/u/issues')
+                        navigate('/issues')
                         setMenuDisplay(false)
                     }} selected={page === 'issues'}/>
                 </div>

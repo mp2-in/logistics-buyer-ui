@@ -6,6 +6,7 @@ import Select from "@components/Select"
 
 import Button from "@components/Button"
 import TextArea from "@components/TextArea"
+import Input from "@components/Input"
 
 
 export default ({ open, onClose, raiseIssue, loading, orderStatus }: {
@@ -19,10 +20,13 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus }: {
         "Delay in delivery",
         "Rider ran away with the item",
         "Food spillage",
-        "MDND - Marked delivered without delivering"
+        "MDND - Marked delivered without delivering",
+        "Delay in pickup",
+        "Marked delivered without picking up items"
     ]
     const [issue, setIssue] = useState('')
     const [description, setDescription] = useState('')
+    const [refundAmount, setRefundAmount] = useState('')
 
     useEffect(() => {
         setIssue('')
@@ -39,6 +43,10 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus }: {
                 return orderStatus === 'Order-delivered'
             case "MDND - Marked delivered without delivering":
                 return orderStatus === 'Order-delivered'
+            case "Marked delivered without picking up items":
+                return orderStatus === 'Order-delivered'
+            case "Delay in pickup":
+                return ['Created', 'UnFulfilled', 'Pending', 'Searching-for-Agent', 'Agent-assigned'].includes(orderStatus)
         }
     }
 
@@ -48,13 +56,16 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus }: {
                 <p className="text-xl font-semibold">Raise Issue</p>
                 <img src={closeIcon} onClick={onClose} className="w-6 absolute top-1 right-1 cursor-pointer" />
             </div>
-            <div className={'flex flex-col items-center mt-5'}>
+            <div className={'flex flex-col items-center mt-3 *:my-2'}>
                 <Select options={issuesList.filter(filterIssueReasons).map(e => ({ label: e, value: e }))}
                     onChange={val => setIssue(val)} value={issue} label="Issue" size={'large'} />
-                <div className="mt-5">
+                <div>
                     <TextArea label="Description" value={description} onChange={val => setDescription(val)} size="large" />
                 </div>
-                <div className="mt-[40px] mb-[25px]">
+                <div className="w-full">
+                    <Input label="Refund Amount" type='number' value={refundAmount} onChange={val => /^[0-9.]*$/.test(val) && setRefundAmount(val)} size='small' />
+                </div>
+                <div className="py-3">
                     <Button title="Raise Issue" variant="primary" onClick={() => raiseIssue(issue, description)} loading={loading} disabled={!issue || !description} />
                 </div>
             </div>

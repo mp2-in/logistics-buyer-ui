@@ -16,6 +16,7 @@ import retryIcon from "@assets/retry.png"
 import IssueInfo from "./IssueInfo"
 import CloseIssueConfirmation from "./CloseIssueConfirmation"
 import parse from 'html-react-parser';
+import IssueResolution from "./IssueResolution"
 
 
 const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: string, label: string, sort?: 'asc' | 'dsc', hidden?: boolean, onClick: () => void }) => {
@@ -34,6 +35,7 @@ interface State {
     filterDate?: string
     chosenIssue?: string
     closeIssue?: string
+    issueResolution?: string
     showIssueDetails: boolean
 }
 
@@ -65,6 +67,10 @@ export default () => {
     useEffect(() => {
         getIssues(token || '', state.filterDate)
     }, [state.filterDate])
+
+    const rowBackground = (resolutionStatus: string) => {
+        return resolutionStatus === 'Resolved' ? 'bg-green-100' : 'bg-red-100'
+    }
 
     const updateSortField = (field: keyof Issue) => {
         if (field === state.sortField) {
@@ -104,23 +110,29 @@ export default () => {
                 </div>
                 <div className={`absolute  top-[35px] bottom-0 lg:right-5 left-0 w-[1265px] xl:w-full xl:overflow-auto`}>
                     {[...issues].sort(sortOrders).map(eachIssue => {
-                        return <div key={eachIssue.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center xl:text-sm h-[40px]`}>
+                        return <div key={eachIssue.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center xl:text-sm h-[40px] ${rowBackground(eachIssue.resolutionStatus)}`}>
                             <p className={`flex-[4] ml-0`}>{eachIssue.createdat ? dayjs(eachIssue.createdat).format('MMM Do,hh:mm A') : '--'}</p>
                             <div className={`flex-[6]`}>
-                                <input className={`w-full outline-none  border-none text-center`} readOnly value={eachIssue.clientOrderId} />
+                                <input className={`w-full outline-none  border-none text-center ${rowBackground(eachIssue.resolutionStatus)}`} readOnly value={eachIssue.clientOrderId} />
                             </div>
                             <div className={`flex justify-center items-center h-full flex-[5]`}>
                                 <p>{eachIssue.statusUpdatedat ? dayjs(eachIssue.statusUpdatedat).format('MMM Do,hh:mm A') : ''}</p>
                             </div>
-                            <div className={`flex justify-center items-center h-full flex-[3]`}>
-                                <input className={`border-none outline-none text-center w-full`} readOnly value={eachIssue.resolutionStatus} />
+                            <div className={`flex justify-center items-center h-full flex-[3] ${rowBackground(eachIssue.resolutionStatus)}`}>
+                                <input className={`border-none outline-none text-center w-full bg-inherit`} readOnly value={eachIssue.resolutionStatus} />
                             </div>
-                            <textarea readOnly className="h-[38px] flex-[5] text-xs resize-none" value={(eachIssue.shortDescription || '').length > 40 ? `${eachIssue.shortDescription.substring(0, 40)}...` : (eachIssue.shortDescription || '')} />
+                            <textarea readOnly className={`h-[38px] flex-[5] text-xs resize-none ${rowBackground(eachIssue.resolutionStatus)}`} value={(eachIssue.shortDescription || '').length > 40 ? `${eachIssue.shortDescription.substring(0, 40)}...` : (eachIssue.shortDescription || '')} />
                             <p className={`flex-[3] h-full py-1 text-xs`}>{eachIssue.resolutionAction}</p>
-                            <div className={'h-[36px] flex-[5] text-xs pt-[2px]'}>
-                                {/<\/?\w+>/.test((eachIssue.resolutionDescription || '').toString()) ? parse(eachIssue.resolutionDescription) : <textarea readOnly className="h-full flex-[5] text-xs resize-none"
-                                    value={(eachIssue.resolutionDescription || '').length > 40 ? `${eachIssue.resolutionDescription.substring(0, 40)}...` : (eachIssue.resolutionDescription || '')} />}
-                            </div>
+                            {!!eachIssue.resolutionDescription ? <div className={`h-[36px] flex-[5] text-xs pt-[2px] cursor-pointer rounded-md ${rowBackground(eachIssue.resolutionStatus)} border border-transparent overflow-hidden hover:border-slate-400`} onClick={() => {
+                                if (eachIssue.resolutionDescription) {
+                                    dispatch({ type: 'update', payload: { issueResolution: eachIssue.resolutionDescription } })
+                                }
+                            }}>
+                                {/<\/?\w+>/.test((eachIssue.resolutionDescription || '').toString()) ? parse(eachIssue.resolutionDescription) :
+                                    <p className="h-full flex-[5] text-xs resize-none bg-inherit border-none outline-none">
+                                        {(eachIssue.resolutionDescription || '').length > 40 ? `${eachIssue.resolutionDescription.substring(0, 40)}...` : (eachIssue.resolutionDescription || '')}
+                                    </p>}
+                            </div> : <p className="flex-[5]"/>}
                             <div className={`flex justify-center items-center h-full flex-[3]`}>
                                 <p className={`text-center w-full`}>{eachIssue.refundAmount}</p>
                             </div>
@@ -155,5 +167,6 @@ export default () => {
                 setToast(message, 'error')
             }
         })} loading={activity.closeIssue} />
+        <IssueResolution open={!!state.issueResolution} onClose={() => dispatch({ type: 'update', payload: { issueResolution: undefined } })} issueResolution={state.issueResolution || ''} />
     </div>
 }   

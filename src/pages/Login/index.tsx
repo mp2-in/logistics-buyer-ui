@@ -46,7 +46,7 @@ export default () => {
 
     useEffect(() => {
         if (loggedIn) {
-            navigate('/u/orders')
+            navigate('/orders')
         }
     }, [loggedIn])
 
@@ -111,7 +111,7 @@ export default () => {
                     } else {
                         verifyOtp(phoneNumber, otp, (success, message) => {
                             if (success) {
-                                navigate('/u/orders')
+                                navigate('/orders')
                             } else {
                                 setOtp('')
                                 setErrMsg(message)
@@ -129,7 +129,7 @@ export default () => {
                     const decoded = jwtDecode(credentialResponse.credential || '') as IJwtPayload;
                     verifyGmail(decoded.email || '', decoded.jti || '', (success, message) => {
                         if (success) {
-                            navigate('/u/orders')
+                            navigate('/orders')
                         } else {
                             setErrMsg(message)
                         }

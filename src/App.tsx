@@ -40,7 +40,7 @@ export default function App() {
     {checkStatus ? <Routes>
       <Route path="" element={<Navigate to={'/login'} />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/u/" element={<RequireAuth loggedIn={loggedIn}><><Outlet /></></RequireAuth>}>
+      <Route path="/" element={<RequireAuth loggedIn={loggedIn}><><Outlet /></></RequireAuth>}>
         <Route path="orders" element={<Orders />} />
         <Route path="wallet" element={<Wallet />} />
         <Route path="reports" element={<Reports />} />
