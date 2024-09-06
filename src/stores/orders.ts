@@ -12,6 +12,7 @@ interface Attributes {
 
 interface State extends Attributes {
     getOrders: (token: string, forDate: string) => void,
+    getOrderInfo: (token: string, orderId: string, callback: (success: boolean, orderInfo?: Order) => void) => void
     getPickupList: (token: string, callback: () => void) => void,
     clearPickupList: () => void,
     googlePlacesApi: (searchText: string, callback: (data: PlaceAutoComplete[]) => void, latitude?: number, longitude?: number) => void
@@ -45,6 +46,27 @@ export const useOrdersStore = create<State>()((set, get) => ({
             .catch(() => {
                 set(produce((state: State) => {
                     state.activity.getOrders = false
+                }))
+            })
+    },
+    getOrderInfo: async (token, orderId, callback) => {
+        set(produce((state: State) => {
+            state.activity.getOrderInfo = true
+        }))
+        Api('/webui/order/info', { method: 'post', headers: { 'Content-Type': 'application/json', token }, data: { order: { id: orderId } } })
+            .then(res => {
+                set(produce((state: State) => {
+                    state.activity.getOrderInfo = false
+                    if(res.status === 1) {
+                        callback(true, res.order)
+                    } else {
+                        callback(false)
+                    }
+                }))
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.activity.getOrderInfo = false
                 }))
             })
     },

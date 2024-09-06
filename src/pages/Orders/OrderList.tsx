@@ -29,6 +29,8 @@ import { Order } from '@lib/interfaces'
 import Input from '@components/Input';
 import Button from '@components/Button';
 import { cancellable, trimTextValue } from '@lib/utils';
+import Multiselect from '@components/Multiselect';
+import ActionsAndFilters from './ActionsAndFilters';
 
 
 const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: string, label: string, sort?: 'asc' | 'dsc', hidden?: boolean, onClick: () => void }) => {
@@ -59,6 +61,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
 
     const [sortOrder, setSortOrder] = useState<'asc' | 'dsc'>('dsc')
     const [sortField, setSortField] = useState<keyof Order>('createdAt')
+    const [chosenOutlets, chooseOutlets] = useState<string[]>([])
 
     const rowBackground = (orderState: string) => {
         return orderState === 'Order-delivered' ? 'bg-green-100' : orderState === 'Cancelled' ? 'bg-red-100' : ''
@@ -112,17 +115,18 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 return ''
         }
     }
-    
-    return <div className={`absolute left-0 right-0 top-12 bottom-3 lg:px-5 px-2 sm:top-12 md:top-[70px]`}>
-        <div className={`flex sm:items-end items-start justify-between p-2 sm:flex-row-reverse flex-col mb-2`}>
-            <div className={`flex flex-row-reverse w-full mb-3 sm:mb-0`}>
-                {isRetail ? <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" onClick={onAddOrder} /> : null}
-            </div>
-            <div className={'flex items-end sm:*:mr-4 justify-between mt-2 sm:mt-0 w-full sm:w-auto'}>
-                <Button title="Refresh" icon={<img src={refreshIcon} />} variant="primary" onClick={onRefresh} />
-                <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => changeDate(val)} />
-            </div>
-        </div>
+
+    const getOutlets = (): { label: string, value: string }[] => {
+        return orders.map(e => e.pickupName).filter((v, i, a) => {
+            return a.indexOf(v) === i;
+        }).map(e => {
+            return { label: e, value: e }
+        })
+    }
+
+    return <div className={`absolute left-0 right-0 top-14 bottom-3 lg:px-5 px-2 md:top-[70px]`} >
+        <ActionsAndFilters onAddOrder={isRetail ? onAddOrder : undefined} onRefresh={onRefresh} outlets={getOutlets()}
+            chooseOutlets={chooseOutlets} chosenOutlets={chosenOutlets} changeDate={changeDate} filterDate={filterDate} />
         <div className='absolute top-[100px] left-2 right-2 bottom-1 overflow-auto sm:top-[50px] md:top-[70px]'>
             <div className={`flex items-center bg-blue-300 *:text-center *:font-medium  *:text-sm xl:*:text-sm w-[1265px] xl:w-full`}>
                 <HeaderField cssClass='flex-[3] ml-0 bg-blue-300 py-2 pl-1' label='Creation' sort={sortField === 'createdAt' ? sortOrder : undefined} onClick={() => updateSortField('createdAt')} />
@@ -139,7 +143,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 <p className={`flex-[5] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
             </div>
             <div className={`absolute  top-[35px] bottom-0 lg:right-5 left-0 w-[1265px] xl:w-full xl:overflow-auto`}>
-                {[...orders].sort(sortOrders).map(eachOrder => {
+                {[...orders].filter(e => chosenOutlets.includes(e.pickupName) || chosenOutlets.length === 0).sort(sortOrders).map(eachOrder => {
                     return <div key={eachOrder.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center xl:text-sm ${rowBackground(eachOrder.orderState)} h-[40px]`}>
                         <p className={`flex-[3] ml-0 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
                         <div className={`flex-[6] ${rowBackground(eachOrder.orderState)}`}>
@@ -161,17 +165,17 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                         <div className='flex-[2] flex justify-center items-center'>
                             <img src={getLogo(eachOrder.providerId)} className='w-7' alt={eachOrder.providerId} title={eachOrder.providerId} />
                         </div>
-                        {eachOrder.riderNumber ?<div className={`flex-col justify-center items-center h-full py-1 flex-[4] ${rowBackground(eachOrder.orderState)}`}>
-                                <p className='text-xs'>{trimTextValue(eachOrder.riderName, 12)}</p>
-                                <p className='text-xs'>{eachOrder.riderNumber}</p>
-                            </div> : <p className={`flex-[4] h-full py-1 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.riderName}</p>}
+                        {eachOrder.riderNumber ? <div className={`flex-col justify-center items-center h-full py-1 flex-[4] ${rowBackground(eachOrder.orderState)}`}>
+                            <p className='text-xs'>{trimTextValue(eachOrder.riderName, 12)}</p>
+                            <p className='text-xs'>{eachOrder.riderNumber}</p>
+                        </div> : <p className={`flex-[4] h-full py-1 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.riderName}</p>}
                         {(eachOrder.distance || eachOrder['f.distance']) && mapLink(eachOrder) ? <a className={`flex-[3] text-blue-600 underline font-semibold py-3 h-full ${rowBackground(eachOrder.orderState)}`}
                             href={mapLink(eachOrder)} target='_blank'>{`${(eachOrder.distance || eachOrder['f.distance']).toFixed(2)} km`}</a> :
                             <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{(eachOrder.distance || eachOrder['f.distance']) ? `${(eachOrder.distance || eachOrder['f.distance']).toFixed(2)} km` : 0}</p>}
                         <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.priceWithGST ? `₹ ${eachOrder.priceWithGST.toFixed(2)}` : 0}</p>
                         <div className={`flex-[4] h-full flex flex-col justify-center items-center ${rowBackground(eachOrder.orderState)}`}>
                             <p className='text-xs'>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
-                            {eachOrder.deliveredAt && eachOrder.rtsAt ?<p className='text-xs font-medium'>{`(${dayjs(eachOrder.deliveredAt).diff(eachOrder.rtsAt, 'minute')} min)`}</p>:null}
+                            {eachOrder.deliveredAt && eachOrder.rtsAt ? <p className='text-xs font-medium'>{`(${dayjs(eachOrder.deliveredAt).diff(eachOrder.rtsAt, 'minute')} min)`}</p> : null}
                         </div>
                         <div className={`flex-[5] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
                             <img src={driverSearch} onClick={e => {
@@ -186,7 +190,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                                 <img src={trackIcon} title='Track Shipment' className='w-5 opacity-40' />
                             </a>}
                             <img src={warningIcon} onClick={e => {
-                                if(eachOrder.networkOrderId) {
+                                if (eachOrder.networkOrderId) {
                                     onIssueReport(eachOrder.orderId)
                                 }
                                 e.stopPropagation()

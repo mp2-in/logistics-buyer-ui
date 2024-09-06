@@ -47,18 +47,19 @@ export default <T extends unknown>({ label, value, onChange, size, options, requ
 
     return <div className={`relative inline-flex flex-col justify-end ${label ? 'h-[30px] md:h-[46px]' : 'md:h-[35px]'} z-50`}>
         <div className={`flex flex-col border border-gray-300 rounded relative h-[35px] justify-center py-0 px-[8px] bg-white group focus-within:border-blue-500
-                                    ${size === 'small' ? `w-[150px] md:w-[196px]` : size === 'medium' || !size ? 'w-[300px] md:w-[400px]' : size === 'large' ? 'w-[320px] md:w-[500px]' : 'w-[300px] md:w-[620px]'} ${readOnly ? 'opacity-60' : ''}`} >
+                                    ${size === 'small' ? `w-[150px] md:w-[196px]` : size === 'medium' || !size ? 'w-[300px] md:w-[400px]' : size === 'large' ?
+                'w-[320px] md:w-[500px]' : 'w-[300px] md:w-[620px]'} ${readOnly ? 'opacity-60' : ''}`} >
             <div onClick={() => !readOnly && options?.length ? setOptionDisplay(true) : null} className={`flex justify-between items-center`}>
-                <input readOnly value={getValueLabel()} className="w-full outline-none border-none text-sm"/>
-                <img src={downLogo} className='ml-5 w-6'/>
+                <input readOnly value={getValueLabel()} className="w-full outline-none border-none text-sm" />
+                <img src={downLogo} className='ml-5 w-6' />
             </div>
             {label ? <p className={`absolute group-focus-within:text-blue-500 bg-white left-[10px] -top-[8px] text-xs leading-3 font-medium px-1 text-slate-500 ${required ? "after:content-['*'] after:font-bold after:text-sm after:ml-1" : ''}`}>{label}</p> : null}
             {!readOnly && optionDisplay && options?.length ?
                 <div ref={selectContainerRef} className={`absolute top-[33px] z-50 left-2 right-2 bg-white shadow-3xl rounded max-h-[250px] overflow-auto flex flex-col`}>
                     {options.length >= 6 && !hideSearch ?
                         <div className={'flex flex-row items-center mx-2'}>
-                            <input placeholder='Search' value={searchFilter} onChange={e => setSearchFilter(e.target.value)} className="outline-none border bg-white rounded my-2 mx-3 px-2"/>
-                            <img src={close} onClick={() => setSearchFilter('')} className="w-6 cursor-pointer"/>
+                            <input placeholder='Search' value={searchFilter} onChange={e => setSearchFilter(e.target.value)} className="outline-none border bg-white rounded my-2 mx-3 px-2" />
+                            <img src={close} onClick={() => setSearchFilter('')} className="w-6 cursor-pointer" />
                         </div> : null}
                     {options?.filter(e => !searchFilter || e.label.toUpperCase().replace(/\s|_/g, "").indexOf(searchFilter.toUpperCase().replace(/\s|_/g, "")) > -1).map(eachOption => {
                         return <div onClick={() => {

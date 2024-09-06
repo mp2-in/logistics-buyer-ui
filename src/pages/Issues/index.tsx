@@ -121,7 +121,7 @@ export default () => {
                             <div className={`flex justify-center items-center h-full flex-[3] ${rowBackground(eachIssue.resolutionStatus)}`}>
                                 <input className={`border-none outline-none text-center w-full bg-inherit`} readOnly value={eachIssue.resolutionStatus} />
                             </div>
-                            <textarea readOnly className={`h-[38px] flex-[5] text-xs resize-none ${rowBackground(eachIssue.resolutionStatus)}`} value={(eachIssue.shortDescription || '').length > 40 ? `${eachIssue.shortDescription.substring(0, 40)}...` : (eachIssue.shortDescription || '')} />
+                            <textarea readOnly className={`h-[38px] flex-[5] text-xs resize-none outline-none border-none ${rowBackground(eachIssue.resolutionStatus)}`} value={(eachIssue.shortDescription || '').length > 40 ? `${eachIssue.shortDescription.substring(0, 40)}...` : (eachIssue.shortDescription || '')} />
                             <p className={`flex-[3] h-full py-1 text-xs`}>{eachIssue.resolutionAction}</p>
                             {!!eachIssue.resolutionDescription ? <div className={`h-[36px] flex-[5] text-xs pt-[2px] cursor-pointer rounded-md ${rowBackground(eachIssue.resolutionStatus)} border border-transparent overflow-hidden hover:border-slate-400`} onClick={() => {
                                 if (eachIssue.resolutionDescription) {
