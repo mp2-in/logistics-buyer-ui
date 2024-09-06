@@ -114,7 +114,7 @@ export default () => {
         <TopBar title="Orders" onAccountSwitch={(newToken) => {
             getOrders(newToken, state.orderFilterDate)
             clearPickupList()
-        }}/>
+        }} />
         <OrderList
             onAddOrder={(orderId) => dispatch({ type: 'update', payload: { addOrderDisplay: true, toBeRebookedOrder: orderId } })}
             onRefresh={() => token ? getOrders(token, state.orderFilterDate) : null}
@@ -137,6 +137,21 @@ export default () => {
             isRetail={isRetail || false}
             token={token}
         />
+        <OrderInfo
+            open={state.orderInfoDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { orderInfoDisplay: false } })}
+            orderInfo={orders.find(e => e.orderId === state.chosenOrder)}
+            onCancelOrder={orderId => {
+                dispatch({ type: 'update', payload: { toBeCancelledOrder: orderId, cancelOrderDisplay: true } })
+            }}
+            onIssueReport={orderId => {
+                dispatch({ type: 'update', payload: { reportedOrderIssue: orderId, raiseIssueDisplay: true } })
+            }}
+            onOrderFulfillment={orderId => {
+                dispatch({ type: 'update', payload: { toBeFulfilledOrder: orderId, fulfillOrderDisplay: true } })
+            }}
+            onAddOrder={(orderId) => dispatch({ type: 'update', payload: { addOrderDisplay: true, toBeRebookedOrder: orderId } })}
+        />
         <AddOrder
             open={state.addOrderDisplay}
             onClose={() => dispatch({ type: 'update', payload: { addOrderDisplay: false } })}
@@ -156,7 +171,7 @@ export default () => {
                         getOrders(token || '', state.orderFilterDate)
                         setToast('Order created successfully', 'success')
                     } else {
-                        if(insufficientBalance) {
+                        if (insufficientBalance) {
                             dispatch({ type: 'update', payload: { insufficientBalanceDialogDisplay: true, walletBalanceErrorMsg: message } })
                         } else {
                             setToast(message || 'Error creating order', 'error')
@@ -190,7 +205,7 @@ export default () => {
                             getOrders(token || '', state.orderFilterDate)
                             setToast('Order created successfully', 'success')
                         } else {
-                            if(insufficientBalance) {
+                            if (insufficientBalance) {
                                 dispatch({ type: 'update', payload: { insufficientBalanceDialogDisplay: true, walletBalanceErrorMsg: message, priceQuotesDisplay: false } })
                             } else {
                                 dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })
@@ -225,17 +240,6 @@ export default () => {
             }}
             chosenStore={pickupStores.find(e => e.storeId === state.chosenStoreId)}
         />
-        <OrderInfo
-            open={state.orderInfoDisplay}
-            onClose={() => dispatch({ type: 'update', payload: { orderInfoDisplay: false } })}
-            orderInfo={orders.find(e => e.orderId === state.chosenOrder)}
-            onCancelOrder={orderId => {
-                dispatch({ type: 'update', payload: { toBeCancelledOrder: orderId, cancelOrderDisplay: true } })
-            }}
-            onIssueReport={orderId => {
-                dispatch({ type: 'update', payload: { reportedOrderIssue: orderId, raiseIssueDisplay: true } })
-            }}
-        />
         <CancelOrder
             open={state.cancelOrderDisplay}
             onClose={() => dispatch({ type: 'update', payload: { cancelOrderDisplay: false } })}
@@ -259,7 +263,7 @@ export default () => {
                 } else {
                     setToast(message || 'Error registering issue', 'error')
                 }
-            })} loading={activity.raiseIssue} orderStatus={orders.find(e => e.orderId === state.reportedOrderIssue)?.orderState || ''}/>
+            })} loading={activity.raiseIssue} orderStatus={orders.find(e => e.orderId === state.reportedOrderIssue)?.orderState || ''} />
         <OrderFulfillment open={state.fulfillOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { fulfillOrderDisplay: false } })} assignRider={() => {
             assignAgent(token || '', state.toBeFulfilledOrder || '', orders.find(e => e.orderId === state.toBeFulfilledOrder)?.pcc || '', (success, message) => {
                 if (success) {
@@ -271,6 +275,6 @@ export default () => {
             })
         }} loading={activity.assignAgent} />
         <InsufficientBalanceDialog open={state.insufficientBalanceDialogDisplay} onClose={() => dispatch({ type: 'update', payload: { insufficientBalanceDialogDisplay: false } })}
-            accountId={accountId} email={email} phone={phone} message={state.walletBalanceErrorMsg}/>
+            accountId={accountId} email={email} phone={phone} message={state.walletBalanceErrorMsg} />
     </div>
 }       

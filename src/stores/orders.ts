@@ -8,6 +8,11 @@ interface Attributes {
     activity: { [k: string]: boolean }
     pickupStores: PickupStore[]
     orderPriceQuote: PriceQuote[]
+    searchOrder: {
+        orderId: string,
+        showDialog: boolean,
+        showError: boolean
+    }
 }
 
 interface State extends Attributes {
@@ -26,9 +31,10 @@ interface State extends Attributes {
     getCustomerInfo: (token: string, phone: string, callback: (customerInfo: LocationAddress) => void) => void
     raiseIssue: (token: string, orderId: string, issue: string, description: string, callback: (sucess: boolean, message?: string) => void) => void
     assignAgent: (token: string, orderId: string, pickupCode: string, callback: (success: boolean, message: string) => void) => void
+    setSearchOrderAttributes: (searchOrderDisplay: boolean, orderId: string, error: boolean) => void
 }
 
-const initialState: Attributes = { orders: [], activity: {}, pickupStores: [], orderPriceQuote: [] };
+const initialState: Attributes = { orders: [], activity: {}, pickupStores: [], orderPriceQuote: [], searchOrder: {orderId: '', showDialog: false, showError: false} };
 
 export const useOrdersStore = create<State>()((set, get) => ({
     ...initialState,
@@ -60,7 +66,9 @@ export const useOrdersStore = create<State>()((set, get) => ({
                     if(res.status === 1) {
                         callback(true, res.order)
                     } else {
-                        callback(false)
+                        state.searchOrder.showDialog = true
+                        state.searchOrder.showError = true
+                        state.searchOrder.orderId = orderId
                     }
                 }))
             })
@@ -344,5 +352,14 @@ export const useOrdersStore = create<State>()((set, get) => ({
             }))
             callback(false, 'Error proceeding with fulfillment of the order')
         })
+    },
+    setSearchOrderAttributes: async (searchOrderDisplay, orderId, showError) => {
+        set(produce((state: State) => {
+            state.searchOrder = {
+                orderId,
+                showDialog: searchOrderDisplay,
+                showError
+            }
+        }))
     }
 }))

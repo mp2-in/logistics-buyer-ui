@@ -29,7 +29,7 @@ export default () => {
     }, [orderId])
 
     return <div>
-        <TopBar title="Order Details"/>
+        <TopBar title="Order Details" />
         <div className={'absolute left-1 right-1 bottom-5 top-14 flex items-center  overflow-auto md:top-10 flex-col'}>
             <p className='md:invisible text-lg my-1 font-medium w-full text-left pl-5'>Order Details</p>
             <div className="w-[350px] md:w-[700px] border overflow-auto py-3 px-3 md:py-5 md:px-10 lg:px-40 lg:w-[1000px] rounded-md flex flex-col items-center md:block">

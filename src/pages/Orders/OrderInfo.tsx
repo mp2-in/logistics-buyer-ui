@@ -3,6 +3,9 @@ import closeIcon from '@assets/close.png'
 import trackIcon from '@assets/track.png'
 import cancelIcon from '@assets/cancel.png'
 import issueIcon from '@assets/warning.png'
+import driverSearch from "@assets/driver_search.png"
+import retryIcon from "@assets/retry.png"
+
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 
 import { Order } from "@lib/interfaces"
@@ -13,12 +16,14 @@ import ShowValue from "@components/ShowValue"
 dayjs.extend(advancedFormat)
 
 
-export default ({ open, onClose, orderInfo, onCancelOrder, onIssueReport }: {
+export default ({ open, onClose, orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, onAddOrder }: {
     open: boolean,
     onClose: () => void,
     orderInfo: Order | undefined,
     onCancelOrder: (orderId: string) => void
     onIssueReport: (orderId: string) => void
+    onOrderFulfillment: (orderId: string) => void
+    onAddOrder: (orderId?: string) => void
 }) => {
     return <Modal open={open} onClose={onClose}>
         <div className={'md:h-[700px] md:w-[600px] w-[350px] h-[600px] bg-white p-3 rounded-md relative'} onMouseDown={e => e.stopPropagation()}>
@@ -68,25 +73,47 @@ export default ({ open, onClose, orderInfo, onCancelOrder, onIssueReport }: {
                 </div>
                 <div className="flex justify-evenly items-center px-2 py-1">
                     <div className="flex items-center flex-col" onClick={() => {
-                        if (orderInfo?.orderId) {
-                            onIssueReport(orderInfo.orderId)
+                        if (/unfulfilled/i.test(orderInfo?.orderState || '')) {
+                            onOrderFulfillment(orderInfo?.orderId || '')
                         }
                     }}>
-                        <a className="w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center cursor-pointer"><img src={issueIcon} className="w-6" /></a>
-                        <p className="text-sm mt-1 hidden md:block text-red-500 font-semibold">Raise Issue</p>
+                        <div className={`w-10 h-10 rounded-full border-2 border-blue-500 flex items-center justify-center ${/unfulfilled/i.test(orderInfo?.orderState || '') ? 'cursor-pointer' : 'opacity-30'}`}>
+                            <img src={driverSearch} className="w-6" />
+                        </div>
+                        <p className={`text-sm mt-1 hidden md:block text-blue-500 font-semibold ${/unfulfilled/i.test(orderInfo?.orderState || '') ? '':'opacity-30'}`}>Assign</p>
                     </div>
                     <div className="flex items-center flex-col">
                         {orderInfo?.trackingUrl ? <a className={`w-10 h-10 rounded-full border-2 border-blue-500 flex items-center justify-center`} href={orderInfo?.trackingUrl} target="_blank">
                             <img src={trackIcon} className="w-6" /></a> : <a className={`w-10 h-10 rounded-full border-2 border-blue-500 flex items-center justify-center opacity-25`}><img src={trackIcon} className="w-6" /></a>}
-                        <p className={`text-sm mt-1 hidden md:block text-blue-500 font-semibold ${!orderInfo?.trackingUrl ? 'opacity-30' : ''}`}>Track Order</p>
+                        <p className={`text-sm mt-1 hidden md:block text-blue-500 font-semibold ${!orderInfo?.trackingUrl ? 'opacity-30' : ''}`}>Track</p>
+                    </div>
+                    <div className="flex items-center flex-col" onClick={() => {
+                        if (orderInfo?.orderId) {
+                            onIssueReport(orderInfo.orderId)
+                        }
+                    }}>
+                        <div className="w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center cursor-pointer"><img src={issueIcon} className="w-6" /></div>
+                        <p className="text-sm mt-1 hidden md:block text-red-500 font-semibold">Issue</p>
                     </div>
                     <div className="flex items-center flex-col" onClick={() => {
                         if (orderInfo?.orderId) {
                             onCancelOrder(orderInfo.orderId)
                         }
                     }}>
-                        <a className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center ${cancellable(orderInfo?.orderState || '') ? 'cursor-pointer' : 'opacity-30'}`}><img src={cancelIcon} className="w-6" /></a>
-                        <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold ${!cancellable(orderInfo?.orderState || '') ? 'opacity-30' : ''}`}>Cancel Order</p>
+                        <div className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center ${cancellable(orderInfo?.orderState || '') ? 'cursor-pointer' : 'opacity-30'}`}>
+                            <img src={cancelIcon} className="w-6" />
+                        </div>
+                        <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold ${!cancellable(orderInfo?.orderState || '') ? 'opacity-30' : ''}`}>Cancel</p>
+                    </div>
+                    <div className="flex items-center flex-col" onClick={() => {
+                        if (orderInfo?.orderState === 'Cancelled') {
+                            onAddOrder(orderInfo?.orderId)
+                        }
+                    }}>
+                        <div className={`w-10 h-10 rounded-full border-2 border-blue-500 flex items-center justify-center ${orderInfo?.orderState === 'Cancelled' ? 'cursor-pointer' : 'opacity-30'}`}>
+                            <img src={retryIcon} className="w-6" />
+                        </div>
+                        <p className={`text-sm mt-1 hidden md:block text-blue-500 font-semibold ${orderInfo?.orderState !== 'Cancelled' ? 'opacity-30' : ''}`}>Re-Book</p>
                     </div>
                 </div>
                 <p className="font-bold bg-slate-100 my-2 py-1 px-3">Rider</p>
