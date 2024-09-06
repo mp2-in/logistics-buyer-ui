@@ -150,7 +150,7 @@ export default () => {
             activity={activity}
             pickupStores={pickupStores}
             createOrder={(billNumber, storeId, amount, drop) => {
-                createOrder(token || '', billNumber, storeId, drop, amount, undefined, undefined, (success, message, insufficientBalance) => {
+                createOrder(token || '', billNumber, storeId, drop, amount, undefined, undefined, undefined, (success, message, insufficientBalance) => {
                     if (success) {
                         dispatch({ type: 'update', payload: { addOrderDisplay: false } })
                         getOrders(token || '', state.orderFilterDate)
@@ -182,9 +182,9 @@ export default () => {
         <ShowPriceQuotes
             open={state.priceQuotesDisplay}
             onClose={() => dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })}
-            priceQuotes={orderPriceQuote} createOrder={(chosenLsp) => {
+            priceQuotes={orderPriceQuote} createOrder={(chosenLsp, chosenItem) => {
                 if (state.billNumber && state.storeId && state.orderAmount && state.drop) {
-                    createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, chosenLsp, state.quoteId, (success, message, insufficientBalance) => {
+                    createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, chosenLsp, state.quoteId, chosenItem, (success, message, insufficientBalance) => {
                         if (success) {
                             dispatch({ type: 'update', payload: { addOrderDisplay: false, priceQuotesDisplay: false } })
                             getOrders(token || '', state.orderFilterDate)
