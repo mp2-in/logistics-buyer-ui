@@ -122,7 +122,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     return <div className={`absolute left-0 right-0 top-14 bottom-3 lg:px-5 px-2 md:top-[70px]`} >
         <ActionsAndFilters onAddOrder={isRetail ? onAddOrder : undefined} onRefresh={onRefresh} outlets={getOutlets()}
             chooseOutlets={chooseOutlets} chosenOutlets={chosenOutlets} changeDate={changeDate} filterDate={filterDate} />
-        <div className='absolute top-[100px] left-2 right-2 bottom-1 overflow-auto sm:top-[50px] md:top-[70px]'>
+        <div className='absolute top-[100px] left-2 right-2 bottom-1 overflow-auto md:top-[130px] lg:top-[70px]   '>
             <div className={`flex items-center bg-blue-300 *:text-center *:font-medium  *:text-sm xl:*:text-sm w-[1265px] xl:w-full`}>
                 <HeaderField cssClass='flex-[3] ml-0 bg-blue-300 py-2 pl-1' label='Creation' sort={sortField === 'createdAt' ? sortOrder : undefined} onClick={() => updateSortField('createdAt')} />
                 <HeaderField cssClass='flex-[6] bg-blue-300 py-2' label='Bill Number' sort={sortField === 'orderId' ? sortOrder : undefined} onClick={() => updateSortField('orderId')} />

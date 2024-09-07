@@ -17,7 +17,6 @@ import LogoutConfirmation from "./LogoutConfirmation"
 import { useAppConfigStore } from "stores/appConfig"
 import AddAccount from "./AddAccount"
 import OrderSearch from "./OrderSearch"
-import { useOrdersStore } from "stores/orders"
 
 
 const AccountMenuItem = ({ title, icon, onClick }: { title: string, icon: React.ReactNode, onClick: () => void }) => {
@@ -41,9 +40,10 @@ interface State {
     showLogoutConfirmation: boolean
     showAddAccount: boolean
     showMainMenu: boolean
+    showOrderSearch: boolean
 }
 
-const initialValue: State = { showMenu: false, showAccountInfo: false, showLogoutConfirmation: false, showAddAccount: false, showMainMenu: false}
+const initialValue: State = { showMenu: false, showAccountInfo: false, showLogoutConfirmation: false, showAddAccount: false, showMainMenu: false, showOrderSearch: false}
 
 const reducer = (state: State, action: { type: 'update', payload: Partial<State> }) => {
     switch (action.type) {
@@ -66,11 +66,6 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
         validateGst: state.validateGst,
         activity: state.activity,
         page: state.page
-    }))
-
-    const {searchOrder, setSearchOrderAttributes} = useOrdersStore(state => ({
-        searchOrder: state.searchOrder ,
-        setSearchOrderAttributes: state.setSearchOrderAttributes
     }))
 
 
@@ -137,7 +132,7 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
             email={email}
         />
         <LogoutConfirmation open={state.showLogoutConfirmation} onClose={() => dispatch({ type: 'update', payload: { showLogoutConfirmation: false } })} logout={clearAuth} loading={false} />
-        <OrderSearch open={searchOrder.showDialog} onClose={() => setSearchOrderAttributes(false, '', false)} showError={searchOrder.showError} orderId={searchOrder.orderId}/>
+        <OrderSearch open={state.showOrderSearch} onClose={() => dispatch({ type: 'update', payload: { showOrderSearch: false } })}/>
         <AddAccount open={state.showAddAccount} onClose={() => dispatch({ type: 'update', payload: { showAddAccount: false } })} createAccount={(accountName, gstin, autoSelectMode, contacts, plan, rtoRequired) => {
             validateGst(token || '', gstin, (isValid) => {
                 if (isValid) {
@@ -176,8 +171,7 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
                         dispatch({ type: 'update', payload: { showMainMenu: false } })
                     }} selected={page === 'issues'} />
                     <MainMenuItem title="Search Order" icon={<img src={searchIcon} className="w-9 lg:w-8" />} onClick={() => {
-                        dispatch({ type: 'update', payload: { showMainMenu: false} })
-                        setSearchOrderAttributes(true, '', false)
+                        dispatch({ type: 'update', payload: { showMainMenu: false, showOrderSearch: true} })
                     }} />
                 </div>
             </div>

@@ -1,15 +1,17 @@
 import trackIcon from '@assets/track.png'
+import searchIcon from '@assets/search.png'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 
 import dayjs from "dayjs"
 import { cancellationIdReasonMapping } from "@lib/utils"
 import ShowValue from "@components/ShowValue"
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useOrdersStore } from 'stores/orders'
 import { useEffect, useState } from 'react'
 import { useAppConfigStore } from 'stores/appConfig'
 import { Order } from '@lib/interfaces'
 import TopBar from '@components/TopBar'
+import Input from '@components/Input'
 
 dayjs.extend(advancedFormat)
 
@@ -19,20 +21,37 @@ export default () => {
     const { token } = useAppConfigStore(state => ({ token: state.token }))
     const { getOrderInfo } = useOrdersStore(state => ({ getOrderInfo: state.getOrderInfo }))
     const [orderInfo, setOrderInfo] = useState<Order | undefined>(undefined)
+    const [mp2OrderId, setOrderId] = useState('')
+    const [error, setError] = useState(false)
+
+    const navigate = useNavigate()
 
     useEffect(() => {
+        setOrderId(orderId)
         getOrderInfo(token || '', orderId, (success, orderInfo) => {
             if (success) {
                 setOrderInfo(orderInfo)
+                setError(false)
+            } else {
+                setOrderInfo(undefined)
+                setError(true)
             }
         })
     }, [orderId])
 
     return <div>
         <TopBar title="Order Details" />
-        <div className={'absolute left-1 right-1 bottom-5 top-14 flex items-center  overflow-auto md:top-10 flex-col'}>
-            <p className='md:invisible text-lg my-1 font-medium w-full text-left pl-5'>Order Details</p>
-            <div className="w-[350px] md:w-[700px] border overflow-auto py-3 px-3 md:py-5 md:px-10 lg:px-40 lg:w-[1000px] rounded-md flex flex-col items-center md:block">
+        <div className={'absolute left-1 right-1 bottom-5 top-12 flex items-center  overflow-auto flex-col md:top-16'}>
+            <div className='mt-3 flex items-end'>
+                <Input label='Order Id' value={mp2OrderId} onChange={val => setOrderId(val)} />
+                <div className='bg-blue-500 flex justify-center items-center ml-2 p-1 rounded-full mb-1 cursor-pointer' onClick={() => navigate(`/orders/${mp2OrderId}`)}>
+                    <img src={searchIcon} className='w-4 md:w-6' />
+                </div>
+            </div>
+            <div className='h-[40px] flex items-center justify-center'>
+                {error ? <p className='text-sm text-red-500 font-medium'>Invalid order id</p> : null}
+            </div>
+            <div className={`w-[350px] md:w-[700px] border overflow-auto py-3 px-3 md:py-5 md:px-10 lg:px-40 lg:w-[1000px] rounded-md flex flex-col items-center md:block ${error?`opacity-35`:''}`}>
                 <div className="md:flex justify-between">
                     <ShowValue label="Order Id" value={orderInfo?.orderId} />
                     <ShowValue label="Client Order Id" value={orderInfo?.clientOrderId} />

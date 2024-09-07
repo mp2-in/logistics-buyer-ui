@@ -6,14 +6,12 @@ import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 
 
-export default ({ open, onClose, showError, orderId }: {
+export default ({ open, onClose}: {
     open: boolean,
     onClose: () => void,
-    showError?: boolean,
-    orderId?: string
 }) => {
     const navigate = useNavigate()
-    const [mp2OrderId, setOrderId] = useState('')
+    const [orderId, setOrderId] = useState('')
 
     return <Modal open={open} onClose={onClose}>
         <div className={'bg-white rounded py-[10px] px-[20px] md:w-[600px] w-[350px] relative'} onMouseDown={e => e.stopPropagation()}>
@@ -22,13 +20,12 @@ export default ({ open, onClose, showError, orderId }: {
                 <img src={closeIcon} onClick={onClose} className="w-6 absolute top-1 right-1 cursor-pointer" />
             </div>
             <div className={'mt-1'}>
-                {showError?<p className="mb-4 text-red-600">{orderId?`Order Id ${orderId} is invalid!`:`Invalid order id!`}</p>:null}
-                <Input label="Order Id" value={mp2OrderId} onChange={val => setOrderId(val)}/>
+                <Input label="Order Id" value={orderId} onChange={val => setOrderId(val)}/>
                 <div className="mt-[20px] mb-[15px] w-full flex justify-end">
                     <Button title="Search" variant="primary" onClick={() => {
                         onClose()
-                        navigate(`/orders/${mp2OrderId}`)
-                    }} disabled={!mp2OrderId} />
+                        navigate(`/orders/${orderId}`)
+                    }} disabled={!orderId} />
                 </div>
             </div>
         </div>
