@@ -116,7 +116,7 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
         </div>
         <AccountDetails
             open={state.showAccountInfo}
-            onClose={() => dispatch({ type: 'update', payload: { showAccountInfo: true } })}
+            onClose={() => dispatch({ type: 'update', payload: { showAccountInfo: false } })}
             selectedAccount={selectedAccount || ''}
             onLogout={() => dispatch({ type: 'update', payload: { showLogoutConfirmation: true } })}
             accountIds={accountIds}
