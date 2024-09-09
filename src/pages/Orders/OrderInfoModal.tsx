@@ -1,6 +1,5 @@
 import Modal from "@components/Modal"
 import closeIcon from '@assets/close.png'
-import trackIcon from '@assets/track.png'
 
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 
