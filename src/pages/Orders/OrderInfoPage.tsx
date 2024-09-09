@@ -1,28 +1,95 @@
-import trackIcon from '@assets/track.png'
 import searchIcon from '@assets/search.png'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 
 import dayjs from "dayjs"
-import { cancellationIdReasonMapping } from "@lib/utils"
-import ShowValue from "@components/ShowValue"
 import { useNavigate, useParams } from 'react-router-dom'
 import { useOrdersStore } from 'stores/orders'
-import { useEffect, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { useAppConfigStore } from 'stores/appConfig'
-import { Order } from '@lib/interfaces'
+import { LocationAddress, Order } from '@lib/interfaces'
 import TopBar from '@components/TopBar'
 import Input from '@components/Input'
+import OrderDetails from './OrderDetails'
+import AddOrder from './AddOrder'
+import ShowPriceQuotes from './ShowPriceQuotes'
+import AddOutlet from './AddOutlet'
+import CancelOrder from './CancelOrder'
+import RaiseIssue from './RaiseIssue'
+import OrderFulfillment from './OrderFulfillment'
+import InsufficientBalanceDialog from './InsufficientBalanceDialog'
 
 dayjs.extend(advancedFormat)
 
 
+interface State {
+    addOrderDisplay: boolean
+    insufficientBalanceDialogDisplay: boolean
+    walletBalanceErrorMsg: string
+    priceQuotesDisplay: boolean
+    billNumber?: string
+    storeId?: string
+    orderAmount?: string
+    drop?: LocationAddress
+    quoteId?: string
+    addOutletDisplay: boolean
+    chosenStoreId?: string
+    cancelOrderDisplay: boolean
+    raiseIssueDisplay: boolean
+    fulfillOrderDisplay: boolean
+}
+
+const initialValue: State = {
+    addOrderDisplay: false, insufficientBalanceDialogDisplay: false, walletBalanceErrorMsg: '',
+    priceQuotesDisplay: false, addOutletDisplay: false, cancelOrderDisplay: false,
+    raiseIssueDisplay: false, fulfillOrderDisplay: false
+}
+
+
+const reducer = (state: State, action: { type: 'reset' } | { type: 'update', payload: Partial<State> }) => {
+    switch (action.type) {
+        case "update":
+            return { ...state, ...action.payload }
+        case "reset":
+            return initialValue
+    }
+}
+
 export default () => {
     const { orderId } = useParams() as { orderId: string }
-    const { token } = useAppConfigStore(state => ({ token: state.token }))
-    const { getOrderInfo } = useOrdersStore(state => ({ getOrderInfo: state.getOrderInfo }))
+
+    const { token, setToast, role, accountId, phone, email } = useAppConfigStore(state => ({
+        token: state.token,
+        setToast: state.setToast,
+        role: state.role,
+        accountId: state.selectedAccount,
+        email: state.email,
+        phone: state.phone
+    }))
+
+    const { getOrderInfo, googlePlacesApi, googlePlaceDetailsApi, getPickupList, activity, orderPriceQuote, addOutlet, assignAgent,
+        pickupStores, createOrder, getPriceQuote, saveInStorage, getCustomerInfo, cancelOrder, raiseIssue } = useOrdersStore(state => ({
+            getOrderInfo: state.getOrderInfo,
+            googlePlacesApi: state.googlePlacesApi,
+            googlePlaceDetailsApi: state.googlePlaceDetailsApi,
+            getPickupList: state.getPickupList,
+            activity: state.activity,
+            pickupStores: state.pickupStores,
+            createOrder: state.createOrder,
+            getPriceQuote: state.getPriceQuote,
+            saveInStorage: state.saveInStorage,
+            getCustomerInfo: state.getCustomerInfo,
+            orderPriceQuote: state.orderPriceQuote,
+            addOutlet: state.addOutlet,
+            cancelOrder: state.cancelOrder,
+            raiseIssue: state.raiseIssue,
+            assignAgent: state.assignAgent
+        }))
+
     const [orderInfo, setOrderInfo] = useState<Order | undefined>(undefined)
     const [mp2OrderId, setOrderId] = useState('')
     const [error, setError] = useState(false)
+
+    const [state, dispatch] = useReducer(reducer, initialValue)
 
     const navigate = useNavigate()
 
@@ -51,98 +118,134 @@ export default () => {
             <div className='h-[40px] flex items-center justify-center'>
                 {error ? <p className='text-sm text-red-500 font-medium'>Invalid order id</p> : null}
             </div>
-            <div className={`w-[350px] md:w-[700px] border overflow-auto py-3 px-3 md:py-5 md:px-10 lg:px-40 lg:w-[1000px] rounded-md flex flex-col items-center md:block ${error?`opacity-35`:''}`}>
-                <div className="md:flex justify-between">
-                    <ShowValue label="Order Id" value={orderInfo?.orderId} />
-                    <ShowValue label="Client Order Id" value={orderInfo?.clientOrderId} />
-                </div>
-                <div className="md:flex justify-between">
-                    <ShowValue label="Network Order Id" value={orderInfo?.networkOrderId} large />
-                </div>
-                <div className="md:flex justify-between">
-                    <ShowValue label="State" value={orderInfo?.orderState} />
-                    <ShowValue label="Selction Mode" value={orderInfo?.selectionMode} />
-                </div>
-                <div className="md:flex justify-between">
-                    <ShowValue label="LSP" value={orderInfo?.providerId} />
-                    <ShowValue label="Order Category" value={orderInfo?.orderCategory} />
-                </div>
-                <div className="md:flex justify-between">
-                    <ShowValue label="Delivery Fee" value={orderInfo?.deliveryFee ? `₹ ${orderInfo?.deliveryFee}` : '₹ 0'} />
-                    <ShowValue label="Platform Fee" value={orderInfo?.platformFee ? `₹ ${orderInfo?.platformFee}` : '₹ 0'} />
-                </div>
-                <div className="md:flex justify-between">
-                    <ShowValue label="Order Amount" value={orderInfo?.orderAmount ? `₹ ${orderInfo?.orderAmount}` : '₹ 0'} />
-                    <ShowValue label="Distance" value={orderInfo?.distance ? `${orderInfo?.distance} km` : '0 km'} />
-                </div>
-                <div className="md:flex justify-between">
-                    <ShowValue label="Created At" value={orderInfo?.createdAt} isDate />
-                    <ShowValue label="Assigned At" value={orderInfo?.assignedAt} isDate />
-                </div>
-                <div className="md:flex justify-between">
-                    <ShowValue label="Reached Pickup At" value={orderInfo?.atpickupAt} isDate />
-                    <ShowValue label="Picked At" value={orderInfo?.pickedupAt} isDate />
-                </div>
-                <div className="md:flex justify-between">
-                    <ShowValue label="Reached Delivery At" value={orderInfo?.atdeliveryAt} isDate />
-                    <ShowValue label="Delivered At" value={orderInfo?.deliveredAt} isDate />
-                </div>
-                <div className="md:flex justify-between">
-                    <ShowValue label="RTO Initiated At" value={orderInfo?.rtoPickedupAt} isDate />
-                    <ShowValue label="RTO Delivered At" value={orderInfo?.rtoDeliveredAt} isDate />
-                </div>
-                <p className="font-bold bg-slate-100 my-2 py-1 px-3 rounded-md w-full">Rider</p>
-                <div className="md:flex justify-between">
-                    <ShowValue label="Name" value={orderInfo?.riderName} />
-                    <ShowValue label="Phone" value={orderInfo?.riderNumber} />
-                </div>
-                <p className="font-bold bg-slate-100 my-2 py-1 px-3 rounded-md w-full">Pickup</p>
-                <div className="md:flex justify-between">
-                    <ShowValue label="Name" value={orderInfo?.pickupName} />
-                    <ShowValue label="Phone" value={orderInfo?.pickupPhone} />
-                </div>
-                <div className="md:flex justify-between">
-                    <ShowValue label="Address Line 1" value={orderInfo?.pickupAddress?.line1} />
-                    <ShowValue label="Address Line 2" value={orderInfo?.pickupAddress?.line2} />
-                </div>
-                <div className="md:flex justify-between">
-                    <ShowValue label="City" value={orderInfo?.pickupAddress?.city} />
-                    <ShowValue label="State" value={orderInfo?.pickupAddress?.state} />
-                </div>
-                <div className="flex items-center">
-                    <ShowValue label="Pincode" value={orderInfo?.pickupPincode} small />
-                    {orderInfo?.pickupLatitude && orderInfo?.pickupLongitude ? <a href={`https://maps.google.com/?q=${orderInfo?.pickupLatitude},${orderInfo?.pickupLongitude}`} target="_blank">
-                        <img src={trackIcon} className="w-6 mx-5" /></a> : <img src={trackIcon} className="w-6 mx-5 opacity-30" />}
-                    <ShowValue label="Pcc" value={orderInfo?.pcc} small />
-                </div>
-                <p className="font-bold bg-slate-100 my-2 py-1 px-3 rounded-md w-full">Drop</p>
-                <div className="md:flex justify-between">
-                    <ShowValue label="Name" value={orderInfo?.dropName} />
-                    <ShowValue label="Phone" value={orderInfo?.dropPhone} />
-                </div>
-                <div className="md:flex justify-between">
-                    <ShowValue label="Address Line 1" value={orderInfo?.dropAddress?.line1} />
-                    <ShowValue label="Address Line 2" value={orderInfo?.dropAddress?.line2} />
-                </div>
-                <div className="md:flex justify-between">
-                    <ShowValue label="City" value={orderInfo?.dropAddress?.city} />
-                    <ShowValue label="State" value={orderInfo?.dropAddress?.state} />
-                </div>
-                <div className="flex items-center">
-                    <ShowValue label="Pincode" value={orderInfo?.dropPincode} small />
-                    {orderInfo?.dropLatitude && orderInfo?.dropLongitude ? <a href={`https://maps.google.com/?q=${orderInfo?.dropLatitude},${orderInfo?.dropLongitude}`} target="_blank">
-                        <img src={trackIcon} className="w-6 mx-5" /></a> : <img src={trackIcon} className="w-6 mx-5 opacity-30" />}
-                    <ShowValue label="Dcc" value={orderInfo?.dcc} small />
-                </div>
-                <p className="font-bold bg-slate-100 my-2 py-1 px-3 rounded-md w-full">Cancellation</p>
-                <div className="md:flex justify-between">
-                    <ShowValue label="Cancelled At" value={orderInfo?.cancelledAt} isDate />
-                    <ShowValue label="Cancelled by" value={orderInfo?.cancelledBy} />
-                </div>
-                <div className="flex justify-between">
-                    <ShowValue label="Reason" value={cancellationIdReasonMapping[orderInfo?.cancellationReason || '']} large />
-                </div>
+            <div className={`w-[350px] md:w-[700px] border overflow-auto pb-3 px-3 md:pb-5 md:px-10 lg:px-40 lg:w-[1000px] rounded-md flex flex-col items-center md:block ${error ? `opacity-35` : ''} relative`}>
+                <OrderDetails orderInfo={orderInfo} onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })}
+                    onCancelOrder={() => dispatch({ type: 'update', payload: { cancelOrderDisplay: true } })}
+                    onIssueReport={() => dispatch({ type: 'update', payload: { raiseIssueDisplay: true } })}
+                    onOrderFulfillment={() => dispatch({ type: 'update', payload: { fulfillOrderDisplay: true } })} actionAtTop />
             </div>
         </div>
+        <AddOrder
+            open={state.addOrderDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { addOrderDisplay: false } })}
+            onPlacesSearch={(searchText, callback, latitude, longitude) => {
+                googlePlacesApi(searchText, callback, latitude, longitude)
+            }}
+            onPlaceChoose={(placeId, callback) => {
+                googlePlaceDetailsApi(placeId, callback)
+            }}
+            getPickupList={callback => token ? getPickupList(token, callback) : null}
+            activity={activity}
+            pickupStores={pickupStores}
+            createOrder={(billNumber, storeId, amount, drop) => {
+                createOrder(token || '', billNumber, storeId, drop, amount, undefined, undefined, undefined, (success, message, insufficientBalance) => {
+                    if (success) {
+                        dispatch({ type: 'update', payload: { addOrderDisplay: false } })
+                        setToast('Order created successfully', 'success')
+                    } else {
+                        if (insufficientBalance) {
+                            dispatch({ type: 'update', payload: { insufficientBalanceDialogDisplay: true, walletBalanceErrorMsg: message } })
+                        } else {
+                            setToast(message || 'Error creating order', 'error')
+                        }
+                    }
+                })
+            }}
+            checkPrice={(billNumber, storeId, orderAmount, drop) => {
+                getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), (success, quoteId, message) => {
+                    if (success) {
+                        dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, drop, quoteId } })
+                    } else {
+                        setToast(message || 'Error fetching price quotes', 'error')
+                    }
+                })
+            }}
+            showNewOutletForm={(chosenStoreId) => dispatch({ type: 'update', payload: { addOutletDisplay: true, chosenStoreId } })}
+            saveInStorage={(keyName, value) => saveInStorage(keyName, value)}
+            getCustomerInfo={(phone, callback) => getCustomerInfo(token || '', phone, callback)}
+            role={role || ''}
+            orderDetails={orderInfo}
+        />
+        <ShowPriceQuotes
+            open={state.priceQuotesDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })}
+            priceQuotes={orderPriceQuote} createOrder={(chosenLsp, chosenItem) => {
+                if (state.billNumber && state.storeId && state.orderAmount && state.drop) {
+                    createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, chosenLsp, state.quoteId, chosenItem, (success, message, insufficientBalance) => {
+                        if (success) {
+                            dispatch({ type: 'update', payload: { addOrderDisplay: false, priceQuotesDisplay: false } })
+                            setToast('Order created successfully', 'success')
+                        } else {
+                            if (insufficientBalance) {
+                                dispatch({ type: 'update', payload: { insufficientBalanceDialogDisplay: true, walletBalanceErrorMsg: message, priceQuotesDisplay: false } })
+                            } else {
+                                dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })
+                                setToast(message || 'Error creating order', 'error')
+                            }
+                        }
+                    })
+                }
+            }}
+            loading={activity.createOrder}
+        />
+        <AddOutlet
+            open={state.addOutletDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { addOutletDisplay: false } })}
+            onPlacesSearch={(searchText, callback) => {
+                googlePlacesApi(searchText, callback)
+            }}
+            activity={activity}
+            addOutlet={(storeId, address, placesId) => {
+                addOutlet(state.chosenStoreId ? 'update' : 'create', token || '', storeId, address, placesId, (success, message) => {
+                    if (success) {
+                        dispatch({ type: 'update', payload: { addOutletDisplay: false } })
+                        getPickupList(token || '', () => null)
+                        setToast('Outlet created successfully', 'success')
+                    } else {
+                        setToast(message || 'Error creating outlet', 'error')
+                    }
+                })
+            }}
+            onPlaceChoose={(placeId, callback) => {
+                googlePlaceDetailsApi(placeId, callback)
+            }}
+            chosenStore={pickupStores.find(e => e.storeId === state.chosenStoreId)}
+        />
+        <CancelOrder
+            open={state.cancelOrderDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { cancelOrderDisplay: false } })}
+            onCancel={reason => {
+                cancelOrder(token || '', orderInfo?.orderId || '', reason, (success, message) => {
+                    if (success) {
+                        setToast('Order cancelled.', 'success')
+                        dispatch({ type: 'update', payload: { cancelOrderDisplay: false } })
+                    } else {
+                        setToast(message || 'Error cancelling order', 'error')
+                    }
+                })
+            }}
+            loading={activity.cancelOrder}
+        />
+        <RaiseIssue open={state.raiseIssueDisplay} onClose={() => dispatch({ type: 'update', payload: { raiseIssueDisplay: false } })}
+            raiseIssue={(issue, description) => raiseIssue(token || '', orderInfo?.orderId || '', issue, description, (success, message) => {
+                if (success) {
+                    setToast('Issue had been registered', 'success')
+                    dispatch({ type: 'update', payload: { raiseIssueDisplay: false } })
+                } else {
+                    setToast(message || 'Error registering issue', 'error')
+                }
+            })} loading={activity.raiseIssue} orderStatus={orderInfo?.orderState || ''} />
+        <OrderFulfillment open={state.fulfillOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { fulfillOrderDisplay: false } })} assignRider={() => {
+            assignAgent(token || '', orderInfo?.orderId || '', orderInfo?.pcc || '', (success, message) => {
+                if (success) {
+                    setToast(message || 'Agent successfully assigned', 'success')
+                    dispatch({ type: 'update', payload: { fulfillOrderDisplay: false } })
+                } else {
+                    setToast(message || 'Error proceeding with fulfillment of the order', 'error')
+                }
+            })
+        }} loading={activity.assignAgent} />
+        <InsufficientBalanceDialog open={state.insufficientBalanceDialogDisplay} onClose={() => dispatch({ type: 'update', payload: { insufficientBalanceDialogDisplay: false } })}
+            accountId={accountId} email={email} phone={phone} message={state.walletBalanceErrorMsg} />
     </div>
 }   

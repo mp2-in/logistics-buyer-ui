@@ -10,7 +10,7 @@ import ShowPriceQuotes from "./ShowPriceQuotes";
 import AddOutlet from "./AddOutlet";
 import { LocationAddress } from "@lib/interfaces";
 import dayjs from "dayjs";
-import OrderInfo from "./OrderInfo";
+import OrderInfo from "./OrderInfoModal";
 import CancelOrder from "./CancelOrder";
 import RaiseIssue from "./RaiseIssue";
 import OrderFulfillment from "./OrderFulfillment";
