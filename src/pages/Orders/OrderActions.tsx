@@ -30,12 +30,12 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
             <p className={`text-sm mt-1 hidden md:block text-blue-500 font-semibold ${!orderInfo?.trackingUrl ? 'opacity-30' : ''}`}>Track</p>
         </div>
         <div className="flex items-center flex-col" onClick={() => {
-            if (orderInfo?.orderId) {
+            if (orderInfo?.networkOrderId && orderInfo?.orderId) {
                 onIssueReport(orderInfo.orderId)
             }
         }}>
-            <div className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center ${orderInfo?.orderId ? 'cursor-pointer' : 'opacity-30'}`}><img src={issueIcon} className="w-6" /></div>
-            <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold ${orderInfo?.orderId ? '' : 'opacity-30'}`}>Issue</p>
+            <div className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center ${orderInfo?.networkOrderId && orderInfo?.orderId ? 'cursor-pointer' : 'opacity-30'}`}><img src={issueIcon} className="w-6" /></div>
+            <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold ${orderInfo?.networkOrderId && orderInfo?.orderId ? '' : 'opacity-30'}`}>Issue</p>
         </div>
         <div className="flex items-center flex-col" onClick={() => {
             if (orderInfo?.orderId && cancellable(orderInfo?.orderState || '')) {
