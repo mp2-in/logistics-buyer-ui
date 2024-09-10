@@ -132,7 +132,6 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
             email={email}
         />
         <LogoutConfirmation open={state.showLogoutConfirmation} onClose={() => dispatch({ type: 'update', payload: { showLogoutConfirmation: false } })} logout={clearAuth} loading={false} />
-        <OrderSearch open={state.showOrderSearch} onClose={() => dispatch({ type: 'update', payload: { showOrderSearch: false } })}/>
         <AddAccount open={state.showAddAccount} onClose={() => dispatch({ type: 'update', payload: { showAddAccount: false } })} createAccount={(accountName, gstin, autoSelectMode, contacts, plan, rtoRequired) => {
             validateGst(token || '', gstin, (isValid) => {
                 if (isValid) {
@@ -171,7 +170,8 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
                         dispatch({ type: 'update', payload: { showMainMenu: false } })
                     }} selected={page === 'issues'} />
                     <MainMenuItem title="Search Order" icon={<img src={searchIcon} className="w-9 lg:w-8" />} onClick={() => {
-                        dispatch({ type: 'update', payload: { showMainMenu: false, showOrderSearch: true} })
+                        navigate('/order/<order_id>')
+                        dispatch({ type: 'update', payload: { showMainMenu: false} })
                     }} />
                 </div>
             </div>

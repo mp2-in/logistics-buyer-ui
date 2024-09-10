@@ -94,16 +94,18 @@ export default () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        setOrderId(orderId)
-        getOrderInfo(token || '', orderId, (success, orderInfo) => {
-            if (success) {
-                setOrderInfo(orderInfo)
-                setError(false)
-            } else {
-                setOrderInfo(undefined)
-                setError(true)
-            }
-        })
+        if(orderId !== '<order_id>') {
+            setOrderId(orderId)
+            getOrderInfo(token || '', orderId, (success, orderInfo) => {
+                if (success) {
+                    setOrderInfo(orderInfo)
+                    setError(false)
+                } else {
+                    setOrderInfo(undefined)
+                    setError(true)
+                }
+            })
+        }
     }, [orderId])
 
     return <div>
@@ -118,7 +120,7 @@ export default () => {
             <div className='h-[40px] flex items-center justify-center'>
                 {error ? <p className='text-sm text-red-500 font-medium'>Invalid order id</p> : null}
             </div>
-            <div className={`w-[350px] md:w-[700px] border overflow-auto pb-3 px-3 md:pb-5 md:px-10 lg:px-40 lg:w-[1000px] rounded-md flex flex-col items-center md:block ${error ? `opacity-35` : ''} relative`}>
+            <div className={`w-[350px] md:w-[700px] border overflow-auto pb-3 px-3 md:pb-5 md:px-10 lg:px-40 lg:w-[1000px] rounded-md flex flex-col items-center md:block ${error || !orderInfo ? `opacity-35` : ''} relative`}>
                 <OrderDetails orderInfo={orderInfo} onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })}
                     onCancelOrder={() => dispatch({ type: 'update', payload: { cancelOrderDisplay: true } })}
                     onIssueReport={() => dispatch({ type: 'update', payload: { raiseIssueDisplay: true } })}
