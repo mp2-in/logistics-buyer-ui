@@ -20,7 +20,7 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
     actionAtTop?: boolean
 }) => {
     return <>
-        {actionAtTop ? <div className='sticky top-0 bg-white z-[1] py-5'>
+        {actionAtTop ? <div className='sticky top-0 bg-white z-[1] py-5 w-full'>
             <OrderActions orderInfo={orderInfo} onAddOrder={onAddOrder} onCancelOrder={onCancelOrder} onOrderFulfillment={onOrderFulfillment} onIssueReport={onIssueReport} />
         </div> : null}
         <div className="md:flex justify-between">
@@ -63,12 +63,12 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
             <ShowValue label="RTO Delivered At" value={orderInfo?.rtoDeliveredAt} isDate />
         </div>
         {!actionAtTop?<OrderActions orderInfo={orderInfo} onAddOrder={onAddOrder} onCancelOrder={onCancelOrder} onOrderFulfillment={onOrderFulfillment} onIssueReport={onIssueReport} />:null}
-        <p className="font-bold bg-slate-100 my-2 py-1 px-3">Rider</p>
+        <p className="font-bold bg-slate-100 my-2 py-1 px-3 w-full rounded-md">Rider</p>
         <div className="md:flex justify-between">
             <ShowValue label="Name" value={orderInfo?.riderName} />
             <ShowValue label="Phone" value={orderInfo?.riderNumber} />
         </div>
-        <p className="font-bold bg-slate-100 my-2 py-1 px-3">Pickup</p>
+        <p className="font-bold bg-slate-100 my-2 py-1 px-3 w-full rounded-md">Pickup</p>
         <div className="md:flex justify-between">
             <ShowValue label="Name" value={orderInfo?.pickupName} />
             <ShowValue label="Phone" value={orderInfo?.pickupPhone} />
@@ -87,7 +87,7 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
                 <img src={trackIcon} className="w-6 mx-5" /></a> : <img src={trackIcon} className="w-6 mx-5 opacity-30" />}
             <ShowValue label="Pcc" value={orderInfo?.pcc} small />
         </div>
-        <p className="font-bold bg-slate-100 my-2 py-1 px-3">Drop</p>
+        <p className="font-bold bg-slate-100 my-2 py-1 px-3 w-full rounded-md">Drop</p>
         <div className="md:flex justify-between">
             <ShowValue label="Name" value={orderInfo?.dropName} />
             <ShowValue label="Phone" value={orderInfo?.dropPhone} />
@@ -106,7 +106,7 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
                 <img src={trackIcon} className="w-6 mx-5" /></a> : <img src={trackIcon} className="w-6 mx-5 opacity-30" />}
             <ShowValue label="Dcc" value={orderInfo?.dcc} small />
         </div>
-        <p className="font-bold bg-slate-100 my-2 py-1 px-3">Cancellation</p>
+        <p className="font-bold bg-slate-100 my-2 py-1 px-3 w-full rounded-md">Cancellation</p>
         <div className="md:flex justify-between">
             <ShowValue label="Cancelled At" value={orderInfo?.cancelledAt} isDate />
             <ShowValue label="Cancelled by" value={orderInfo?.cancelledBy} />
