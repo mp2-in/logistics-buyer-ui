@@ -16,7 +16,6 @@ import { useNavigate } from "react-router-dom"
 import LogoutConfirmation from "./LogoutConfirmation"
 import { useAppConfigStore } from "stores/appConfig"
 import AddAccount from "./AddAccount"
-import OrderSearch from "./OrderSearch"
 
 
 const AccountMenuItem = ({ title, icon, onClick }: { title: string, icon: React.ReactNode, onClick: () => void }) => {
