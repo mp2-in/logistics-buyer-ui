@@ -169,7 +169,7 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
                         dispatch({ type: 'update', payload: { showMainMenu: false } })
                     }} selected={page === 'issues'} />
                     <MainMenuItem title="Search Order" icon={<img src={searchIcon} className="w-9 lg:w-8" />} onClick={() => {
-                        navigate('/order/<order_id>')
+                        navigate('/order')
                         dispatch({ type: 'update', payload: { showMainMenu: false} })
                     }} />
                 </div>

@@ -44,9 +44,8 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<RequireAuth loggedIn={loggedIn}><><Outlet /></></RequireAuth>}>
         <Route path="order/:orderId" element={<OrderInfoPage />} />
-        <Route path="orders/:orderId" element={<OrderInfoPage />} />
+        <Route path="order" element={<OrderInfoPage />} />
         <Route path="orders" element={<Orders />} />
-        <Route path="order" element={<Orders />} />
         <Route path="wallet" element={<Wallet />} />
         <Route path="reports" element={<Reports />} />
         <Route path="issues" element={<Issues />} />

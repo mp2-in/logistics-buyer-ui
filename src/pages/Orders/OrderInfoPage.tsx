@@ -55,7 +55,7 @@ const reducer = (state: State, action: { type: 'reset' } | { type: 'update', pay
 }
 
 export default () => {
-    const { orderId } = useParams() as { orderId: string }
+    const { orderId } = useParams() as { orderId: string | undefined }
 
     const { token, setToast, role, accountId, phone, email } = useAppConfigStore(state => ({
         token: state.token,
@@ -94,7 +94,7 @@ export default () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if(orderId !== '<order_id>') {
+        if(orderId) {
             setOrderId(orderId)
             getOrderInfo(token || '', orderId, (success, orderInfo) => {
                 if (success) {
@@ -113,7 +113,7 @@ export default () => {
         <div className={'absolute left-1 right-1 bottom-5 top-12 flex items-center  overflow-auto flex-col md:top-16'}>
             <div className='mt-3 flex items-end'>
                 <Input label='Order Id' value={mp2OrderId} onChange={val => setOrderId(val)} />
-                <div className='bg-blue-500 flex justify-center items-center ml-2 p-1 rounded-full mb-1 cursor-pointer' onClick={() => navigate(`/orders/${mp2OrderId}`)}>
+                <div className='bg-blue-500 flex justify-center items-center ml-2 p-1 rounded-full mb-1 cursor-pointer' onClick={() => navigate(`/order/${mp2OrderId}`)}>
                     <img src={searchIcon} className='w-4 md:w-6' />
                 </div>
             </div>
