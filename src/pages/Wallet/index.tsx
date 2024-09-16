@@ -14,7 +14,6 @@ export default () => {
         selectedAccount: state.selectedAccount,
         phone: state.phone,
         email: state.email,
-        isRetail: state.isRetail,
         role: state.role,
         setPage: state.setPage
     }))
@@ -41,8 +40,7 @@ export default () => {
             </div>
             <div className={`absolute left-2 right-2 bottom-2 top-[60px] overflow-auto lg:left-5 lg:right-5 md:top-[85px]`}>
                 {walletLink ? <div onMouseDown={e => e.stopPropagation()}>
-                    <iframe src={walletLink} className="hidden md:block absolute right-0 top-0 bottom-0 left-0 w-full h-full" />
-                    <iframe src={walletLink} className="block md:hidden absolute right-0 top-0 bottom-0 left-0 w-full h-full" />
+                    <iframe src={walletLink} className="absolute right-0 top-0 bottom-0 left-0 w-full h-full" />
                 </div> : activity.getWalletDashboardLink ? <ActivityIndicator /> : null}
             </div>
         </div>

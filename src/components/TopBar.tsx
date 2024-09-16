@@ -3,13 +3,13 @@ import { createRef, useEffect, useReducer } from "react"
 import mp2Icon from "@assets/mp2_logo.png"
 import menuIcon from "@assets/menu.png"
 import userIcon from "@assets/user.png"
-import addAccount from "@assets/add_account.png"
 import accountIcon from "@assets/account.png"
 import walletIcon from "@assets/wallet.png"
 import billingIcon from "@assets/billing.png"
 import warningIcon from "@assets/warning_black.png"
 import searchIcon from "@assets/search_order.png"
 import orderIcon from "@assets/orders.png"
+import manageIcon from "@assets/manage_account.png"
 import logout from "@assets/logout.png"
 import AccountDetails from "./AccountDetails"
 import { useNavigate } from "react-router-dom"
@@ -27,9 +27,9 @@ const AccountMenuItem = ({ title, icon, onClick }: { title: string, icon: React.
 
 
 const MainMenuItem = ({ title, icon, onClick, selected }: { title: string, icon: React.ReactNode, onClick: () => void, selected?: boolean }) => {
-    return <div className={`flex flex-col lg:flex-row items-center w-full lg:pl-6 rounded-md py-1 px-2 lg:px-0 lg:w-[230px] ${selected ? 'bg-slate-200' : 'hover:bg-slate-100 cursor-pointer'}`} onClick={onClick}>
+    return <div className={`flex flex-col lg:flex-row items-center w-full lg:pl-6 rounded-md py-1 px-2 lg:px-0 lg:w-[250px] ${selected ? 'bg-slate-200' : 'hover:bg-slate-100 cursor-pointer'}`} onClick={onClick}>
         {icon}
-        <p className="lg:text-lg font-medium lg:ml-8 text-xs text-center">{title}</p>
+        <p className="lg:text-lg font-medium lg:ml-5 text-xs text-center">{title}</p>
     </div>
 }
 
@@ -42,7 +42,7 @@ interface State {
     showOrderSearch: boolean
 }
 
-const initialValue: State = { showMenu: false, showAccountInfo: false, showLogoutConfirmation: false, showAddAccount: false, showMainMenu: false, showOrderSearch: false}
+const initialValue: State = { showMenu: false, showAccountInfo: false, showLogoutConfirmation: false, showAddAccount: false, showMainMenu: false, showOrderSearch: false }
 
 const reducer = (state: State, action: { type: 'update', payload: Partial<State> }) => {
     switch (action.type) {
@@ -51,8 +51,8 @@ const reducer = (state: State, action: { type: 'update', payload: Partial<State>
     }
 }
 
-export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (token: string) => void}) => {
-    const { token, selectedAccount, clearAuth, accountIds, phone, switchAccount, createAccount, setToast, email, validateGst, activity, page } = useAppConfigStore(state => ({
+export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (token: string) => void }) => {
+    const { token, selectedAccount, clearAuth, accountIds, phone, switchAccount, createAccount, setToast, email, validateGst, activity, page, role } = useAppConfigStore(state => ({
         selectedAccount: state.selectedAccount,
         clearAuth: state.clearAuth,
         setToast: state.setToast,
@@ -64,7 +64,8 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
         createAccount: state.createAccount,
         validateGst: state.validateGst,
         activity: state.activity,
-        page: state.page
+        page: state.page,
+        role: state.role
     }))
 
 
@@ -101,9 +102,6 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
                 <img src={userIcon} className="w-10 mx-1" />
                 <p className="font-medium text-lg hidden md:block">{selectedAccount}</p>
                 {state.showMenu ? <div className="absolute top-5 bg-gray-100 cursor-pointer z-20 w-44 right-10 md:top-12 md:right-0 md:bg-gray-100">
-                    {/mp2\.in$/.test(email || '') ? <AccountMenuItem icon={<img src={addAccount} className="w-7" />} title="Account" onClick={() => {
-                        dispatch({ type: 'update', payload: { showMenu: false, showAddAccount: true } })
-                    }} /> : null}
                     <AccountMenuItem icon={<img src={accountIcon} className="w-7" />} title="Profile" onClick={() => {
                         dispatch({ type: 'update', payload: { showMenu: false, showAccountInfo: true } })
                     }} />
@@ -148,7 +146,7 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
             })
         }} loading={activity.createAccount || activity.validateGst} />
         <div className={`absolute left-0 top-0 bottom-0 z-10  ${state.showMainMenu ? 'w-full' : 'w-0'}`} onClick={() => dispatch({ type: 'update', payload: { showMainMenu: false } })}>
-            <div className={`bg-white absolute left-0 top-0 bottom-0 transition-all overflow-x-hidden ${state.showMainMenu ? 'lg:w-[250px] w-[80px] border-r' : 'w-0'} flex flex-col items-center py-10 shadow-lg`}
+            <div className={`bg-white absolute left-0 top-0 bottom-0 transition-all overflow-x-hidden ${state.showMainMenu ? 'lg:w-[300px] w-[80px] border-r' : 'w-0'} flex flex-col items-center py-10 shadow-lg`}
                 onClick={e => e.stopPropagation()}>
                 <img src={mp2Icon} className="w-10 cursor-pointer scale-1 min-w-10 lg:min-w-16 lg:w-16" />
                 <div className={`mt-8 *:py-1 *:my-2`}>
@@ -170,8 +168,12 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
                     }} selected={page === 'issues'} />
                     <MainMenuItem title="Search Order" icon={<img src={searchIcon} className="w-9 lg:w-8" />} onClick={() => {
                         navigate('/order')
-                        dispatch({ type: 'update', payload: { showMainMenu: false} })
+                        dispatch({ type: 'update', payload: { showMainMenu: false } })
                     }} />
+                    {/admin/.test(role || '') ? <MainMenuItem title="Manage Account" icon={<img src={manageIcon} className="w-9 lg:w-8" />} onClick={() => {
+                        navigate('/manage')
+                        dispatch({ type: 'update', payload: { showMainMenu: false } })
+                    }} /> : null}
                 </div>
             </div>
         </div>

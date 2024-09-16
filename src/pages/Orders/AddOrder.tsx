@@ -184,15 +184,15 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                         dispatch({ type: 'update', payload: { storeId: val, city: storeDetails?.address.city, state: storeDetails?.address.state } })
                         saveInStorage('storeDetails', JSON.stringify({ storeId: val, city: storeDetails?.address.city || '', state: storeDetails?.address.state || '' }))
                     }} value={state.storeId} hideSearch size="large" />
-                    <div onClick={() => role === 'super_admin' && showNewOutletForm()} className={`bg-blue-500 md:w-8 rounded-full ml-4 mb-1 w-6 hidden md:block ${role === 'super_admin' ? `cursor-pointer` : 'opacity-30'}`} title="Add Outlet">
+                    <div onClick={() => /admin/.test(role) && showNewOutletForm()} className={`bg-blue-500 md:w-8 rounded-full ml-4 mb-1 w-6 hidden md:block ${/admin/.test(role) ? `cursor-pointer` : 'opacity-30'}`} title="Add Outlet">
                         <img src={addIcon} />
                     </div>
                     <div onClick={() => showNewOutletForm(state.storeId)} className={`bg-blue-500 md:w-8 rounded-full ml-4 mb-1 cursor-pointer w-6 hidden md:block p-1 ${!state.storeId ? 'opacity-0' : ''}`} title="Edit Outlet">
                         <img src={editIcon} />
                     </div>
                     <div className="flex justify-between">
-                        <p className={`text-blue-500 font-semibold md:text-lg underline cursor-pointer md:ml-6 mb-1 text-sm mt-2 md:hidden ${role === 'super_admin' ? `cursor-pointer` : 'opacity-30'}`}
-                            onClick={() => role === 'super_admin' && showNewOutletForm()}>Add Outlet</p>
+                        <p className={`text-blue-500 font-semibold md:text-lg underline cursor-pointer md:ml-6 mb-1 text-sm mt-2 md:hidden ${/admin/.test(role) ? `cursor-pointer` : 'opacity-30'}`}
+                            onClick={() => /admin/.test(role) && showNewOutletForm()}>Add Outlet</p>
                         {state.storeId ? <p className={`text-blue-500 font-semibold md:text-lg underline cursor-pointer md:ml-6 mb-1 text-sm mt-2 md:hidden`}
                             onClick={() => showNewOutletForm(state.storeId)}>Edit Outlet</p> : null}
                     </div>

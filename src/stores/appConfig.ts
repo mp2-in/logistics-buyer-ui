@@ -9,6 +9,7 @@ interface Attributes {
     isRetail?: boolean
     phone?: string
     email?: string
+    apiKey?: string
     accountIds: string[]
     loggedIn: boolean
     toastMessage: string
@@ -20,7 +21,7 @@ interface Attributes {
 
 interface State extends Attributes {
     checkLoginStatus: (callback: () => void) => void
-    setPage: (page: 'orders'|'issues'|'wallet'|'reports') => void
+    setPage: (page: 'orders' | 'issues' | 'wallet' | 'reports') => void
     clearAuth: () => void
     setToast: (message: string, type: 'success' | 'warning' | 'error') => void,
     hideToast: () => void,
@@ -29,6 +30,7 @@ interface State extends Attributes {
     switchAccount: (token: string, accountId: string, callback: (success: boolean, token: string) => void) => void
     verifyGmail: (emailId: string, tokenId: string, callback: (success: boolean, message: string) => void) => void
     createAccount: (token: string, accountName: string, gstin: string, autoSelectMode: string, contacts: string, plan: string, rtoRequired: boolean, callback: (sucess: boolean, message: string) => void) => void
+    addUser: (token: string, phoneNumber: string, username: string, email: string | undefined, accountId: string, callback: (success: boolean, message: string) => void) => void
     validateGst: (token: string, gstIn: string, callback: (valid: boolean) => void) => void
 }
 
@@ -44,8 +46,9 @@ export const useAppConfigStore = create<State>()((set) => ({
         const accountIds = localStorage.getItem("accountIds");
         const role = localStorage.getItem("role");
         const isRetail = localStorage.getItem("isRetail");
+        const apiKey = localStorage.getItem("apiKey");
 
-        if (token && selectedAccount && accountIds && role && (email || phone)) {
+        if (token && selectedAccount && accountIds && role && (email || phone) && ((/admin/.test(role) && apiKey) || !/admin/.test(role))) {
             set(produce((state: State) => {
                 state.token = token
                 state.selectedAccount = selectedAccount
@@ -53,6 +56,7 @@ export const useAppConfigStore = create<State>()((set) => ({
                 state.email = email || undefined
                 state.loggedIn = true
                 state.role = role
+                state.apiKey = apiKey || undefined
                 state.isRetail = (isRetail === 'true')
                 state.accountIds = JSON.parse(accountIds)
             }))
@@ -65,6 +69,9 @@ export const useAppConfigStore = create<State>()((set) => ({
         localStorage.removeItem('phone')
         localStorage.removeItem('email')
         localStorage.removeItem('accountIds')
+        localStorage.removeItem('role')
+        localStorage.removeItem('isRetail')
+        localStorage.removeItem('apiKey')
 
         set(produce((state: State) => {
             state.token = undefined
@@ -121,6 +128,7 @@ export const useAppConfigStore = create<State>()((set) => ({
                 if (res.status === 1) {
                     set(produce((state: State) => {
                         state.token = res.access_token
+                        state.apiKey = res.api_key
                         state.selectedAccount = res.selected_account.id
                         state.role = res.selected_account.role
                         state.isRetail = res.selected_account.is_retail
@@ -131,6 +139,7 @@ export const useAppConfigStore = create<State>()((set) => ({
                         state.activity.verifyOtp = false
                     }))
                     localStorage.setItem("token", res.access_token);
+                    localStorage.setItem("apiKey", res.api_key);
                     localStorage.setItem("accountIds", JSON.stringify(res.account_ids));
                     localStorage.setItem("selectedAccount", res.selected_account.id);
                     localStorage.setItem("phone", res.phone_number);
@@ -165,12 +174,14 @@ export const useAppConfigStore = create<State>()((set) => ({
                 if (res.status === 1) {
                     localStorage.setItem("selectedAccount", res.selected_account.id)
                     localStorage.setItem("token", res.access_token)
+                    localStorage.setItem("apiKey", res.api_key)
                     localStorage.setItem("role", res.selected_account.role)
                     localStorage.setItem("isRetail", res.selected_account.is_retail)
                     localStorage.setItem("accountIds", JSON.stringify(res.account_ids))
                     set(produce((state: State) => {
                         state.selectedAccount = res.selected_account.id
                         state.token = res.access_token
+                        state.apiKey = res.api_key
                         state.role = res.selected_account.role
                         state.isRetail = res.selected_account.is_retail
                         state.activity.switchAccount = false
@@ -201,6 +212,7 @@ export const useAppConfigStore = create<State>()((set) => ({
                 if (res.status === 1) {
                     set(produce((state: State) => {
                         state.token = res.access_token
+                        state.apiKey = res.api_key
                         state.selectedAccount = res.selected_account.id
                         state.role = res.selected_account.role
                         state.isRetail = res.selected_account.is_retail
@@ -211,6 +223,7 @@ export const useAppConfigStore = create<State>()((set) => ({
                         state.activity.verifyGmail = false
                     }))
                     localStorage.setItem("token", res.access_token);
+                    localStorage.setItem("apiKey", res.api_key);
                     localStorage.setItem("accountIds", JSON.stringify(res.account_ids));
                     localStorage.setItem("selectedAccount", res.selected_account.id);
                     localStorage.setItem("phone", res.phone_number);
@@ -284,6 +297,33 @@ export const useAppConfigStore = create<State>()((set) => ({
                     state.activity.validateGst = false
                 }))
                 callback(false)
+            })
+    },
+    addUser: async (token, phoneNumber, username, email, accountId, callback) => {
+        set(produce((state: State) => {
+            state.activity.addUser = true
+        }))
+
+        Api('/webui/create_account_user', {
+            method: 'post', headers: { 'Content-Type': 'application/json', token },
+            data: { phone_number: phoneNumber, username, mail_id: email, role: 'staff', account_ids: accountId }
+        })
+            .then(res => {
+                set(produce((state: State) => {
+                    state.activity.addUser = false
+                }))
+                
+                if (res.status === 1) {
+                    callback(true, 'User added to account successfully')
+                } else {
+                    callback(false, res.message || 'Error creating account user')
+                }
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.activity.addUser = false
+                }))
+                callback(false, 'Error creating account user')
             })
     },
 }))
