@@ -30,7 +30,7 @@ interface State extends Attributes {
     switchAccount: (token: string, accountId: string, callback: (success: boolean, token: string) => void) => void
     verifyGmail: (emailId: string, tokenId: string, callback: (success: boolean, message: string) => void) => void
     createAccount: (token: string, accountName: string, gstin: string, autoSelectMode: string, contacts: string, plan: string, rtoRequired: boolean, callback: (sucess: boolean, message: string) => void) => void
-    addUser: (token: string, phoneNumber: string, username: string, email: string | undefined, accountId: string, callback: (success: boolean, message: string) => void) => void
+    addUser: (token: string, phoneNumber: string, username: string, email: string | undefined, role: string, accountId: string, callback: (success: boolean, message: string) => void) => void
     validateGst: (token: string, gstIn: string, callback: (valid: boolean) => void) => void
 }
 
@@ -299,14 +299,14 @@ export const useAppConfigStore = create<State>()((set) => ({
                 callback(false)
             })
     },
-    addUser: async (token, phoneNumber, username, email, accountId, callback) => {
+    addUser: async (token, phoneNumber, username, email, role, accountId, callback) => {
         set(produce((state: State) => {
             state.activity.addUser = true
         }))
 
         Api('/webui/create_account_user', {
             method: 'post', headers: { 'Content-Type': 'application/json', token },
-            data: { phone_number: phoneNumber, username, mail_id: email, role: 'staff', account_ids: accountId }
+            data: { phone_number: phoneNumber, username, mail_id: email, role, account_ids: accountId }
         })
             .then(res => {
                 set(produce((state: State) => {

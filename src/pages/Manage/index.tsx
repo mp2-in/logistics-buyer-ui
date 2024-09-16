@@ -68,8 +68,8 @@ export default () => {
                 }
             })
         }} loading={activity.createAccount} />
-        <AddUser open={showAddUser} onClose={() => addUserDisplay(false)} addUser={(userName, phoneNumber, email) => {
-            addUser(token || '', phoneNumber, userName, email, accountId || '', (success, message) => {
+        <AddUser open={showAddUser} onClose={() => addUserDisplay(false)} addUser={(userName, phoneNumber, email, role) => {
+            addUser(token || '', phoneNumber, userName, email, role, accountId || '', (success, message) => {
                 if (success) {
                     setToast(message, 'success')
                     addUserDisplay(false)
