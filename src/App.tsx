@@ -18,6 +18,7 @@ import Reports from "@pages/Reports";
 import Issues from "@pages/Issues";
 import RedirectOldLink from "@components/RedirectOldLink";
 import OrderInfoPage from "@pages/Orders/OrderInfoPage";
+import Manage from "@pages/Manage";
 
 
 const RequireAuth = ({ children, loggedIn }: { children: React.ReactNode, loggedIn: boolean }) => {
@@ -44,11 +45,13 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<RequireAuth loggedIn={loggedIn}><><Outlet /></></RequireAuth>}>
         <Route path="order/:orderId" element={<OrderInfoPage />} />
+        <Route path="orders/:orderId" element={<OrderInfoPage />} />
         <Route path="order" element={<OrderInfoPage />} />
         <Route path="orders" element={<Orders />} />
         <Route path="wallet" element={<Wallet />} />
         <Route path="reports" element={<Reports />} />
         <Route path="issues" element={<Issues />} />
+        <Route path="manage" element={<Manage />} />
         <Route path="u/:component" element={<RedirectOldLink />} />
       </Route>
     </Routes> : <ActivityIndicator />}

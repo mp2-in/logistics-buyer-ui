@@ -57,9 +57,10 @@ const reducer = (state: State, action: { type: 'reset' } | { type: 'update', pay
 export default () => {
     const { orderId } = useParams() as { orderId: string | undefined }
 
-    const { token, setToast, role, accountId, phone, email } = useAppConfigStore(state => ({
+    const { token, setToast, role, accountId, phone, email, setPage } = useAppConfigStore(state => ({
         token: state.token,
         setToast: state.setToast,
+        setPage: state.setPage,
         role: state.role,
         accountId: state.selectedAccount,
         email: state.email,
@@ -106,6 +107,7 @@ export default () => {
                 }
             })
         }
+        setPage('search')
     }, [orderId])
 
     return <div>
