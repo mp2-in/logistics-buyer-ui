@@ -1,7 +1,7 @@
 import TopBar from "@components/TopBar"
 import { useAppConfigStore } from "stores/appConfig"
 import AddAccount from "./AddAccount"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import AddUser from "./AddUser"
 import addIcon from '@assets/add.png'
 import copyIcon from '@assets/copy.png'
@@ -9,7 +9,7 @@ import checkbox from '@assets/checkbox.png'
 import checkboxSelected from '@assets/checkbox_selected.png'
 
 export default () => {
-    const { role, addUser, token, accountId, setToast, createAccount, activity, apiKey } = useAppConfigStore(state => ({
+    const { role, addUser, token, accountId, setToast, createAccount, activity, apiKey, setPage } = useAppConfigStore(state => ({
         token: state.token,
         apiKey: state.apiKey,
         role: state.role,
@@ -17,12 +17,17 @@ export default () => {
         createAccount: state.createAccount,
         accountId: state.selectedAccount,
         setToast: state.setToast,
-        activity: state.activity
+        activity: state.activity,
+        setPage: state.setPage
     }))
 
     const [showAddAccount, addAccountDisplay] = useState(false)
     const [showAddUser, addUserDisplay] = useState(false)
     const [showKey, keyDisplayToggle] = useState(false)
+
+    useEffect(() => {
+        setPage('manage')
+    }, [])
 
     return <div>
         <TopBar title="Manage Account" />

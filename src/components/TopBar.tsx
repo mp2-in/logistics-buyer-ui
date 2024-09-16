@@ -169,11 +169,11 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
                     <MainMenuItem title="Search Order" icon={<img src={searchIcon} className="w-9 lg:w-8" />} onClick={() => {
                         navigate('/order')
                         dispatch({ type: 'update', payload: { showMainMenu: false } })
-                    }} />
+                    }} selected={page === 'search'} />
                     {/admin/.test(role || '') ? <MainMenuItem title="Manage Account" icon={<img src={manageIcon} className="w-9 lg:w-8" />} onClick={() => {
                         navigate('/manage')
                         dispatch({ type: 'update', payload: { showMainMenu: false } })
-                    }} /> : null}
+                    }} selected={page === 'manage'} /> : null}
                 </div>
             </div>
         </div>

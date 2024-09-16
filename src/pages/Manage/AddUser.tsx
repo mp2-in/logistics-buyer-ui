@@ -22,7 +22,7 @@ export default ({ open, onClose, addUser, loading }: {
     }, [open])
 
     return <Modal open={open} onClose={onClose}>
-        <div className={`bg-white rounded flex flex-col items-center py-3 px-5  w-[370px] h-[390px] relative md:w-[580px] md:h-[330px]`} onMouseDown={e => e.stopPropagation()}>
+        <div className={`bg-white rounded flex flex-col items-center py-3 px-5  w-[370px] h-[280px] relative md:w-[580px] md:h-[330px]`} onMouseDown={e => e.stopPropagation()}>
             <div className={`flex justify-between w-full items-center mb-3`}>
                 <p className="text-xl font-semibold">Add User</p>
                 <img src={closeIcon} onClick={onClose} className="w-6 cursor-pointer absolute right-1 top-1" />
