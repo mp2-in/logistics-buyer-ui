@@ -59,7 +59,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     const [chosenOutlets, chooseOutlets] = useState<string[]>([])
 
     const rowBackground = (orderState: string) => {
-        return orderState === 'Order-delivered' ? 'bg-green-100' : orderState === 'Cancelled' ? 'bg-red-100' : ''
+        return orderState === 'Order-delivered' ? 'bg-green-100' : orderState === 'Cancelled' ? 'bg-red-100' : orderState === 'RTO-Delivered'? 'bg-orange-100' : ''
     }
 
     useEffect(() => {
