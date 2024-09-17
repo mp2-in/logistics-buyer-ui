@@ -7,9 +7,11 @@ import addIcon from '@assets/add.png'
 import copyIcon from '@assets/copy.png'
 import checkbox from '@assets/checkbox.png'
 import checkboxSelected from '@assets/checkbox_selected.png'
+import { User } from "@lib/interfaces"
+import ShowAccountUsers from "./ShowAccountUsers"
 
 export default () => {
-    const { role, addUser, token, accountId, setToast, createAccount, activity, apiKey, setPage } = useAppConfigStore(state => ({
+    const { role, addUser, token, accountId, setToast, createAccount, activity, apiKey, setPage, getAccountUsers } = useAppConfigStore(state => ({
         token: state.token,
         apiKey: state.apiKey,
         role: state.role,
@@ -18,12 +20,15 @@ export default () => {
         accountId: state.selectedAccount,
         setToast: state.setToast,
         activity: state.activity,
-        setPage: state.setPage
+        setPage: state.setPage,
+        getAccountUsers: state.getAccountUsers
     }))
 
     const [showAddAccount, addAccountDisplay] = useState(false)
     const [showAddUser, addUserDisplay] = useState(false)
     const [showKey, keyDisplayToggle] = useState(false)
+    const [showUsers, usersDisplay] = useState(false)
+    const [users, setUsers] = useState<User[]>([])
 
     useEffect(() => {
         setPage('manage')
@@ -31,33 +36,6 @@ export default () => {
 
     return <div>
         <TopBar title="Manage Account" />
-        <div className={`bg-white rounded flex flex-col items-center py-3 px-5  w-[350px] md:w-[650px] lg:w-[850px] mx-auto border my-20 *:m-5 md:my-40 md:py-10`}>
-            {/super_admin/.test(role || '') ? <div className="bg-blue-500 flex items-center px-10 py-2 rounded-lg cursor-pointer" onClick={() => addAccountDisplay(true)}>
-                <img src={addIcon} className="w-8 mr-5" />
-                <p className="text-[18px] text-white">Add Account</p>
-            </div> : null}
-            {/admin/.test(role || '') ? <div className="bg-blue-500 flex items-center px-10 py-2 rounded-lg cursor-pointer" onClick={() => addUserDisplay(true)}>
-                <img src={addIcon} className="w-8 mr-5" />
-                <p className="text-[18px] text-white">Add User</p>
-            </div> : null}
-            {apiKey?<div>
-                <p className="font-medium ml-2">Api Key:</p>
-                <div className="flex items-center">
-                    <input value={!showKey?`${apiKey.substring(0,5)+'* '.repeat(35)+apiKey.substring(apiKey.length-5)}`:apiKey} readOnly className="border text-gray-500 outline-none hidden md:block px-3 py-2 rounded-lg text-sm md:w-[600px] lg:w-[650px]" />
-                    <input value={!showKey?`${apiKey.substring(0,5)+'* '.repeat(15)+apiKey.substring(apiKey.length-5)}`:apiKey} readOnly className="border text-gray-500 outline-none md:hidden w-[320px] px-3 py-2 rounded-lg text-sm" />
-                    <img src={copyIcon} className="w-6 ml-2 cursor-pointer active:opacity-45" onClick={() => navigator.clipboard.writeText(apiKey)}/>
-                </div>
-                <div className="flex items-center cursor-pointer mt-2 ml-2" onClick={() => {
-                    keyDisplayToggle(!showKey)
-                    setTimeout(() => {
-                        keyDisplayToggle(false)
-                    },10000)
-                }}>
-                    <img src={showKey?checkboxSelected:checkbox} className="w-6 mr-2"/>
-                    <p className="text-sm">Show Key</p>
-                </div>
-            </div>:null}
-        </div>
         <AddAccount open={showAddAccount} onClose={() => addAccountDisplay(false)} createAccount={(accountName, gstin, autoSelectMode, contacts, plan, rtoRequired) => {
             createAccount(token || '', accountName, gstin, autoSelectMode, contacts, plan, rtoRequired, (success, message) => {
                 if (success) {
@@ -78,5 +56,51 @@ export default () => {
                 }
             })
         }} loading={activity.addUser} />
+        <ShowAccountUsers open={showUsers} onClose={() => usersDisplay(false)} users={users}/>
+        {/super_admin/.test(role || '') ? <div className="shadow-3xl m-3 rounded-lg border relative md:m-10 p-3 md:p-5">
+            <p className="absolute left-2 top-1 font-medium text-lg">Create Account</p>
+            <p className="mt-8 mb-16">Create new account</p>
+            <div className="bg-sky-600 flex items-center px-4 py-2 cursor-pointer absolute right-3 bottom-3" onClick={() => addAccountDisplay(true)}>
+                <img src={addIcon} className="w-6 mr-2" />
+                <p className="text-md text-white">Create Account</p>
+            </div>
+        </div> : null}
+        {/admin/.test(role || '') ? <div className="shadow-3xl m-3 rounded-lg border relative md:m-10 p-3 md:p-5">
+            <p className="absolute left-2 top-1 font-medium text-lg">Add user</p>
+            <p className="mt-8 mb-16">Add new user to account</p>
+            <div className="bg-sky-600 flex items-center px-4 py-2 cursor-pointer absolute right-3 bottom-3" onClick={() => addUserDisplay(true)}>
+                <img src={addIcon} className="w-6 mr-2" />
+                <p className="text-md text-white">Add User</p>
+            </div>
+        </div> : null}
+        <div className="shadow-3xl m-3 rounded-lg border relative md:m-10 p-3 md:p-5">
+            <p className="absolute left-2 top-1 font-medium text-lg">View Users</p>
+            <p className="my-8">List of users with access to the account.</p>
+            <p className="text-center underline text-blue-700 font-semibold cursor-pointer" onClick={() => getAccountUsers(token || '', accountId || '', (users) => {
+                if(users.length > 0) {
+                    usersDisplay(true)
+                    setUsers(users)
+                }
+            })}>View Users</p>
+        </div>
+        {apiKey ? <div className="shadow-3xl m-3 rounded-lg border relative md:m-10 p-3 md:p-5">
+            <p className="absolute left-2 top-1 font-medium text-lg">API Key</p>
+            <div className="mt-10 mb-6">
+                <div className="flex items-center">
+                    <input value={!showKey ? `${apiKey.substring(0, 5) + '* '.repeat(35) + apiKey.substring(apiKey.length - 5)}` : apiKey} readOnly className="border text-gray-500 outline-none hidden md:block px-3 py-2 rounded-lg text-sm md:w-[600px] lg:w-[650px]" />
+                    <input value={!showKey ? `${apiKey.substring(0, 5) + '* '.repeat(15) + apiKey.substring(apiKey.length - 5)}` : apiKey} readOnly className="border text-gray-500 outline-none md:hidden w-[320px] px-3 py-2 rounded-lg text-sm" />
+                    <img src={copyIcon} className="w-6 ml-2 cursor-pointer active:opacity-45" onClick={() => navigator.clipboard.writeText(apiKey)} />
+                </div>
+                <div className="flex items-center cursor-pointer mt-2 ml-2" onClick={() => {
+                    keyDisplayToggle(!showKey)
+                    setTimeout(() => {
+                        keyDisplayToggle(false)
+                    }, 10000)
+                }}>
+                    <img src={showKey ? checkboxSelected : checkbox} className="w-6 mr-2" />
+                    <p className="text-sm">Show Key</p>
+                </div>
+            </div>
+        </div> : null}
     </div>
 }

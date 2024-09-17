@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { produce } from 'immer'
 import { Api } from '@lib/utils'
+import { User } from '@lib/interfaces'
 
 interface Attributes {
     token?: string
@@ -32,6 +33,7 @@ interface State extends Attributes {
     createAccount: (token: string, accountName: string, gstin: string, autoSelectMode: string, contacts: string, plan: string, rtoRequired: boolean, callback: (sucess: boolean, message: string) => void) => void
     addUser: (token: string, phoneNumber: string, username: string, email: string | undefined, role: string, accountId: string, callback: (success: boolean, message: string) => void) => void
     validateGst: (token: string, gstIn: string, callback: (valid: boolean) => void) => void
+    getAccountUsers: (token: string, accountId: string, callback: (users: User[]) => void) => void
 }
 
 const initialState: Attributes = { loggedIn: false, activity: {}, toastMessage: '', toastVisibility: false, accountIds: [] };
@@ -324,6 +326,29 @@ export const useAppConfigStore = create<State>()((set) => ({
                     state.activity.addUser = false
                 }))
                 callback(false, 'Error creating account user')
+            })
+    },
+    getAccountUsers: async (token, accountId, callback) => {
+        set(produce((state: State) => {
+            state.activity.getAccountUsers = true
+        }))
+
+        Api('/webui/get_account_users', {
+            method: 'post', headers: { 'Content-Type': 'application/json', token },
+            data: { account_id: accountId }
+        })
+            .then(res => {
+                set(produce((state: State) => {
+                    state.activity.getAccountUsers = false
+                }))
+                if(res.status === 1) {
+                    callback(res.users)
+                }
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.activity.getAccountUsers = false
+                }))
             })
     },
 }))

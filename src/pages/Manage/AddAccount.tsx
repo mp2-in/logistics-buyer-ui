@@ -44,7 +44,7 @@ export default ({ open, onClose, createAccount, loading }: {
     return <Modal open={open} onClose={onClose}>
         <div className={`bg-white rounded flex flex-col items-center py-3 px-5  w-[370px] h-[390px] relative md:w-[650px] md:h-[410px]`} onMouseDown={e => e.stopPropagation()}>
             <div className={`flex justify-between w-full items-center mb-3`}>
-                <p className="text-xl font-semibold">Add Account</p>
+                <p className="text-xl font-semibold">Create Account</p>
                 <img src={closeIcon} onClick={onClose} className="w-6 cursor-pointer absolute right-1 top-1" />
             </div>
             <div className="*:my-2">
