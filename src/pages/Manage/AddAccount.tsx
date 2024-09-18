@@ -13,10 +13,12 @@ interface State {
     contactNumbers: string
     plan: string
     rtoRequired: boolean
+    category: string
+    maxRadius: number
 }
 
 const initialValue: State = {
-    accountName: '', gstin: '', autoSelectMode: 'fastest_agent', contactNumbers: '', plan: 'flat-5-manual-dashboard', rtoRequired: false
+    accountName: '', gstin: '', autoSelectMode: 'fastest_agent', contactNumbers: '', plan: 'flat-5-manual-dashboard', rtoRequired: false, category: 'F&B', maxRadius: 15
 }
 
 const reducer = (state: State, action: { type: 'reset' | 'update', payload: Partial<State> }) => {
@@ -32,7 +34,7 @@ const reducer = (state: State, action: { type: 'reset' | 'update', payload: Part
 export default ({ open, onClose, createAccount, loading }: {
     open: boolean,
     onClose: () => void,
-    createAccount: (accountName: string, gstin: string, autoSelectMode: string, contacts: string, plan: string, rtoRequired: boolean) => void
+    createAccount: (accountName: string, gstin: string, autoSelectMode: string, contacts: string, plan: string, rtoRequired: boolean, orderCategory: string, maxRadius: number) => void
     loading: boolean
 }) => {
     const [state, dispatch] = useReducer(reducer, initialValue)
@@ -42,7 +44,7 @@ export default ({ open, onClose, createAccount, loading }: {
     }, [open])
 
     return <Modal open={open} onClose={onClose}>
-        <div className={`bg-white rounded flex flex-col items-center py-3 px-5  w-[370px] h-[390px] relative md:w-[650px] md:h-[410px]`} onMouseDown={e => e.stopPropagation()}>
+        <div className={`bg-white rounded flex flex-col items-center py-3 px-5  w-[370px] h-[480px] relative md:w-[650px]`} onMouseDown={e => e.stopPropagation()}>
             <div className={`flex justify-between w-full items-center mb-3`}>
                 <p className="text-xl font-semibold">Create Account</p>
                 <img src={closeIcon} onClick={onClose} className="w-6 cursor-pointer absolute right-1 top-1" />
@@ -56,6 +58,14 @@ export default ({ open, onClose, createAccount, loading }: {
                             value={state.autoSelectMode || undefined} onChange={val => dispatch({ type: 'update', payload: { autoSelectMode: val } })} />
                     </div>
                 </div>
+                <div className="md:flex  md:items-center pt-2" >
+                    <Select label={'Category'} options={[{ label: 'F&B', value: 'F&B' }, { label: 'Grocery', value: 'Grocery' }, { label: 'Pharma', value: 'Pharma' }]}
+                        value={state.category} onChange={val => dispatch({ type: 'update', payload: { category: val } })} size='small'/>
+                    <div className="md:ml-2 mt-4 md:mt-0">
+                        <Input label={'Max serviceable distance (in km)'} value={state.maxRadius}
+                            onChange={val => /^\d*$/.test(val) && dispatch({ type: 'update', payload: { maxRadius: parseInt(val) } })} type='number' />
+                    </div>
+                </div>
                 <Input label={'Contact Numbers'} value={state.contactNumbers || ''} onChange={val => /^[0-9, \-]*$/.test(val) && dispatch({ type: 'update', payload: { contactNumbers: val } })} />
                 <Select label={'Plan'} options={[{ label: 'Flat 5 Manual Dashboard', value: 'flat-5-manual-dashboard' }]} onChange={val => dispatch({ type: 'update', payload: { plan: val } })} />
                 <div className="flex items-center">
@@ -63,9 +73,9 @@ export default ({ open, onClose, createAccount, loading }: {
                     <Switch on={state.rtoRequired} onClick={() => dispatch({ type: 'update', payload: { rtoRequired: !state.rtoRequired } })} />
                 </div>
                 <div className="flex justify-center pt-4 ">
-                    <Button title="Create Account" onClick={() => createAccount(state.accountName, state.gstin, state.autoSelectMode, state.contactNumbers, state.plan, state.rtoRequired)}
+                    <Button title="Create Account" onClick={() => createAccount(state.accountName, state.gstin, state.autoSelectMode, state.contactNumbers, state.plan, state.rtoRequired, state.category, state.maxRadius)}
                         variant="primary" disabled={!state.accountName || !state.autoSelectMode
-                            || !state.contactNumbers || !/^[0-9]{2}[A-Z]{3}[ABCFGHLJPTF]{1}[A-Z]{1}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/i.test(state.gstin)}
+                            || !state.contactNumbers || !/^[0-9]{2}[A-Z]{3}[ABCFGHLJPTF]{1}[A-Z]{1}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/i.test(state.gstin) || !state.maxRadius}
                         loading={loading} />
                 </div>
             </div>

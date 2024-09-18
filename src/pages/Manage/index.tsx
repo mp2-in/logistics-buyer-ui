@@ -36,8 +36,8 @@ export default () => {
 
     return <div>
         <TopBar title="Manage Account" />
-        <AddAccount open={showAddAccount} onClose={() => addAccountDisplay(false)} createAccount={(accountName, gstin, autoSelectMode, contacts, plan, rtoRequired) => {
-            createAccount(token || '', accountName, gstin, autoSelectMode, contacts, plan, rtoRequired, (success, message) => {
+        <AddAccount open={showAddAccount} onClose={() => addAccountDisplay(false)} createAccount={(accountName, gstin, autoSelectMode, contacts, plan, rtoRequired, orderCategory, maxRadius) => {
+            createAccount(token || '', accountName, gstin, autoSelectMode, contacts, plan, rtoRequired, orderCategory, maxRadius, (success, message) => {
                 if (success) {
                     setToast(message, 'success')
                     addAccountDisplay(false)
