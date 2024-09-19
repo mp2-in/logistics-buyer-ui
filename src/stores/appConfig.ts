@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { produce } from 'immer'
 import { Api } from '@lib/utils'
+import { User } from '@lib/interfaces'
 
 interface Attributes {
     token?: string
@@ -27,11 +28,13 @@ interface State extends Attributes {
     hideToast: () => void,
     sendOtp: (phoneNumber: string, callback: (success: boolean, message: string) => void) => void,
     verifyOtp: (phoneNumber: string, otp: string, callback: (success: boolean, message: string) => void) => void
-    switchAccount: (token: string, accountId: string, callback: (success: boolean, token: string) => void) => void
+    switchAccount: (token: string, accountId: string, callback: (success: boolean, token: string, accountId: string) => void) => void
     verifyGmail: (emailId: string, tokenId: string, callback: (success: boolean, message: string) => void) => void
-    createAccount: (token: string, accountName: string, gstin: string, autoSelectMode: string, contacts: string, plan: string, rtoRequired: boolean, callback: (sucess: boolean, message: string) => void) => void
+    createAccount: (token: string, accountName: string, gstin: string, autoSelectMode: string, contacts: string, plan: string,
+        rtoRequired: boolean, orderCategory: string, maxRadius: number, callback: (sucess: boolean, message: string) => void) => void
     addUser: (token: string, phoneNumber: string, username: string, email: string | undefined, role: string, accountId: string, callback: (success: boolean, message: string) => void) => void
     validateGst: (token: string, gstIn: string, callback: (valid: boolean) => void) => void
+    getAccountUsers: (token: string, accountId: string, callback: (users: User[]) => void) => void
 }
 
 const initialState: Attributes = { loggedIn: false, activity: {}, toastMessage: '', toastVisibility: false, accountIds: [] };
@@ -187,9 +190,9 @@ export const useAppConfigStore = create<State>()((set) => ({
                         state.activity.switchAccount = false
                         state.accountIds = res.account_ids
                     }))
-                    callback(true, res.access_token)
+                    callback(true, res.access_token, res.selected_account.id)
                 } else {
-                    callback(false, '')
+                    callback(false, '', '')
                     set(produce((state: State) => {
                         state.activity.switchAccount = false
                     }))
@@ -199,7 +202,7 @@ export const useAppConfigStore = create<State>()((set) => ({
                 set(produce((state: State) => {
                     state.activity.switchAccount = false
                 }))
-                callback(false, '')
+                callback(false, '', '')
             })
     },
     verifyGmail: async (emailId, tokenId, callback) => {
@@ -247,14 +250,23 @@ export const useAppConfigStore = create<State>()((set) => ({
                 callback(false, 'Unregistered email id')
             })
     },
-    createAccount: async (token, accountName, gstin, autoSelectMode, contacts, plan, rtoRequired, callback) => {
+    createAccount: async (token, accountName, gstin, autoSelectMode, contacts, plan, rtoRequired, orderCategory, maxRadius, callback) => {
         set(produce((state: State) => {
             state.activity.createAccount = true
         }))
 
         Api('/webui/create_account', {
             method: 'post', headers: { 'Content-Type': 'application/json', token },
-            data: { account_name: accountName, gst_number: gstin, auto_select_mode: autoSelectMode, phone_numbers: contacts.trim().split(/\s*,\s*/), plan, rto_required: rtoRequired }
+            data: {
+                account_name: accountName,
+                gst_number: gstin,
+                auto_select_mode: autoSelectMode,
+                phone_numbers: contacts.trim().split(/\s*,\s*/),
+                plan,
+                rto_required: rtoRequired,
+                order_category: orderCategory,
+                max_radius: maxRadius
+             }
         })
             .then(res => {
                 if (res.status === 1) {
@@ -312,7 +324,7 @@ export const useAppConfigStore = create<State>()((set) => ({
                 set(produce((state: State) => {
                     state.activity.addUser = false
                 }))
-                
+
                 if (res.status === 1) {
                     callback(true, 'User added to account successfully')
                 } else {
@@ -324,6 +336,29 @@ export const useAppConfigStore = create<State>()((set) => ({
                     state.activity.addUser = false
                 }))
                 callback(false, 'Error creating account user')
+            })
+    },
+    getAccountUsers: async (token, accountId, callback) => {
+        set(produce((state: State) => {
+            state.activity.getAccountUsers = true
+        }))
+
+        Api('/webui/get_account_users', {
+            method: 'post', headers: { 'Content-Type': 'application/json', token },
+            data: { account_id: accountId }
+        })
+            .then(res => {
+                set(produce((state: State) => {
+                    state.activity.getAccountUsers = false
+                }))
+                if (res.status === 1) {
+                    callback(res.users)
+                }
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.activity.getAccountUsers = false
+                }))
             })
     },
 }))

@@ -200,7 +200,15 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 <div className={'md:flex md:items-center'}>
                     <Input label="Bill Number" value={state.billNumber || ''} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} />
                     <div className="md:ml-3 mt-4 md:mt-0">
-                        <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => /^[0-9]*$/.test(val) && dispatch({ type: 'update', payload: { orderAmount: val } })} />
+                        <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => {
+                            if(/^[0-9.]*$/.test(val)) {
+                                if(parseFloat(val) > 500 && !state.dropCode) {
+                                    dispatch({ type: 'update', payload: { orderAmount: val, dropCode: Math.floor(1000 + Math.random() * 9000).toString() } })
+                                } else {
+                                    dispatch({ type: 'update', payload: { orderAmount: val } })
+                                }
+                            }
+                        }} />
                     </div>
                 </div>
                 <p className={'text-lg font-semibold my-3 mx-1'}>Drop</p>

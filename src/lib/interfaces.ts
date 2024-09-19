@@ -168,3 +168,11 @@ export interface Issue {
     resolutionDescription: string,
     refundAmount: number
 }
+
+export interface User {
+    phoneNumber:string,
+    username: string,
+    accountIds: string
+    role: string
+    mailId: string
+}

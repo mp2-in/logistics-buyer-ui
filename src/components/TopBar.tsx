@@ -15,7 +15,6 @@ import AccountDetails from "./AccountDetails"
 import { useNavigate } from "react-router-dom"
 import LogoutConfirmation from "./LogoutConfirmation"
 import { useAppConfigStore } from "stores/appConfig"
-import AddAccount from "./AddAccount"
 
 
 const AccountMenuItem = ({ title, icon, onClick }: { title: string, icon: React.ReactNode, onClick: () => void }) => {
@@ -51,19 +50,15 @@ const reducer = (state: State, action: { type: 'update', payload: Partial<State>
     }
 }
 
-export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (token: string) => void }) => {
-    const { token, selectedAccount, clearAuth, accountIds, phone, switchAccount, createAccount, setToast, email, validateGst, activity, page, role } = useAppConfigStore(state => ({
+export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (token: string, accountId: string) => void }) => {
+    const { token, selectedAccount, clearAuth, accountIds, phone, switchAccount, email, page, role } = useAppConfigStore(state => ({
         selectedAccount: state.selectedAccount,
         clearAuth: state.clearAuth,
-        setToast: state.setToast,
         accountIds: state.accountIds,
         phone: state.phone,
         email: state.email,
         switchAccount: state.switchAccount,
         token: state.token,
-        createAccount: state.createAccount,
-        validateGst: state.validateGst,
-        activity: state.activity,
         page: state.page,
         role: state.role
     }))
@@ -118,9 +113,9 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
             onLogout={() => dispatch({ type: 'update', payload: { showLogoutConfirmation: true } })}
             accountIds={accountIds}
             phoneNumber={phone}
-            switchAccount={(accountId) => switchAccount(token || '', accountId, (success, newToken) => {
+            switchAccount={(accountId) => switchAccount(token || '', accountId, (success, newToken, accountId) => {
                 if (success) {
-                    onAccountSwitch && onAccountSwitch(newToken)
+                    onAccountSwitch && onAccountSwitch(newToken, accountId)
                     setTimeout(() => {
                         dispatch({ type: 'update', payload: { showAccountInfo: false } })
                     }, 200)
@@ -129,22 +124,6 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
             email={email}
         />
         <LogoutConfirmation open={state.showLogoutConfirmation} onClose={() => dispatch({ type: 'update', payload: { showLogoutConfirmation: false } })} logout={clearAuth} loading={false} />
-        <AddAccount open={state.showAddAccount} onClose={() => dispatch({ type: 'update', payload: { showAddAccount: false } })} createAccount={(accountName, gstin, autoSelectMode, contacts, plan, rtoRequired) => {
-            validateGst(token || '', gstin, (isValid) => {
-                if (isValid) {
-                    createAccount(token || '', accountName, gstin, autoSelectMode, contacts, plan, rtoRequired, (success, message) => {
-                        if (success) {
-                            dispatch({ type: 'update', payload: { showAddAccount: false } })
-                            setToast(message, 'success')
-                        } else {
-                            setToast(message || 'Error creating account', 'error')
-                        }
-                    })
-                } else {
-                    setToast('Invalid GSTIN', 'error')
-                }
-            })
-        }} loading={activity.createAccount || activity.validateGst} />
         <div className={`absolute left-0 top-0 bottom-0 z-10  ${state.showMainMenu ? 'w-full' : 'w-0'}`} onClick={() => dispatch({ type: 'update', payload: { showMainMenu: false } })}>
             <div className={`bg-white absolute left-0 top-0 bottom-0 transition-all overflow-x-hidden ${state.showMainMenu ? 'lg:w-[300px] w-[80px] border-r' : 'w-0'} flex flex-col items-center py-10 shadow-lg`}
                 onClick={e => e.stopPropagation()}>
