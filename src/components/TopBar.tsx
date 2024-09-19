@@ -50,7 +50,7 @@ const reducer = (state: State, action: { type: 'update', payload: Partial<State>
     }
 }
 
-export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (token: string) => void }) => {
+export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (token: string, accountId: string) => void }) => {
     const { token, selectedAccount, clearAuth, accountIds, phone, switchAccount, email, page, role } = useAppConfigStore(state => ({
         selectedAccount: state.selectedAccount,
         clearAuth: state.clearAuth,
@@ -113,9 +113,9 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
             onLogout={() => dispatch({ type: 'update', payload: { showLogoutConfirmation: true } })}
             accountIds={accountIds}
             phoneNumber={phone}
-            switchAccount={(accountId) => switchAccount(token || '', accountId, (success, newToken) => {
+            switchAccount={(accountId) => switchAccount(token || '', accountId, (success, newToken, accountId) => {
                 if (success) {
-                    onAccountSwitch && onAccountSwitch(newToken)
+                    onAccountSwitch && onAccountSwitch(newToken, accountId)
                     setTimeout(() => {
                         dispatch({ type: 'update', payload: { showAccountInfo: false } })
                     }, 200)

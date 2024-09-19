@@ -28,7 +28,7 @@ interface State extends Attributes {
     hideToast: () => void,
     sendOtp: (phoneNumber: string, callback: (success: boolean, message: string) => void) => void,
     verifyOtp: (phoneNumber: string, otp: string, callback: (success: boolean, message: string) => void) => void
-    switchAccount: (token: string, accountId: string, callback: (success: boolean, token: string) => void) => void
+    switchAccount: (token: string, accountId: string, callback: (success: boolean, token: string, accountId: string) => void) => void
     verifyGmail: (emailId: string, tokenId: string, callback: (success: boolean, message: string) => void) => void
     createAccount: (token: string, accountName: string, gstin: string, autoSelectMode: string, contacts: string, plan: string,
         rtoRequired: boolean, orderCategory: string, maxRadius: number, callback: (sucess: boolean, message: string) => void) => void
@@ -190,9 +190,9 @@ export const useAppConfigStore = create<State>()((set) => ({
                         state.activity.switchAccount = false
                         state.accountIds = res.account_ids
                     }))
-                    callback(true, res.access_token)
+                    callback(true, res.access_token, res.selected_account.id)
                 } else {
-                    callback(false, '')
+                    callback(false, '', '')
                     set(produce((state: State) => {
                         state.activity.switchAccount = false
                     }))
@@ -202,7 +202,7 @@ export const useAppConfigStore = create<State>()((set) => ({
                 set(produce((state: State) => {
                     state.activity.switchAccount = false
                 }))
-                callback(false, '')
+                callback(false, '', '')
             })
     },
     verifyGmail: async (emailId, tokenId, callback) => {
