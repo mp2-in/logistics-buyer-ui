@@ -91,7 +91,7 @@ export default () => {
                     <div className="bg-blue-500 rounded-full mr-3 absolute right-1 top-2 cursor-pointer" onClick={() => addUserDisplay(true)}>
                         <img src={addIcon} className="w-8" />
                     </div>
-                    <div className={'md:text-base text-xs mt-10 max-h-[400px]  overflow-auto'}>
+                    {users.length > 0 ? <div className={'md:text-base text-xs mt-10 max-h-[400px]  overflow-auto'}>
                         <div className={`flex items-center py-[5px] px-[12px] bg-gray-200 md:rounded-tl-lg md:rounded-tr-lg  *:font-semibold *:px-[10px] justify-between rounded-t-xl w-[600px] sm:w-full`}>
                             <p className="flex-[2]">Phone</p>
                             <p className="flex-[3]">Name</p>
@@ -108,7 +108,7 @@ export default () => {
                                 </div>
                             })}
                         </div>
-                    </div>
+                    </div> : <p className="text-center italic text-slate-500">No users added to account</p>}
                 </div>
                 {apiKey ? <div className="shadow-3xl rounded-lg border relative p-3 md:p-5">
                     <p className="absolute left-4 top-2 font-semibold">API Key</p>
