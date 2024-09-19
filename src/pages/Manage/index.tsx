@@ -59,6 +59,9 @@ export default () => {
                 if (success) {
                     setToast(message, 'success')
                     addUserDisplay(false)
+                    getAccountUsers(token || '', accountId || '', (users) => {
+                        setUsers(users)
+                    })
                 } else {
                     setToast(message, 'error')
                 }
@@ -114,8 +117,8 @@ export default () => {
                     <p className="absolute left-4 top-2 font-semibold">API Key</p>
                     <div className="mt-10 mb-6">
                         <div className="flex items-center">
-                            <input value={!showKey ? `${apiKey.substring(0, 5) + '* '.repeat(35) + apiKey.substring(apiKey.length - 5)}` : apiKey} readOnly className="border text-gray-500 outline-none hidden md:block px-3 py-2 rounded-lg text-sm md:w-[600px] lg:w-[650px]" />
-                            <input value={!showKey ? `${apiKey.substring(0, 5) + '* '.repeat(15) + apiKey.substring(apiKey.length - 5)}` : apiKey} readOnly className="border text-gray-500 outline-none md:hidden w-[320px] px-3 py-2 rounded-lg text-sm" />
+                            <input value={!showKey ? `${apiKey.substring(0, 5) + ' ' + '* '.repeat(35) + apiKey.substring(apiKey.length - 5)}` : apiKey} readOnly className="border text-gray-500 outline-none hidden md:block px-3 py-2 rounded-lg text-sm md:w-[600px] lg:w-[650px]" />
+                            <input value={!showKey ? `${apiKey.substring(0, 5) + ' ' + '* '.repeat(15) + apiKey.substring(apiKey.length - 5)}` : apiKey} readOnly className="border text-gray-500 outline-none md:hidden w-[320px] px-3 py-2 rounded-lg text-sm" />
                             <img src={copyIcon} className="w-6 ml-2 cursor-pointer active:opacity-45" onClick={() => navigator.clipboard.writeText(apiKey)} />
                         </div>
                         <div className="flex items-center cursor-pointer mt-2 ml-2" onClick={() => {

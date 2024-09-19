@@ -202,7 +202,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                     <div className="md:ml-3 mt-4 md:mt-0">
                         <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => {
                             if(/^[0-9.]*$/.test(val)) {
-                                if(parseFloat(val) > 500 && !state.dropCode) {
+                                if(!state.dropCode || state.dropCode.length < 4) {
                                     dispatch({ type: 'update', payload: { orderAmount: val, dropCode: Math.floor(1000 + Math.random() * 9000).toString() } })
                                 } else {
                                     dispatch({ type: 'update', payload: { orderAmount: val } })
@@ -230,7 +230,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 <SpecifyAddress onPlacesSearch={onPlacesSearch} onUpdate={payload => dispatch({ type: 'update', payload })} payload={state} onPlaceChoose={onPlaceChoose}
                     module="addOrder" storeLocation={storeGeolocation()} />
                 <div className="mt-2">
-                    <Input label="Code" size="small" type='number' value={state.dropCode || ''} onChange={val => /^\d{0,4}$/.test(val) && dispatch({ type: 'update', payload: { dropCode: val } })} />
+                    <Input label="Drop Code" size="small" type='number' value={state.dropCode || ''} onChange={val => /^\d{0,4}$/.test(val) && dispatch({ type: 'update', payload: { dropCode: val } })} />
                 </div>
             </div>
             <div className="absolute flex justify-end mt-5 *:ml-3 pt-2 md:mb-0 md:bottom-5 bottom-2">
