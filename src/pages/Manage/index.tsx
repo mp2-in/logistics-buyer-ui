@@ -65,7 +65,7 @@ export default () => {
             })
         }} loading={activity.addUser} />
         <div className="absolute top-14 bottom-2 left-1 right-1 md:top-20 *:my-2 overflow-auto">
-            <div className="flex items-center flex-col *:w-full md:px-[300px] md:*:my-3 *:my-1 px-1">
+            <div className="flex items-center flex-col *:w-full md:w-[650px] lg:w-[900px] md:*:my-3 *:my-1 px-1 mx-auto">
                 <div className="border rounded-xl bg-gray-50">
                     {/super_admin/.test(role || '') ? <div className="flex items-center p-4 active:bg-white rounded-t-xl cursor-pointer" onClick={() => addAccountDisplay(true)}>
                         <div className="bg-blue-500 rounded-full mr-3">
@@ -86,22 +86,24 @@ export default () => {
                         </div>
                     </div> : null}
                 </div>
-                <div className={'relative shadow-3xl rounded-xl p-2'}>
+                <div className={'relative shadow-3xl rounded-xl py-4 px-2'}>
                     <p className="absolute left-4 top-2 font-semibold">Users</p>
                     <div className="bg-blue-500 rounded-full mr-3 absolute right-1 top-2 cursor-pointer" onClick={() => addUserDisplay(true)}>
                         <img src={addIcon} className="w-8" />
                     </div>
-                    <div className={'md:text-base text-xs mt-10'}>
-                        <div className={`flex items-center py-[5px] px-[12px] bg-gray-200 md:rounded-tl-lg md:rounded-tr-lg  *:font-semibold *:px-[10px] justify-between rounded-t-xl`}>
+                    <div className={'md:text-base text-xs mt-10 max-h-[400px]  overflow-auto'}>
+                        <div className={`flex items-center py-[5px] px-[12px] bg-gray-200 md:rounded-tl-lg md:rounded-tr-lg  *:font-semibold *:px-[10px] justify-between rounded-t-xl w-[600px] sm:w-full`}>
                             <p className="flex-[2]">Phone</p>
                             <p className="flex-[3]">Name</p>
+                            <p className="flex-[3]">Email</p>
                             <p className="flex-[2] text-center">Role</p>
                         </div>
-                        <div className={'flex max-h-[300px] flex-col overflow-auto'}>
+                        <div className={'flex flex-col'}>
                             {users.map(e => {
-                                return <div key={e.phoneNumber} className="flex items-center w-full py-[5px] md:px-[10px] border-b md:border-l md:border-r text-xs md:text-sm relative *:px-[10px] justify-between">
+                                return <div key={e.phoneNumber} className="flex items-center sm:w-full py-[5px] px-[10px] border-b md:border-l md:border-r text-xs md:text-sm relative *:px-[10px] justify-between w-[600px]">
                                     <p className="flex-[2]">{e.phoneNumber}</p>
-                                    <p className="flex-[3]">{e.username} min</p>
+                                    <p className="flex-[3]">{e.username}</p>
+                                    <p className="flex-[3]">{e.mailId}</p>
                                     <p className="flex-[2] text-center">{e.role}</p>
                                 </div>
                             })}
