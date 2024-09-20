@@ -24,7 +24,7 @@ interface State extends Attributes {
     addOutlet: (action: 'create' | 'update', token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean, message?: string) => void) => void
     saveInStorage: (keyName: string, value: string) => void
     getCustomerInfo: (token: string, phone: string, callback: (customerInfo: LocationAddress) => void) => void
-    raiseIssue: (token: string, orderId: string, issue: string, description: string, callback: (sucess: boolean, message?: string) => void) => void
+    raiseIssue: (token: string, orderId: string, issue: string, description: string, refundAmount: number | undefined, callback: (sucess: boolean, message?: string) => void) => void
     assignAgent: (token: string, orderId: string, pickupCode: string, callback: (success: boolean, message: string) => void) => void
 }
 
@@ -289,7 +289,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 }))
             })
     },
-    raiseIssue: async (token, orderId, issue, description, callback) => {
+    raiseIssue: async (token, orderId, issue, description, refundAmount, callback) => {
         set(produce((state: State) => {
             state.activity.raiseIssue = true
         }))
@@ -301,7 +301,8 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 description: {
                     line1: issue,
                     line2: description
-                }
+                },
+                refund_amount: refundAmount
             }
         }).then(res => {
             set(produce((state: State) => {

@@ -9,12 +9,14 @@ import TextArea from "@components/TextArea"
 import Input from "@components/Input"
 
 
-export default ({ open, onClose, raiseIssue, loading, orderStatus }: {
+export default ({ open, onClose, raiseIssue, loading, orderStatus, orderAmount, deliveryFee }: {
     open: boolean,
     onClose: () => void,
-    raiseIssue: (issue: string, description: string) => void,
+    raiseIssue: (issue: string, description: string, refundAmount: number | undefined) => void,
     loading: boolean
     orderStatus: string
+    orderAmount: number
+    deliveryFee: number
 }) => {
     const issuesList = [
         "Delay in delivery",
@@ -26,7 +28,7 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus }: {
     ]
     const [issue, setIssue] = useState('')
     const [description, setDescription] = useState('')
-    const [refundAmount, setRefundAmount] = useState('')
+    const [refundAmount, setRefundAmount] = useState<number | undefined>(undefined)
 
     useEffect(() => {
         setIssue('')
@@ -50,6 +52,14 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus }: {
         }
     }
 
+    const getRefundAmount = (reason: string) => {
+        if (['Delay in delivery', "Rider ran away with the item", "Food spillage", "MDND - Marked delivered without delivering"].includes(reason)) {
+            return orderAmount + deliveryFee
+        } else {
+            return deliveryFee
+        }
+    }
+
     return <Modal open={open} onClose={onClose}>
         <div className={'bg-white rounded flex flex-col items-center py-[10px] px-[20px] md:w-[600px] w-[350px] relative'} onMouseDown={e => e.stopPropagation()}>
             <div className={'flex justify-between w-full items-center mb-[10px]'}>
@@ -58,15 +68,18 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus }: {
             </div>
             <div className={'flex flex-col items-center mt-3 *:my-2'}>
                 <Select options={issuesList.filter(filterIssueReasons).map(e => ({ label: e, value: e }))}
-                    onChange={val => setIssue(val)} value={issue} label="Issue" size={'large'} />
+                    onChange={val => {
+                        setIssue(val)
+                        setRefundAmount(getRefundAmount(val))
+                    }} value={issue} label="Issue" size={'large'} />
                 <div>
                     <TextArea label="Description" value={description} onChange={val => setDescription(val)} size="large" />
                 </div>
                 <div className="w-full">
-                    <Input label="Refund Amount" type='number' value={refundAmount} onChange={val => /^[0-9.]*$/.test(val) && setRefundAmount(val)} size='small' />
+                    <Input label="Refund Amount" type='number' value={refundAmount} onChange={val => /^[0-9.]*$/.test(val) && setRefundAmount(parseFloat(val))} size='small' />
                 </div>
                 <div className="py-3">
-                    <Button title="Raise Issue" variant="primary" onClick={() => raiseIssue(issue, description)} loading={loading} disabled={!issue || !description} />
+                    <Button title="Raise Issue" variant="primary" onClick={() => raiseIssue(issue, description, refundAmount)} loading={loading} disabled={!issue || !description} />
                 </div>
             </div>
         </div>
