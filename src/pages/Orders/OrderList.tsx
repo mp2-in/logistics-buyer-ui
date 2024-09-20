@@ -22,6 +22,8 @@ import pidge from "@assets/lsp_logos/pidge.png"
 import porter from "@assets/lsp_logos/porter.png"
 import shadowFax from "@assets/lsp_logos/shadowfax.png"
 import zypp from "@assets/lsp_logos/zypp.png"
+import telyport from "@assets/lsp_logos/teleport.png"
+import defaultLsp from "@assets/lsp_logos/lsp_default.png"
 
 import { Order } from '@lib/interfaces'
 
@@ -90,6 +92,10 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     }
 
     const getLogo = (provider?: string) => {
+        if(!provider) {
+            return ''
+        }
+
         switch (provider) {
             case 'Pidge':
                 return pidge
@@ -107,8 +113,10 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 return zypp
             case 'MP2':
                 return mp2
+            case 'Telyport':
+                return telyport
             default:
-                return ''
+                return defaultLsp
         }
     }
 
