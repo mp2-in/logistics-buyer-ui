@@ -33,6 +33,7 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus, orderAmount, 
     useEffect(() => {
         setIssue('')
         setDescription('')
+        setRefundAmount(undefined)
     }, [open])
 
     const filterIssueReasons = (reason: string) => {
