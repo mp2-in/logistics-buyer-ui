@@ -13,6 +13,7 @@ import Input from "@components/Input"
 import moreIcon from "@assets/info.png"
 import closeIcon from "@assets/cancel.png"
 import retryIcon from "@assets/retry.png"
+import copyIcon from "@assets/copy.png"
 import IssueInfo from "./IssueInfo"
 import CloseIssueConfirmation from "./CloseIssueConfirmation"
 import parse from 'html-react-parser';
@@ -50,6 +51,11 @@ const reducer = (state: State, action: { type: 'reset', payload: Partial<State> 
         case "reset":
             return { ...initialValue, ...action.payload }
     }
+}
+
+const copyIssueDataToClipboard = (issue: Issue) => {
+    let keys: (keyof Issue)[] = ['issueId', 'networkOrderId', 'orderId', 'clientOrderId', 'resolutionStatus', 'resolutionAction']
+    navigator.clipboard.writeText(keys.map(e => `${e} : ${issue[e]}`).join("\n"))
 }
 
 export default () => {
@@ -112,8 +118,9 @@ export default () => {
                     {[...issues].sort(sortOrders).map(eachIssue => {
                         return <div key={eachIssue.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center xl:text-sm h-[40px] ${rowBackground(eachIssue.resolutionStatus)}`}>
                             <p className={`flex-[4] ml-0`}>{eachIssue.createdat ? dayjs(eachIssue.createdat).format('MMM Do,hh:mm A') : '--'}</p>
-                            <div className={`flex-[6]`}>
+                            <div className={`flex-[6] flex items-center`}>
                                 <input className={`w-full outline-none  border-none text-center ${rowBackground(eachIssue.resolutionStatus)}`} readOnly value={eachIssue.clientOrderId} />
+                                <img src={copyIcon} className='w-4 cursor-pointer ml-1 active:opacity-30' onClick={() => copyIssueDataToClipboard(eachIssue)}/>
                             </div>
                             <div className={`flex justify-center items-center h-full flex-[5]`}>
                                 <p>{eachIssue.statusUpdatedat ? dayjs(eachIssue.statusUpdatedat).format('MMM Do,hh:mm A') : ''}</p>

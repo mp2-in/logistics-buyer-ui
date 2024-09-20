@@ -7,6 +7,7 @@ import moreIcon from "@assets/info.png"
 import warningIcon from "@assets/warning.png"
 import driverSearch from "@assets/driver_search.png"
 import trackIcon from "@assets/track.png"
+import copyIcon from "@assets/copy.png"
 import ActivityIndicator from '@components/ActivityIndicator';
 import sortBlackDownIcon from "@assets/sort_black_down.png"
 import sortBlackUpIcon from "@assets/sort_black_up.png"
@@ -59,7 +60,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     const [chosenOutlets, chooseOutlets] = useState<string[]>([])
 
     const rowBackground = (orderState: string) => {
-        return orderState === 'Order-delivered' ? 'bg-green-100' : orderState === 'Cancelled' ? 'bg-red-100' : orderState === 'RTO-Delivered'? 'bg-orange-100' : ''
+        return orderState === 'Order-delivered' ? 'bg-green-100' : orderState === 'Cancelled' ? 'bg-red-100' : orderState === 'RTO-Delivered' ? 'bg-orange-100' : ''
     }
 
     useEffect(() => {
@@ -119,6 +120,11 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
         })
     }
 
+    const copyOrderDataToClipboard = (order: Order) => {
+        let keys: (keyof Order)[] = ['orderId', 'clientOrderId', 'networkOrderId', 'orderState', 'providerId', 'riderName', 'riderNumber', 'trackingUrl']
+        navigator.clipboard.writeText(keys.map(e => `${e} : ${order[e]}`).join("\n"))
+    }
+
     return <div className={`absolute left-0 right-0 top-14 bottom-3 lg:px-5 px-2 md:top-[70px]`} >
         <ActionsAndFilters onAddOrder={isRetail ? onAddOrder : undefined} onRefresh={onRefresh} outlets={getOutlets()}
             chooseOutlets={chooseOutlets} chosenOutlets={chosenOutlets} changeDate={changeDate} filterDate={filterDate} />
@@ -141,8 +147,9 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 {[...orders].filter(e => chosenOutlets.includes(e.pickupName) || chosenOutlets.length === 0).sort(sortOrders).map(eachOrder => {
                     return <div key={eachOrder.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center xl:text-sm ${rowBackground(eachOrder.orderState)} h-[40px]`}>
                         <p className={`flex-[3] ml-0 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
-                        <div className={`flex-[6] ${rowBackground(eachOrder.orderState)}`}>
+                        <div className={`flex-[6] flex items-center ${rowBackground(eachOrder.orderState)}`}>
                             <input className={`w-full outline-none  border-none ${rowBackground(eachOrder.orderState)} text-center`} readOnly value={eachOrder.clientOrderId} />
+                            <img src={copyIcon} className='w-4 cursor-pointer ml-1 active:opacity-30' onClick={() => copyOrderDataToClipboard(eachOrder)}/>
                         </div>
                         <div className={`flex justify-center items-center h-full flex-[2] ${rowBackground(eachOrder.orderState)} `}>
                             <p>{eachOrder.pcc || ' '}</p>
