@@ -231,14 +231,14 @@ export default () => {
             loading={activity.cancelOrder}
         />
         <RaiseIssue open={state.raiseIssueDisplay} onClose={() => dispatch({ type: 'update', payload: { raiseIssueDisplay: false } })}
-            raiseIssue={(issue, description) => raiseIssue(token || '', orderInfo?.orderId || '', issue, description, (success, message) => {
+            raiseIssue={(issue, description, refundAmount) => raiseIssue(token || '', orderInfo?.orderId || '', issue, description, refundAmount, (success, message) => {
                 if (success) {
                     setToast('Issue had been registered', 'success')
                     dispatch({ type: 'update', payload: { raiseIssueDisplay: false } })
                 } else {
                     setToast(message || 'Error registering issue', 'error')
                 }
-            })} loading={activity.raiseIssue} orderStatus={orderInfo?.orderState || ''} />
+            })} orderAmount={orderInfo?.orderAmount || 0} deliveryFee={orderInfo?.deliveryFee || 0} loading={activity.raiseIssue} orderStatus={orderInfo?.orderState || ''} />
         <OrderFulfillment open={state.fulfillOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { fulfillOrderDisplay: false } })} assignRider={() => {
             assignAgent(token || '', orderInfo?.orderId || '', orderInfo?.pcc || '', (success, message) => {
                 if (success) {
