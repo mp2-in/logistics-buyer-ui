@@ -146,6 +146,7 @@ export const cancellationIdReasonMapping: { [k: string]: string } = {
   "003": "Product available at lower than order price",
   "005": "Merchant rejected the order",
   "006": "Order not shipped as per buyer app SLA",
+  "007": "Order not shipped as per buyer app SLA",
   "008": "Order / fulfillment not ready for pickup",
   "010": "Buyer wants to modify details",
   "011": "Buyer not found or cannot be contacted",
@@ -155,7 +156,9 @@ export const cancellationIdReasonMapping: { [k: string]: string } = {
   "015": "Buyer not available at location",
   "016": "Accident / rain / strike / vehicle issues",
   "017": "Order delivery delayed or not possible",
-  "018": "Delivery delayed or not possible"
+  "018": "Delivery delayed or not possible",
+  "020": "Lost in transit",
+  "997": "Order could not be created at LSP"
 }
 
 export const cancellable = (orderState: string) => {
