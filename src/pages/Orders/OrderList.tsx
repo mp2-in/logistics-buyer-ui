@@ -189,11 +189,11 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                         </div>
                         <div className={`flex-[5] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
                             <img src={driverSearch} onClick={e => {
-                                if (/unfulfilled/i.test(eachOrder.orderState)) {
+                                if (/unfulfilled|created|pending/i.test(eachOrder.orderState)) {
                                     onOrderFulfillment(eachOrder.orderId)
                                 }
                                 e.stopPropagation()
-                            }} title='Search Rider' className={`w-5 ${/unfulfilled/i.test(eachOrder.orderState) ? 'cursor-pointer' : 'opacity-30'}`} />
+                            }} title='Search Rider' className={`w-5 ${/unfulfilled|created|pending/i.test(eachOrder.orderState) ? 'cursor-pointer' : 'opacity-30'}`} />
                             {eachOrder.trackingUrl ? <a href={eachOrder.trackingUrl} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-5' onClick={e => e.stopPropagation()}>
                                 <img src={trackIcon} title='Track Shipment' className='w-5' />
                             </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-5'>
