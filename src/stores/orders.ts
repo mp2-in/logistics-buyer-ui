@@ -18,7 +18,7 @@ interface State extends Attributes {
     googlePlacesApi: (searchText: string, callback: (data: PlaceAutoComplete[]) => void, latitude?: number, longitude?: number) => void
     googlePlaceDetailsApi: (placeId: string, callback: (data: PlaceDetails) => void) => void
     createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, lspId: string | undefined,
-        quoteId: string | undefined, itemId: string | undefined, callback: (success: boolean, message?: string, insufficientBalance?: boolean) => void) => void
+        quoteId: string | undefined, itemId: string | undefined, readyToShip: boolean, callback: (success: boolean, message?: string, insufficientBalance?: boolean) => void) => void
     cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean, message?: string) => void) => void
     getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, callback: (success: boolean, quoteId: string, message?: string) => void) => void
     addOutlet: (action: 'create' | 'update', token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean, message?: string) => void) => void
@@ -115,7 +115,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 }))
             })
     },
-    createOrder: async (token, billNumber, storeId, drop, amount, lspId, quoteId, itemId, callback) => {
+    createOrder: async (token, billNumber, storeId, drop, amount, lspId, quoteId, itemId, readyToShip, callback) => {
         set(produce((state: State) => {
             state.activity.createOrder = true
         }))
@@ -127,12 +127,12 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 store_id: storeId
             },
             drop,
-            ready_to_ship: "yes",
+            ready_to_ship: readyToShip?"yes":"no",
             order_amount: amount,
             order_items: [],
             select_criteria: {
                 mode: "auto_select"
-            }
+            },
         }
 
         if (lspId) {

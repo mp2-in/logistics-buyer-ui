@@ -12,6 +12,7 @@ import Button from "@components/Button"
 import { PlaceAutoComplete, PlaceDetails, PickupStore, LocationAddress, Order } from '@lib/interfaces'
 
 import SpecifyAddress from "./SpecifyAddress"
+import Switch from "@components/Switch"
 
 interface State {
     placesResponse: { placeId: string, address: string, offset: number }[]
@@ -32,11 +33,12 @@ interface State {
     pincode: string
     geoLocation: string
     dropCode: string
+    readyToShip: boolean
 }
 
 const initialValue: State = {
     placesResponse: [], billNumber: '', address: '', placeId: '', name: '', phoneNumber: '', orderAmount: '', pincode: '',
-    rto: false, storeId: '', addrLine1: '', addrLine2: '', city: '', state: '', geoLocation: '', dropCode: ''
+    rto: false, storeId: '', addrLine1: '', addrLine2: '', city: '', state: '', geoLocation: '', dropCode: '', readyToShip: true
 }
 
 const reducer = (state: State, action: { type: 'reset', payload: Partial<State> } | { type: 'update', payload: Partial<State> }) => {
@@ -57,8 +59,8 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
     getPickupList: (callback: (stores?: PickupStore[]) => void) => void,
     activity: { [k: string]: boolean },
     pickupStores: PickupStore[],
-    createOrder: (billNumber: string, storeId: string, amount: string, drop: LocationAddress) => void,
-    checkPrice: (billNumber: string, storeId: string, amount: string, drop: LocationAddress) => void,
+    createOrder: (billNumber: string, storeId: string, amount: string, drop: LocationAddress, readyToShip: boolean) => void,
+    checkPrice: (billNumber: string, storeId: string, amount: string, drop: LocationAddress, readyToShip: boolean) => void,
     showNewOutletForm: (storeId?: string) => void,
     saveInStorage: (keyName: string, value: string) => void
     getCustomerInfo: (phone: string, callback: (info: LocationAddress) => void) => void
@@ -163,9 +165,9 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 }
 
                 if (action === 'checkPrice' && drop) {
-                    checkPrice(state.billNumber, state.storeId, state.orderAmount, drop)
+                    checkPrice(state.billNumber, state.storeId, state.orderAmount, drop, state.readyToShip)
                 } else if (action === 'createOrder' && drop) {
-                    createOrder(state.billNumber, state.storeId, state.orderAmount, { ...drop })
+                    createOrder(state.billNumber, state.storeId, state.orderAmount, { ...drop }, state.readyToShip)
                 }
             }
         }
@@ -229,8 +231,12 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 </div>
                 <SpecifyAddress onPlacesSearch={onPlacesSearch} onUpdate={payload => dispatch({ type: 'update', payload })} payload={state} onPlaceChoose={onPlaceChoose}
                     module="addOrder" storeLocation={storeGeolocation()} />
-                <div className="mt-2">
+                <div className="mt-2 md:flex">
                     <Input label="Drop Code" size="small" type='number' value={state.dropCode || ''} onChange={val => /^\d{0,4}$/.test(val) && dispatch({ type: 'update', payload: { dropCode: val } })} />
+                    <div className="flex items-center mt-4 md:mt-0 md:ml-10">
+                        <p className="mr-2">Ready to ship</p>
+                        <Switch on={state.readyToShip} onClick={() => dispatch({ type: 'update', payload: { readyToShip: !state.readyToShip } })}/>
+                    </div>
                 </div>
             </div>
             <div className="absolute flex justify-end mt-5 *:ml-3 pt-2 md:mb-0 md:bottom-5 bottom-2">
