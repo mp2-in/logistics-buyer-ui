@@ -22,7 +22,7 @@ import pidge from "@assets/lsp_logos/pidge.png"
 import porter from "@assets/lsp_logos/porter.png"
 import shadowFax from "@assets/lsp_logos/shadowfax.png"
 import zypp from "@assets/lsp_logos/zypp.png"
-import telyport from "@assets/lsp_logos/teleport.png"
+import telyport from "@assets/lsp_logos/telyport.jpg"
 import defaultLsp from "@assets/lsp_logos/lsp_default.png"
 
 import { Order } from '@lib/interfaces'
