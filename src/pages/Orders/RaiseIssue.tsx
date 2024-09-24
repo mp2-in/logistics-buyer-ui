@@ -53,13 +53,13 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus, orderAmount, 
         }
     }
 
-    const getRefundAmount = (reason: string) => {
-        if (['Delay in delivery', "Rider ran away with the item", "Food spillage", "MDND - Marked delivered without delivering"].includes(reason)) {
-            return orderAmount + deliveryFee
-        } else {
-            return deliveryFee
-        }
-    }
+    // const getRefundAmount = (reason: string) => {
+    //     if (['Delay in delivery', "Rider ran away with the item", "Food spillage", "MDND - Marked delivered without delivering"].includes(reason)) {
+    //         return orderAmount + deliveryFee
+    //     } else {
+    //         return deliveryFee
+    //     }
+    // }
 
     return <Modal open={open} onClose={onClose}>
         <div className={'bg-white rounded flex flex-col items-center py-[10px] px-[20px] md:w-[600px] w-[350px] relative'} onMouseDown={e => e.stopPropagation()}>
@@ -71,10 +71,14 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus, orderAmount, 
                 <Select options={issuesList.filter(filterIssueReasons).map(e => ({ label: e, value: e }))}
                     onChange={val => {
                         setIssue(val)
-                        setRefundAmount(getRefundAmount(val))
+                        //setRefundAmount(getRefundAmount(val))
                     }} value={issue} label="Issue" size={'large'} />
                 <div>
                     <TextArea label="Description" value={description} onChange={val => setDescription(val)} size="large" />
+                </div>
+                <div className="w-full flex flex-col items-start text-sm">
+                    <p className="bg-gray-200 px-2 py-1 mb-1 rounded-md">Order Amount: <span className="font-bold">₹ {orderAmount}</span></p>
+                    <p className="bg-gray-200 px-2 py-1 rounded-md">Delivery Fee: <span className="font-bold">₹ {deliveryFee}</span></p>
                 </div>
                 <div className="w-full">
                     <Input label="Refund Amount" type='number' value={refundAmount} onChange={val => /^[0-9.]*$/.test(val) && setRefundAmount(parseFloat(val))} size='small' />
