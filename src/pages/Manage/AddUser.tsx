@@ -33,7 +33,7 @@ export default ({ open, onClose, addUser, loading }: {
                 <Input label={'Name'} value={userName|| ''} onChange={val => /^[a-z0-9]*$/i.test(val) && setUserName(val)} required />
                 <Input label={'Phone Number'} value={phoneNumber|| ''} onChange={val => /^[0-9]{0,10}$/i.test(val) && setPhoneNumber(val)} required type="number"/>
                 <Input label={'Email'} value={email|| ''} onChange={val => /^[a-z0-9@.]*$/i.test(val) && setEmail(val)} />
-                <DefaultSelect label="Role" value={role} options={[{label: 'Staff', value: 'staff'}]} onChange={val => setRole(val)}/>
+                <DefaultSelect label="Role" value={role} options={[{label: 'Staff', value: 'staff'}, {label: 'Admin', value: 'admin'}]} onChange={val => setRole(val)}/>
                 <div className="flex justify-center pt-4 ">
                     <Button title="Add User" onClick={() => addUser(userName, phoneNumber, email, role)}
                         variant="primary" disabled={!userName || !phoneNumber || phoneNumber.length < 10 || (!!email && !/^\S+@\S+\.\S+$/.test(email))} loading={loading} />
