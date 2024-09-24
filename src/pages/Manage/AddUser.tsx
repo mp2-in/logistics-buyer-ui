@@ -30,7 +30,7 @@ export default ({ open, onClose, addUser, loading }: {
                 <img src={closeIcon} onClick={onClose} className="w-6 cursor-pointer absolute right-1 top-1" />
             </div>
             <div className="*:my-2 flex flex-col items-center">
-                <Input label={'Name'} value={userName|| ''} onChange={val => /^[a-z0-9]*$/i.test(val) && setUserName(val)} required />
+                <Input label={'Name'} value={userName|| ''} onChange={val => setUserName(val)} required />
                 <Input label={'Phone Number'} value={phoneNumber|| ''} onChange={val => /^[0-9]{0,10}$/i.test(val) && setPhoneNumber(val)} required type="number"/>
                 <Input label={'Email'} value={email|| ''} onChange={val => /^[a-z0-9@.]*$/i.test(val) && setEmail(val)} />
                 <DefaultSelect label="Role" value={role} options={[{label: 'Staff', value: 'staff'}, {label: 'Admin', value: 'admin'}]} onChange={val => setRole(val)}/>
