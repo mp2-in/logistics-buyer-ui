@@ -255,6 +255,7 @@ export default () => {
                 })
             }}
             loading={activity.cancelOrder}
+            orderState={orders.find(e => e.orderId === state.toBeCancelledOrder)?.orderState || ''}
         />
         <RaiseIssue open={state.raiseIssueDisplay} onClose={() => dispatch({ type: 'update', payload: { raiseIssueDisplay: false } })}
             raiseIssue={(issue, description, refundAmount) => raiseIssue(token || '', state.reportedOrderIssue || '', issue, description, refundAmount, (success, message) => {
@@ -264,7 +265,7 @@ export default () => {
                 } else {
                     setToast(message || 'Error registering issue', 'error')
                 }
-            })} orderAmount={orders.find(e => e.orderId === state.reportedOrderIssue)?.orderAmount || 0} deliveryFee={orders.find(e => e.orderId === state.reportedOrderIssue)?.deliveryFee || 0} 
+            })} orderAmount={orders.find(e => e.orderId === state.reportedOrderIssue)?.orderAmount || 0} deliveryFee={orders.find(e => e.orderId === state.reportedOrderIssue)?.deliveryFee || 0}
             loading={activity.raiseIssue} orderStatus={orders.find(e => e.orderId === state.reportedOrderIssue)?.orderState || ''} />
         <OrderFulfillment open={state.fulfillOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { fulfillOrderDisplay: false } })} assignRider={() => {
             assignAgent(token || '', state.toBeFulfilledOrder || '', orders.find(e => e.orderId === state.toBeFulfilledOrder)?.pcc || '', (success, message) => {
