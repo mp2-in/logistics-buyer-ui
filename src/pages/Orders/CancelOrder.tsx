@@ -8,14 +8,19 @@ import Button from "@components/Button"
 import { cancellationIdReasonMapping } from "@lib/utils"
 
 
-export default ({ open, onClose, onCancel, loading }: { 
+export default ({ open, onClose, onCancel, loading, orderState }: { 
     open: boolean, 
     onClose: () => void, 
     onCancel: (reason: string) => void, 
-    loading: boolean 
+    loading: boolean,
+    orderState: string
 }) => {
     
     const [cancellationReason, setCancellationReason] = useState('005')
+
+    const filterReason = (reasonId: string) => {
+        return ['005', '012'].includes(reasonId) || (reasonId === '007' && ['Created', 'UnFulfilled', 'Pending', 'Searching-for-Agent', 'Agent-assigned', 'At-pickup'].includes(orderState))
+    }
 
     return <Modal open={open} onClose={onClose}>
         <div className={'bg-white rounded flex flex-col items-center py-[10px] px-[20px] md:w-[600px] w-[320px] relative'} onMouseDown={e => e.stopPropagation()}>
@@ -24,7 +29,7 @@ export default ({ open, onClose, onCancel, loading }: {
                 <img src={closeIcon} onClick={onClose} className="w-6 absolute top-1 right-1" />
             </div>
             <div className={'flex flex-col items-center mt-5'}>
-                <Select options={Object.keys(cancellationIdReasonMapping).filter(e => ['005', '012'].includes(e)).map(e => ({ label: cancellationIdReasonMapping[e], value: e }))}
+                <Select options={Object.keys(cancellationIdReasonMapping).filter(e => filterReason(e)).map(e => ({ label: cancellationIdReasonMapping[e], value: e }))}
                     onChange={val => setCancellationReason(val)} value={cancellationReason} label="Cancellation Reason"  />
                 <div className="mt-[40px] mb-[25px]">
                     <Button title="Cancel Order" variant="primary" onClick={() => onCancel(cancellationReason)} loading={loading} />

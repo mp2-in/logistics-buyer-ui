@@ -146,7 +146,7 @@ export const cancellationIdReasonMapping: { [k: string]: string } = {
   "003": "Product available at lower than order price",
   "005": "Merchant rejected the order",
   "006": "Order not shipped as per buyer app SLA",
-  "007": "Order not shipped as per buyer app SLA",
+  "007": "Pickup ETA breach",
   "008": "Order / fulfillment not ready for pickup",
   "010": "Buyer wants to modify details",
   "011": "Buyer not found or cannot be contacted",
