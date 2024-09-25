@@ -15,14 +15,14 @@ import sortGreyDownIcon from "@assets/sort_grey_down.png"
 import sortGreyUpIcon from "@assets/sort_grey_up.png"
 
 import addLoggs from "@assets/lsp_logos/adloggs.png"
-import lsn from "@assets/lsp_logos/lsn.jpeg"
+import lsn from "@assets/lsp_logos/lsn.png"
 import mp2 from "@assets/lsp_logos/mp2_logo.png"
 import ola from "@assets/lsp_logos/ola.png"
 import pidge from "@assets/lsp_logos/pidge.png"
 import porter from "@assets/lsp_logos/porter.png"
 import shadowFax from "@assets/lsp_logos/shadowfax.png"
 import zypp from "@assets/lsp_logos/zypp.png"
-import telyport from "@assets/lsp_logos/telyport.jpg"
+import telyport from "@assets/lsp_logos/telyport.png"
 import defaultLsp from "@assets/lsp_logos/lsp_default.png"
 
 import { Order } from '@lib/interfaces'
