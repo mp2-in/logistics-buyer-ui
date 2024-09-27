@@ -22,7 +22,7 @@ interface Attributes {
 
 interface State extends Attributes {
     checkLoginStatus: (callback: () => void) => void
-    setPage: (page: 'orders' | 'issues' | 'wallet' | 'reports' | 'search' | 'manage') => void
+    setPage: (page: 'orders' | 'issues' | 'wallet' | 'reports' | 'search' | 'manage' | 'serviceability') => void
     clearAuth: () => void
     setToast: (message: string, type: 'success' | 'warning' | 'error') => void,
     hideToast: () => void,

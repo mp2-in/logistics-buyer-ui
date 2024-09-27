@@ -10,6 +10,7 @@ import warningIcon from "@assets/warning_black.png"
 import searchIcon from "@assets/search_order.png"
 import orderIcon from "@assets/orders.png"
 import manageIcon from "@assets/manage_account.png"
+import shippingIcon from "@assets/shipping.png"
 import logout from "@assets/logout.png"
 import AccountDetails from "./AccountDetails"
 import { useNavigate } from "react-router-dom"
@@ -26,7 +27,7 @@ const AccountMenuItem = ({ title, icon, onClick }: { title: string, icon: React.
 
 
 const MainMenuItem = ({ title, icon, onClick, selected }: { title: string, icon: React.ReactNode, onClick: () => void, selected?: boolean }) => {
-    return <div className={`flex flex-col lg:flex-row items-center w-full lg:pl-6 rounded-md py-1 px-2 lg:px-0 lg:w-[250px] ${selected ? 'bg-slate-200' : 'hover:bg-slate-100 cursor-pointer'}`} onClick={onClick}>
+    return <div className={`flex flex-col lg:flex-row items-center w-full lg:pl-6 rounded-md py-1 px-2 lg:px-0 lg:w-[300px] ${selected ? 'bg-slate-200' : 'hover:bg-slate-100 cursor-pointer'}`} onClick={onClick}>
         {icon}
         <p className="lg:text-lg font-medium lg:ml-5 text-xs text-center">{title}</p>
     </div>
@@ -125,10 +126,10 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
         />
         <LogoutConfirmation open={state.showLogoutConfirmation} onClose={() => dispatch({ type: 'update', payload: { showLogoutConfirmation: false } })} logout={clearAuth} loading={false} />
         <div className={`absolute left-0 top-0 bottom-0 z-10  ${state.showMainMenu ? 'w-full' : 'w-0'}`} onClick={() => dispatch({ type: 'update', payload: { showMainMenu: false } })}>
-            <div className={`bg-white absolute left-0 top-0 bottom-0 transition-all overflow-x-hidden ${state.showMainMenu ? 'lg:w-[300px] w-[80px] border-r' : 'w-0'} flex flex-col items-center py-10 shadow-lg`}
+            <div className={`bg-white absolute left-0 top-0 bottom-0 transition-all overflow-x-hidden ${state.showMainMenu ? 'lg:w-[350px] w-[120px] border-r' : 'w-0'} flex flex-col items-center py-10 shadow-lg`}
                 onClick={e => e.stopPropagation()}>
                 <img src={mp2Icon} className="w-10 cursor-pointer scale-1 min-w-10 lg:min-w-16 lg:w-16" />
-                <div className={`mt-8 *:py-1 *:my-2`}>
+                <div className={`mt-8 *:py-1 *:my-2 px-1`}>
                     <MainMenuItem title="Orders" icon={<img src={orderIcon} className="w-9 lg:w-8" />} onClick={() => {
                         navigate('/orders')
                         dispatch({ type: 'update', payload: { showMainMenu: false } })
@@ -153,6 +154,10 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
                         navigate('/manage')
                         dispatch({ type: 'update', payload: { showMainMenu: false } })
                     }} selected={page === 'manage'} /> : null}
+                    <MainMenuItem title="Check Serviceability" icon={<img src={shippingIcon} className="w-9 lg:w-8" />} onClick={() => {
+                        navigate('/serviceability')
+                        dispatch({ type: 'update', payload: { showMainMenu: false } })
+                    }} selected={page === 'serviceability'} />
                 </div>
             </div>
         </div>
