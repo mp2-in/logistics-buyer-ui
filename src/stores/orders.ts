@@ -26,9 +26,11 @@ interface State extends Attributes {
     getCustomerInfo: (token: string, phone: string, callback: (customerInfo: LocationAddress) => void) => void
     raiseIssue: (token: string, orderId: string, issue: string, description: string, refundAmount: number | undefined, callback: (sucess: boolean, message?: string) => void) => void
     assignAgent: (token: string, orderId: string, pickupCode: string, callback: (success: boolean, message: string) => void) => void
+    checkServiceability: (token: string, pickup: { lat: number, lng: number, pincode: string }, drop: { lat: number, lng: number, pincode: string },
+        city: string, callback: (success: boolean, quotes: PriceQuote[], message: string) => void) => void
 }
 
-const initialState: Attributes = { orders: [], activity: {}, pickupStores: [], orderPriceQuote: []};
+const initialState: Attributes = { orders: [], activity: {}, pickupStores: [], orderPriceQuote: [] };
 
 export const useOrdersStore = create<State>()((set, get) => ({
     ...initialState,
@@ -57,7 +59,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
             .then(res => {
                 set(produce((state: State) => {
                     state.activity.getOrderInfo = false
-                    if(res.status === 1) {
+                    if (res.status === 1) {
                         callback(true, res.order)
                     } else {
                         callback(false)
@@ -346,5 +348,33 @@ export const useOrdersStore = create<State>()((set, get) => ({
             }))
             callback(false, 'Error proceeding with fulfillment of the order')
         })
-    }
+    },
+    checkServiceability: async (token, pickup, drop, city, callback) => {
+        Api('/webui/quotes', {
+            method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {
+                pickup: {
+                    lat: pickup.lat,
+                    lng: pickup.lng,
+                    pincode: pickup.pincode
+                },
+                drop: {
+                    lat: drop.lat,
+                    lng: drop.lng,
+                    pincode: drop.pincode
+                },
+                city,
+                order_amount: 150
+            }
+        })
+            .then(res => {
+                if (res.status === 1) {
+                    callback(true, res.quotes, '')
+                } else {
+                    callback(false, [], res.message || 'Error fetching price quotes')
+                }
+            })
+            .catch(() => {
+                callback(false, [], 'Error fetching price quotes')
+            })
+    },
 }))
