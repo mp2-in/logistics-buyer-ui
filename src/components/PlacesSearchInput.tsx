@@ -46,7 +46,7 @@ const Input = ({ label, value, onChange, placeholder, readOnly, required, autoCo
 
 
     return <div className={`relative inline-flex flex-col justify-end ${label ? 'h-[30px] md:h-[46px]' : 'md:h-[35px]'}`}>
-        <div className={`flex flex-col border border-gray-300 rounded relative h-[35px] justify-center py-0 px-[8px] bg-white group focus-within:border-blue-500 w-[300px] md:w-[600px]`}>
+        <div className={`flex flex-col border border-gray-300 rounded relative h-[35px] justify-center py-0 px-[8px] bg-white group focus-within:border-blue-500 w-[300px] md:w-[500px] 2xl:w-[600px]`}>
             <input className={`outline-none border-none font-sans text-sm bg-white`}
                 placeholder={placeholder}
                 readOnly={readOnly}
