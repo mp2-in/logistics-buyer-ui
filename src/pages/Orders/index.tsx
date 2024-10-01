@@ -217,6 +217,7 @@ export default () => {
                 }
             }}
             loading={activity.createOrder}
+            orderAmount={parseFloat(state.orderAmount || '0')}
         />
         <AddOutlet
             open={state.addOutletDisplay}

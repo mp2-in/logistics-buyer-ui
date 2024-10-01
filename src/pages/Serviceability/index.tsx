@@ -39,7 +39,7 @@ const ShowLspQuote = ({ data }: { data: PriceQuote }) => {
     return <div className="shadow-3xl m-4 rounded-lg w-[300px]">
         <p className="bg-blue-500 text-white px-4 py-2 rounded-t-lg">{data.logistics_seller}</p>
         <div className="px-4 *:py-1 py-2">
-            <p className="text-gray-500 font-medium">Price: <span className="font-semibold text-black">{data.price_with_gst}</span></p>
+            <p className="text-gray-500 font-medium">Price: <span className="font-semibold text-black">₹ {data.price_with_gst}</span></p>
             <p className="text-gray-500 font-medium">SLA: <span className="font-semibold text-black">{data.sla} mins</span></p>
             <p className="text-gray-500 font-medium">Distance: <span className="font-semibold text-black">{data.distance} km</span></p>
             <p className="text-gray-500 font-medium">Item Id: <span className="font-semibold text-black">{data.item_id}</span></p>
@@ -62,22 +62,6 @@ export default () => {
     }, [])
 
     const [state, dispatch] = useReducer(reducer, initialValue)
-
-    const onCheckServiceabilityClick = () => {
-        if (state.pickupLocation.latitude && state.pickupLocation.longitude && state.dropLocation.latitude && state.dropLocation.longitude) {
-            dispatch({ type: 'update', payload: { loading: true } })
-            checkServiceability(token || '', { lat: state.pickupLocation.latitude, lng: state.pickupLocation.longitude, pincode: state.pickupLocation.pincode },
-                { lat: state.dropLocation.latitude, lng: state.dropLocation.longitude, pincode: state.dropLocation.pincode }, state.pickupLocation.city, (success, quotes, message) => {
-                    if (success) {
-                        dispatch({ type: 'update', payload: { quotes, loading: false } })
-                    } else {
-                        dispatch({ type: 'update', payload: { loading: false } })
-                        setToast(message, 'error')
-                    }
-                }
-            )
-        }
-    }
 
     return <div>
         <TopBar title="Check Serviceability" />
@@ -125,7 +109,19 @@ export default () => {
                     <a href={`https://www.google.com/maps/dir/?api=1&origin=${state.pickupLocation.geoLocation}&destination=${state.dropLocation.geoLocation}&travelmode=driving`}
                         target='_blank' className="mb-2 underline font-medium cursor-pointer text-blue-700 text-center">Map Route</a> : null}
                 <Button title="Check Serviceability" onClick={() => {
-                    onCheckServiceabilityClick()
+                    if (state.pickupLocation.latitude && state.pickupLocation.longitude && state.dropLocation.latitude && state.dropLocation.longitude) {
+                        dispatch({ type: 'update', payload: { loading: true } })
+                        checkServiceability(token || '', { lat: state.pickupLocation.latitude, lng: state.pickupLocation.longitude, pincode: state.pickupLocation.pincode },
+                            { lat: state.dropLocation.latitude, lng: state.dropLocation.longitude, pincode: state.dropLocation.pincode }, state.pickupLocation.city, (success, quotes, message) => {
+                                if (success) {
+                                    dispatch({ type: 'update', payload: { quotes, loading: false } })
+                                } else {
+                                    dispatch({ type: 'update', payload: { loading: false } })
+                                    setToast(message, 'error')
+                                }
+                            }
+                        )
+                    }
                 }} variant="primary" disabled={!state.pickupLocation.latitude || !state.pickupLocation.longitude || !state.dropLocation.latitude || !state.dropLocation.longitude} loading={state.loading} />
             </div>
             <div className="flex justify-center">
