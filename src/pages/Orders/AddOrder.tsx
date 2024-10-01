@@ -197,9 +197,9 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                             onClick={() => showNewOutletForm(state.storeId)}>Edit Outlet</p> : null}
                     </div>
                 </div>
-                <div className={'md:flex md:items-center'}>
+                <div>
                     <Input label="Bill Number" value={state.billNumber || ''} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} />
-                    <div className="md:ml-3 mt-4 md:mt-0">
+                    <div className="md:flex items-end mt-4 md:mt-2">
                         <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => {
                             if(/^[0-9.]*$/.test(val)) {
                                 if(!state.dropCode || state.dropCode.length < 4) {
@@ -209,6 +209,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                                 }
                             }
                         }} />
+                        <p className="text-blue-800 md:ml-5 font-medium">This is the max liability amount.</p>
                     </div>
                 </div>
                 <p className={'text-lg font-semibold my-3 mx-1'}>Drop</p>

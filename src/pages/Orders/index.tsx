@@ -216,6 +216,7 @@ export default () => {
                 }
             }}
             loading={activity.createOrder}
+            orderAmount={parseFloat(state.orderAmount || '0')}
         />
         <AddOutlet
             open={state.addOutletDisplay}
@@ -263,7 +264,7 @@ export default () => {
                 } else {
                     setToast(message || 'Error registering issue', 'error')
                 }
-            })} orderAmount={orders.find(e => e.orderId === state.reportedOrderIssue)?.orderAmount || 0} deliveryFee={orders.find(e => e.orderId === state.reportedOrderIssue)?.deliveryFee || 0} 
+            })} orderAmount={orders.find(e => e.orderId === state.reportedOrderIssue)?.orderAmount || 0} deliveryFee={orders.find(e => e.orderId === state.reportedOrderIssue)?.deliveryFee || 0}
             loading={activity.raiseIssue} orderStatus={orders.find(e => e.orderId === state.reportedOrderIssue)?.orderState || ''} />
         <OrderFulfillment open={state.fulfillOrderDisplay} onClose={() => dispatch({ type: 'update', payload: { fulfillOrderDisplay: false } })} assignRider={() => {
             assignAgent(token || '', state.toBeFulfilledOrder || '', orders.find(e => e.orderId === state.toBeFulfilledOrder)?.pcc || '', (success, message) => {

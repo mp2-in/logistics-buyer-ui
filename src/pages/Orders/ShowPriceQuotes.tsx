@@ -10,12 +10,13 @@ import { useState } from "react"
 import Button from "@components/Button"
 
 
-export default ({ open, onClose, priceQuotes, createOrder, loading }: { 
+export default ({ open, onClose, priceQuotes, createOrder, loading, orderAmount }: { 
     open: boolean, 
     onClose: () => void, 
     priceQuotes: PriceQuote[], 
     createOrder: (lspId: string, itemId: string) => void, 
-    loading: boolean 
+    loading: boolean,
+    orderAmount: number
 }) => {
     const [chosenLsp, setChosenLsp] = useState('')
     const [chosenItem, setChosenItem] = useState('')
@@ -26,7 +27,10 @@ export default ({ open, onClose, priceQuotes, createOrder, loading }: {
                 <p className="text-xl font-semibold ml-3">Price Quotes</p>
                 <img src={closeIcon} onClick={onClose} className="w-6 cursor-pointer absolute top-1 right-1" />
             </div>
-            <div className={'absolute top-[60px] md:left-[20px] md:right-[20px] bottom-[90px] md:text-base text-xs left-0 right-0'}>
+            <div>
+                <p>Max liability amount: <span className="font-medium">₹{orderAmount}</span></p>
+            </div>
+            <div className={'absolute top-[80px] md:left-[20px] md:right-[20px] bottom-[90px] md:text-base text-xs left-0 right-0'}>
                 <div className={`flex items-center py-[10px] px-[12px] bg-gray-200 md:rounded-tl-lg md:rounded-tr-lg *:text-left *:font-semibold *:px-[10px]`}>
                     <p className="flex-[1]"></p>
                     <p className="flex-[5]">LSP</p>
