@@ -11,17 +11,19 @@ import OrderActions from "./OrderActions"
 dayjs.extend(advancedFormat)
 
 
-export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, onAddOrder, actionAtTop }: {
+export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, onAddOrder, actionAtTop, markOrderAsUnfulfilled, role }: {
     orderInfo: Order | undefined,
     onCancelOrder: (orderId: string) => void
+    markOrderAsUnfulfilled: (orderId: string) => void
     onIssueReport: (orderId: string) => void
     onOrderFulfillment: (orderId: string) => void
     onAddOrder: (orderId?: string) => void
     actionAtTop?: boolean
+    role: string
 }) => {
     return <>
         {actionAtTop ? <div className='sticky top-0 bg-white z-[1] py-5 w-full'>
-            <OrderActions orderInfo={orderInfo} onAddOrder={onAddOrder} onCancelOrder={onCancelOrder} onOrderFulfillment={onOrderFulfillment} onIssueReport={onIssueReport} />
+            <OrderActions orderInfo={orderInfo} onAddOrder={onAddOrder} onCancelOrder={onCancelOrder} onOrderFulfillment={onOrderFulfillment} onIssueReport={onIssueReport} role={role} markOrderAsUnfulfilled={markOrderAsUnfulfilled}/>
         </div> : null}
         <div className="md:flex justify-between">
             <ShowValue label="Order Id" value={orderInfo?.orderId} />
@@ -62,7 +64,7 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
             <ShowValue label="RTO Initiated At" value={orderInfo?.rtoPickedupAt} isDate />
             <ShowValue label="RTO Delivered At" value={orderInfo?.rtoDeliveredAt} isDate />
         </div>
-        {!actionAtTop?<OrderActions orderInfo={orderInfo} onAddOrder={onAddOrder} onCancelOrder={onCancelOrder} onOrderFulfillment={onOrderFulfillment} onIssueReport={onIssueReport} />:null}
+        {!actionAtTop?<OrderActions orderInfo={orderInfo} onAddOrder={onAddOrder} onCancelOrder={onCancelOrder} onOrderFulfillment={onOrderFulfillment} onIssueReport={onIssueReport} role={role} markOrderAsUnfulfilled={markOrderAsUnfulfilled}/>:null}
         <p className="font-bold bg-slate-100 my-2 py-1 px-3 w-full rounded-md">Rider</p>
         <div className="md:flex justify-between">
             <ShowValue label="Name" value={orderInfo?.riderName} />

@@ -17,6 +17,7 @@ import CancelOrder from './CancelOrder'
 import RaiseIssue from './RaiseIssue'
 import OrderFulfillment from './OrderFulfillment'
 import InsufficientBalanceDialog from './InsufficientBalanceDialog'
+import MarkAsUnfulfilled from './MarkAsUnfulfilled'
 
 dayjs.extend(advancedFormat)
 
@@ -36,12 +37,13 @@ interface State {
     cancelOrderDisplay: boolean
     raiseIssueDisplay: boolean
     fulfillOrderDisplay: boolean
+    unFulfillOrderDisplay: boolean
 }
 
 const initialValue: State = {
     addOrderDisplay: false, insufficientBalanceDialogDisplay: false, walletBalanceErrorMsg: '',
     priceQuotesDisplay: false, addOutletDisplay: false, cancelOrderDisplay: false,
-    raiseIssueDisplay: false, fulfillOrderDisplay: false
+    raiseIssueDisplay: false, fulfillOrderDisplay: false, unFulfillOrderDisplay: false
 }
 
 
@@ -67,7 +69,7 @@ export default () => {
         phone: state.phone
     }))
 
-    const { getOrderInfo, googlePlacesApi, googlePlaceDetailsApi, getPickupList, activity, orderPriceQuote, addOutlet, assignAgent,
+    const { getOrderInfo, googlePlacesApi, googlePlaceDetailsApi, getPickupList, activity, orderPriceQuote, addOutlet, assignAgent, unfulfillOrder,
         pickupStores, createOrder, getPriceQuote, saveInStorage, getCustomerInfo, cancelOrder, raiseIssue } = useOrdersStore(state => ({
             getOrderInfo: state.getOrderInfo,
             googlePlacesApi: state.googlePlacesApi,
@@ -83,7 +85,8 @@ export default () => {
             addOutlet: state.addOutlet,
             cancelOrder: state.cancelOrder,
             raiseIssue: state.raiseIssue,
-            assignAgent: state.assignAgent
+            assignAgent: state.assignAgent,
+            unfulfillOrder: state.unfulfillOrder
         }))
 
     const [orderInfo, setOrderInfo] = useState<Order | undefined>(undefined)
@@ -95,7 +98,7 @@ export default () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if(orderId) {
+        if (orderId) {
             setOrderId(orderId)
             getOrderInfo(token || '', orderId, (success, orderInfo) => {
                 if (success) {
@@ -126,7 +129,8 @@ export default () => {
                 <OrderDetails orderInfo={orderInfo} onAddOrder={() => dispatch({ type: 'update', payload: { addOrderDisplay: true } })}
                     onCancelOrder={() => dispatch({ type: 'update', payload: { cancelOrderDisplay: true } })}
                     onIssueReport={() => dispatch({ type: 'update', payload: { raiseIssueDisplay: true } })}
-                    onOrderFulfillment={() => dispatch({ type: 'update', payload: { fulfillOrderDisplay: true } })} actionAtTop />
+                    onOrderFulfillment={() => dispatch({ type: 'update', payload: { fulfillOrderDisplay: true } })} actionAtTop role={role || ''}
+                    markOrderAsUnfulfilled={() => dispatch({ type: 'update', payload: { unFulfillOrderDisplay: true } })} />
             </div>
         </div>
         <AddOrder
@@ -251,5 +255,23 @@ export default () => {
         }} loading={activity.assignAgent} />
         <InsufficientBalanceDialog open={state.insufficientBalanceDialogDisplay} onClose={() => dispatch({ type: 'update', payload: { insufficientBalanceDialogDisplay: false } })}
             accountId={accountId} email={email} phone={phone} message={state.walletBalanceErrorMsg} />
+        <MarkAsUnfulfilled
+            open={state.unFulfillOrderDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { unFulfillOrderDisplay: false } })}
+            markAsUnfulfilled={() => {
+                unfulfillOrder(token || '', orderInfo?.orderId || '', (success, message) => {
+                    if (success) {
+                        if(orderInfo) {
+                            orderInfo.orderState = 'UnFulfilled'
+                        }
+                        setToast('Order marked as Unfulfilled.', 'success')
+                        dispatch({ type: 'update', payload: { unFulfillOrderDisplay: false } })
+                    } else {
+                        setToast(message, 'error')
+                    }
+                })
+            }}
+            loading={activity.unfulfillOrder}
+        />
     </div>
 }   

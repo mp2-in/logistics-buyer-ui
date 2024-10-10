@@ -13,6 +13,7 @@ import sortBlackDownIcon from "@assets/sort_black_down.png"
 import sortBlackUpIcon from "@assets/sort_black_up.png"
 import sortGreyDownIcon from "@assets/sort_grey_down.png"
 import sortGreyUpIcon from "@assets/sort_grey_up.png"
+import blockIcon from "@assets/block.png"
 
 import addLoggs from "@assets/lsp_logos/adloggs.png"
 import lsn from "@assets/lsp_logos/lsn.jpeg"
@@ -42,10 +43,11 @@ const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: str
 }
 
 
-export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail, onOrderFulfillment, token }: {
+export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail, onOrderFulfillment, token, role, markAsUnfulfilled }: {
     onAddOrder: (orderId?: string) => void,
     onRefresh: () => void,
     onCancelOrder: (orderId: string) => void,
+    markAsUnfulfilled: (orderId: string) => void,
     orders: Order[],
     activity: { [k: string]: boolean },
     filterDate: string,
@@ -55,6 +57,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     isRetail: boolean
     onOrderFulfillment: (orderId: string) => void
     token?: string
+    role: string
 }) => {
 
     const [sortOrder, setSortOrder] = useState<'asc' | 'dsc'>('dsc')
@@ -92,7 +95,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     }
 
     const getLogo = (provider?: string) => {
-        if(!provider) {
+        if (!provider) {
             return ''
         }
 
@@ -133,6 +136,10 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
         navigator.clipboard.writeText(keys.map(e => `${e} : ${order[e]}`).join("\n"))
     }
 
+    const canMarkAsUnfulfilled = (orderState: string) => {
+        return ['Pending', 'Searching-for-Agent', 'Agent-assigned', 'At-pickup'].includes(orderState) && /super_admin/.test(role || '')
+    }
+
     return <div className={`absolute left-0 right-0 top-14 bottom-3 lg:px-5 px-2 md:top-[70px]`} >
         <ActionsAndFilters onAddOrder={isRetail ? onAddOrder : undefined} onRefresh={onRefresh} outlets={getOutlets()}
             chooseOutlets={chooseOutlets} chosenOutlets={chosenOutlets} changeDate={changeDate} filterDate={filterDate} />
@@ -157,7 +164,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                         <p className={`flex-[3] ml-0 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
                         <div className={`flex-[6] flex items-center ${rowBackground(eachOrder.orderState)}`}>
                             <input className={`w-full outline-none  border-none ${rowBackground(eachOrder.orderState)} text-center`} readOnly value={eachOrder.clientOrderId} />
-                            <img src={copyIcon} className='w-4 cursor-pointer ml-1 active:opacity-30' onClick={() => copyOrderDataToClipboard(eachOrder)} title='Copy order details'/>
+                            <img src={copyIcon} className='w-4 cursor-pointer ml-1 active:opacity-30' onClick={() => copyOrderDataToClipboard(eachOrder)} title='Copy order details' />
                         </div>
                         <div className={`flex justify-center items-center h-full flex-[2] ${rowBackground(eachOrder.orderState)} `}>
                             <p>{eachOrder.pcc || ' '}</p>
@@ -199,6 +206,12 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                             </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-5'>
                                 <img src={trackIcon} title='Track Shipment' className='w-5 opacity-40' />
                             </a>}
+                            <img src={blockIcon} onClick={e => {
+                                if (canMarkAsUnfulfilled(eachOrder.orderState)) {
+                                    markAsUnfulfilled(eachOrder.orderId)
+                                }
+                                e.stopPropagation()
+                            }} title='Mark as Unfulfilled'  className={`w-5 ${canMarkAsUnfulfilled(eachOrder.orderState) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
                             <img src={warningIcon} onClick={e => {
                                 if (eachOrder.networkOrderId) {
                                     onIssueReport(eachOrder.orderId)
