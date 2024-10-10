@@ -44,6 +44,7 @@ export default function App() {
     {checkStatus ? <Routes>
       <Route path="" element={<Navigate to={'/login'} />} />
       <Route path="/login" element={<Login />} />
+      <Route path="serviceability" element={<Serviceability />} />
       <Route path="/" element={<RequireAuth loggedIn={loggedIn}><><Outlet /></></RequireAuth>}>
         <Route path="order/:orderId" element={<OrderInfoPage />} />
         <Route path="orders/:orderId" element={<OrderInfoPage />} />
@@ -53,7 +54,6 @@ export default function App() {
         <Route path="reports" element={<Reports />} />
         <Route path="issues" element={<Issues />} />
         <Route path="manage" element={<Manage />} />
-        <Route path="serviceability" element={<Serviceability />} />
         <Route path="u/:component" element={<RedirectOldLink />} />
       </Route>
     </Routes> : <ActivityIndicator />}

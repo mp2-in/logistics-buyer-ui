@@ -26,7 +26,7 @@ interface State extends Attributes {
     getCustomerInfo: (token: string, phone: string, callback: (customerInfo: LocationAddress) => void) => void
     raiseIssue: (token: string, orderId: string, issue: string, description: string, refundAmount: number | undefined, callback: (sucess: boolean, message?: string) => void) => void
     assignAgent: (token: string, orderId: string, pickupCode: string, callback: (success: boolean, message: string) => void) => void
-    checkServiceability: (token: string, pickup: { lat: number, lng: number, pincode: string }, drop: { lat: number, lng: number, pincode: string },
+    checkServiceability: (pickup: { lat: number, lng: number, pincode: string }, drop: { lat: number, lng: number, pincode: string },
         city: string, callback: (success: boolean, quotes: PriceQuote[], message: string) => void) => void
 }
 
@@ -349,9 +349,9 @@ export const useOrdersStore = create<State>()((set, get) => ({
             callback(false, 'Error proceeding with fulfillment of the order')
         })
     },
-    checkServiceability: async (token, pickup, drop, city, callback) => {
-        Api('/webui/quotes', {
-            method: 'post', headers: { 'Content-Type': 'application/json', token }, data: {
+    checkServiceability: async (pickup, drop, city, callback) => {
+        Api('/webui/public/quotes', {
+            method: 'post', headers: { 'Content-Type': 'application/json' }, data: {
                 pickup: {
                     lat: pickup.lat,
                     lng: pickup.lng,
