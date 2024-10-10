@@ -49,7 +49,7 @@ const ShowLspQuote = ({ data }: { data: PriceQuote }) => {
 
 
 export default () => {
-    const { setPage, token, setToast } = useAppConfigStore(state => ({ setPage: state.setPage, token: state.token, setToast: state.setToast }))
+    const { setPage, setToast } = useAppConfigStore(state => ({ setPage: state.setPage, setToast: state.setToast }))
 
     const { googlePlacesApi, googlePlaceDetailsApi, checkServiceability } = useOrdersStore(state => ({
         googlePlacesApi: state.googlePlacesApi,
@@ -111,7 +111,7 @@ export default () => {
                 <Button title="Check Serviceability" onClick={() => {
                     if (state.pickupLocation.latitude && state.pickupLocation.longitude && state.dropLocation.latitude && state.dropLocation.longitude) {
                         dispatch({ type: 'update', payload: { loading: true } })
-                        checkServiceability(token || '', { lat: state.pickupLocation.latitude, lng: state.pickupLocation.longitude, pincode: state.pickupLocation.pincode },
+                        checkServiceability({ lat: state.pickupLocation.latitude, lng: state.pickupLocation.longitude, pincode: state.pickupLocation.pincode },
                             { lat: state.dropLocation.latitude, lng: state.dropLocation.longitude, pincode: state.dropLocation.pincode }, state.pickupLocation.city, (success, quotes, message) => {
                                 if (success) {
                                     dispatch({ type: 'update', payload: { quotes, loading: false } })
