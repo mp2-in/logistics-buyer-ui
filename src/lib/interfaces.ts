@@ -2,36 +2,23 @@ export interface Order {
     orderId: string
     clientOrderId: string
     networkOrderId: string
-    accountId: string
     orderState: string
     selectionMode: string
     createdAt: string
-    lastupdatedat: string
-    promisedDeliveryTime: string
     deliveryFee: number
     platformFee: number
-    rts: number
-    rtsAt: string
     orderCategory: string
-    searchCategory: string
     orderAmount: number
     pcc: string
     dcc: string
-    source: string
-    loggedinUserphone: string,
-    callbackUrl: string,
-    cancelledBy: string,
-    cancellationReason: string,
+    cancelledBy: string
+    cancellationReason: string
     storeId: string
-    buyerName: string
-    transactionId: string
-    fulfillmentState: string
-    bppId: string
-    bppUri: string
+    trackingUrl: string
+    priceWithGST: number
+    rtsAt: string
     providerId: string
-    skuId: string
     city: string
-    price: number
     pickupName: string
     pickupLatitude: number
     pickupLongitude: number
@@ -57,23 +44,17 @@ export interface Order {
     dropPincode: string
     dropPhone: string
     distance: number
-    assignedAt: string,
-    atpickupAt: string,
-    atdeliveryAt: string,
-    pickedupAt: string,
-    deliveredAt: string,
-    cancelledAt: string,
-    rtoPickedupAt: string,
-    rtoDeliveredAt: string,
-    pickupProof: string
-    deliveryProof: string
+    assignedAt: string
+    atpickupAt: string
+    atdeliveryAt: string
+    pickedupAt: string
+    deliveredAt: string
+    cancelledAt: string
+    rtoPickedupAt: string
+    rtoDeliveredAt: string
     riderName: string
     riderNumber: string
-    note1: string,
-    note2: string,
-    trackingUrl: string,
-    priceWithGST: number,
-    "f.distance": number,
+    "f.distance": number
 }
 
 export interface PlaceDetails {
