@@ -16,6 +16,7 @@ import RaiseIssue from "./RaiseIssue";
 import OrderFulfillment from "./OrderFulfillment";
 import OrderList from "./OrderList";
 import InsufficientBalanceDialog from "./InsufficientBalanceDialog";
+import MarkAsUnfulfilled from "./MarkAsUnfulfilled";
 
 
 interface State {
@@ -27,6 +28,7 @@ interface State {
     raiseIssueDisplay: boolean
     fulfillOrderDisplay: boolean
     insufficientBalanceDialogDisplay: boolean
+    markAsUnfulfilledDisplay: boolean
     billNumber?: string
     storeId?: string
     drop?: LocationAddress
@@ -38,13 +40,14 @@ interface State {
     chosenOrder?: string
     reportedOrderIssue?: string
     toBeFulfilledOrder?: string
+    toBeUnFulfilledOrder?: string
     toBeRebookedOrder?: string
     walletBalanceErrorMsg: string
     readyToShip: boolean
 }
 
 const initialValue: State = {
-    addOrderDisplay: false, priceQuotesDisplay: false, orderInfoDisplay: false, raiseIssueDisplay: false, insufficientBalanceDialogDisplay: false, readyToShip: true,
+    addOrderDisplay: false, priceQuotesDisplay: false, orderInfoDisplay: false, raiseIssueDisplay: false, insufficientBalanceDialogDisplay: false, readyToShip: true, markAsUnfulfilledDisplay: false,
     addOutletDisplay: false, cancelOrderDisplay: false, fulfillOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD'), walletBalanceErrorMsg: ''
 }
 
@@ -73,7 +76,7 @@ export default () => {
         accountId: state.selectedAccount
     }))
 
-    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, assignAgent,
+    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, assignAgent,unfulfillOrder,
         getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, orderPriceQuote, getCustomerInfo, raiseIssue, clearPickupList } = useOrdersStore(state => ({
             orders: state.orders,
             getOrders: state.getOrders,
@@ -91,7 +94,8 @@ export default () => {
             getCustomerInfo: state.getCustomerInfo,
             raiseIssue: state.raiseIssue,
             assignAgent: state.assignAgent,
-            clearPickupList: state.clearPickupList
+            clearPickupList: state.clearPickupList,
+            unfulfillOrder: state.unfulfillOrder
         }))
 
     const navigate = useNavigate()
@@ -137,6 +141,8 @@ export default () => {
             }}
             isRetail={isRetail || false}
             token={token}
+            role={role || ''}
+            markAsUnfulfilled={orderId => dispatch({ type: 'update', payload: { toBeUnFulfilledOrder: orderId, markAsUnfulfilledDisplay: true } })}
         />
         <OrderInfo
             open={state.orderInfoDisplay}
@@ -152,6 +158,8 @@ export default () => {
                 dispatch({ type: 'update', payload: { toBeFulfilledOrder: orderId, fulfillOrderDisplay: true } })
             }}
             onAddOrder={(orderId) => dispatch({ type: 'update', payload: { addOrderDisplay: true, toBeRebookedOrder: orderId } })}
+            role={role || ''}
+            unfulfillOrder={orderId => dispatch({ type: 'update', payload: { toBeUnFulfilledOrder: orderId, markAsUnfulfilledDisplay: true } })}
         />
         <AddOrder
             open={state.addOrderDisplay}
@@ -258,6 +266,21 @@ export default () => {
             loading={activity.cancelOrder}
             orderState={orders.find(e => e.orderId === state.toBeCancelledOrder)?.orderState || ''}
             isInternalUser={/super_admin/.test(role || '')}
+        />
+        <MarkAsUnfulfilled
+            open={state.markAsUnfulfilledDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { markAsUnfulfilledDisplay: false } })}
+            markAsUnfulfilled={() => {
+                unfulfillOrder(token || '', state.toBeUnFulfilledOrder || '', (success, message) => {
+                    if (success) {
+                        setToast('Order marked as Unfulfilled.', 'success')
+                        dispatch({ type: 'update', payload: { markAsUnfulfilledDisplay: false } })
+                    } else {
+                        setToast(message, 'error')
+                    }
+                })
+            }}
+            loading={activity.unfulfillOrder}
         />
         <RaiseIssue open={state.raiseIssueDisplay} onClose={() => dispatch({ type: 'update', payload: { raiseIssueDisplay: false } })}
             raiseIssue={(issue, description, refundAmount) => raiseIssue(token || '', state.reportedOrderIssue || '', issue, description, refundAmount, (success, message) => {
