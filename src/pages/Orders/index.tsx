@@ -254,7 +254,7 @@ export default () => {
             open={state.cancelOrderDisplay}
             onClose={() => dispatch({ type: 'update', payload: { cancelOrderDisplay: false } })}
             onCancel={reason => {
-                cancelOrder(token || '', state.toBeCancelledOrder || '', reason, (success, message) => {
+                cancelOrder(token || '', state.toBeCancelledOrder || '', reason, /super_admin/.test(role || ''), (success, message) => {
                     if (success) {
                         setToast('Order cancelled.', 'success')
                         dispatch({ type: 'update', payload: { cancelOrderDisplay: false } })

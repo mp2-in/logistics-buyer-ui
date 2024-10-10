@@ -19,8 +19,8 @@ interface State extends Attributes {
     googlePlaceDetailsApi: (placeId: string, callback: (data: PlaceDetails) => void) => void
     createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, lspId: string | undefined,
         quoteId: string | undefined, itemId: string | undefined, readyToShip: boolean, callback: (success: boolean, message?: string, insufficientBalance?: boolean) => void) => void
-    cancelOrder: (token: string, orderId: string, cancellationReason: string, callback: (success: boolean, message?: string) => void) => void
     unfulfillOrder: (token: string, orderId: string, callback: (success: boolean, message: string) => void) => void
+    cancelOrder: (token: string, orderId: string, cancellationReason: string, isSuperAdmin: boolean, callback: (success: boolean, message?: string) => void) => void
     getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, callback: (success: boolean, quoteId: string, message?: string) => void) => void
     addOutlet: (action: 'create' | 'update', token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean, message?: string) => void) => void
     saveInStorage: (keyName: string, value: string) => void
@@ -165,7 +165,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 callback(false, 'Error creating order')
             })
     },
-    cancelOrder: async (token, orderId, cancellationReason, callback) => {
+    cancelOrder: async (token, orderId, cancellationReason, isSuperAdmin, callback) => {
         set(produce((state: State) => {
             state.activity.cancelOrder = true
         }))
@@ -173,7 +173,8 @@ export const useOrdersStore = create<State>()((set, get) => ({
             method: 'post', headers: { token }, data: {
                 order: {
                     id: orderId,
-                    cancellation_reason_id: cancellationReason
+                    cancellation_reason_id: cancellationReason,
+                    cancelled_by: isSuperAdmin && cancellationReason !== '008' ? 'system' : 'lsp'
                 }
             }
         }).then(res => {

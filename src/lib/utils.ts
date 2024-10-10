@@ -165,10 +165,7 @@ export const cancellationIdReasonMapping: { [k: string]: string } = {
 export const internalCancellationIdReasonMapping: { [k: string]: string } = {
   "005": "Merchant Rejected(Client)",
   "006": "Rider not moving(System)",
-  "007": "SLA Breach(System)",
-  "008": "Pickup not ready(LSP)",
-  "018": "Distance too far(System)",
-  "020": "Order Lost(System)"
+  "008": "Pickup not ready(LSP)"
 }
 
 
