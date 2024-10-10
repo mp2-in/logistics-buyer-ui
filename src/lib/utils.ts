@@ -161,6 +161,17 @@ export const cancellationIdReasonMapping: { [k: string]: string } = {
   "997": "Order could not be created at LSP"
 }
 
+
+export const internalCancellationIdReasonMapping: { [k: string]: string } = {
+  "005": "Merchant Rejected(Client)",
+  "006": "Rider not moving(System)",
+  "007": "SLA Breach(System)",
+  "008": "Pickup not ready(LSP)",
+  "018": "Distance too far(System)",
+  "020": "Order Lost(System)"
+}
+
+
 export const cancellable = (orderState: string) => {
   return ['Pending', 'Accepted', 'UnFulFilled', 'Searching-for-Agent', 'Agent-assigned', 'At-pickup', 'UnFulfilled'].includes(orderState)
 }

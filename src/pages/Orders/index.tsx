@@ -257,6 +257,7 @@ export default () => {
             }}
             loading={activity.cancelOrder}
             orderState={orders.find(e => e.orderId === state.toBeCancelledOrder)?.orderState || ''}
+            isInternalUser={/super_admin/.test(role || '')}
         />
         <RaiseIssue open={state.raiseIssueDisplay} onClose={() => dispatch({ type: 'update', payload: { raiseIssueDisplay: false } })}
             raiseIssue={(issue, description, refundAmount) => raiseIssue(token || '', state.reportedOrderIssue || '', issue, description, refundAmount, (success, message) => {
