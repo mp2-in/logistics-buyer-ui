@@ -9,23 +9,29 @@ import { cancellationIdReasonMapping, internalCancellationIdReasonMapping } from
 
 
 export default ({ open, onClose, onCancel, loading, orderState, isInternalUser }: {
-    open: boolean, 
-    onClose: () => void, 
-    onCancel: (reason: string) => void, 
+    open: boolean,
+    onClose: () => void,
+    onCancel: (reason: string) => void,
     loading: boolean,
     orderState: string,
     isInternalUser: boolean
 }) => {
-    
+
     const [cancellationReason, setCancellationReason] = useState('005')
 
     const filterReason = () => {
-        if(isInternalUser) {
-            return Object.keys(internalCancellationIdReasonMapping).map(e => ({ label: internalCancellationIdReasonMapping[e], value: e }))
+        if (isInternalUser) {
+            const cancellationReason = Object.keys(cancellationIdReasonMapping).filter(e =>
+                ['012'].includes(e) ||
+                (e === '007' && ['Created', 'UnFulfilled', 'Pending', 'Searching-for-Agent', 'Agent-assigned', 'At-pickup'].includes(orderState))).map(e => ({ label: cancellationIdReasonMapping[e], value: e }))
+
+            return [...cancellationReason, ...Object.keys(internalCancellationIdReasonMapping).map(e => ({ label: internalCancellationIdReasonMapping[e], value: e }))]
         } else {
-            return Object.keys(cancellationIdReasonMapping).filter(e =>
+            const cancellationReason = Object.keys(cancellationIdReasonMapping).filter(e =>
                 ['005', '012'].includes(e) ||
                 (e === '007' && ['Created', 'UnFulfilled', 'Pending', 'Searching-for-Agent', 'Agent-assigned', 'At-pickup'].includes(orderState))).map(e => ({ label: cancellationIdReasonMapping[e], value: e }))
+
+            return cancellationReason
         }
     }
 
@@ -36,7 +42,7 @@ export default ({ open, onClose, onCancel, loading, orderState, isInternalUser }
                 <img src={closeIcon} onClick={onClose} className="w-6 absolute top-1 right-1" />
             </div>
             <div className={'flex flex-col items-center mt-5'}>
-                <Select options={filterReason()} onChange={val => setCancellationReason(val)} value={cancellationReason} label="Cancellation Reason"  hideSearch/>
+                <Select options={filterReason()} onChange={val => setCancellationReason(val)} value={cancellationReason} label="Cancellation Reason" hideSearch />
                 <div className="mt-[40px] mb-[25px]">
                     <Button title="Cancel Order" variant="primary" onClick={() => onCancel(cancellationReason)} loading={loading} />
                 </div>

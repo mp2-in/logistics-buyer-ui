@@ -141,31 +141,31 @@ export const getStates = () => {
 
 
 export const cancellationIdReasonMapping: { [k: string]: string } = {
-  "001": "Price of one or more items have changed due to which buyer was asked to make additional payment",
-  "002": "One or more items in the Order not available",
-  "003": "Product available at lower than order price",
-  "005": "Merchant rejected the order",
-  "006": "Order not shipped as per buyer app SLA",
-  "007": "Pickup ETA breach",
-  "008": "Order / fulfillment not ready for pickup",
-  "010": "Buyer wants to modify details",
-  "011": "Buyer not found or cannot be contacted",
-  "012": "Buyer does not want product any more",
-  "013": "Buyer refused to accept delivery",
-  "014": "Address not found",
-  "015": "Buyer not available at location",
-  "016": "Accident / rain / strike / vehicle issues",
-  "017": "Order delivery delayed or not possible",
-  "018": "Delivery delayed or not possible",
-  "020": "Lost in transit",
-  "997": "Order could not be created at LSP"
+  "001": "Price of one or more items have changed due to which buyer was asked to make additional payment - 001",
+  "002": "One or more items in the Order not available - 002",
+  "003": "Product available at lower than order price - 003",
+  "005": "Merchant rejected the order - 005",
+  "006": "Order not shipped as per buyer app SLA - 006",
+  "007": "Pickup ETA breach - 007",
+  "008": "Order / fulfillment not ready for pickup - 008",
+  "010": "Buyer wants to modify details - 010",
+  "011": "Buyer not found or cannot be contacted - 011",
+  "012": "Buyer does not want product any more - 012",
+  "013": "Buyer refused to accept delivery - 013",
+  "014": "Address not found - 014",
+  "015": "Buyer not available at location - 015",
+  "016": "Accident / rain / strike / vehicle issues - 016",
+  "017": "Order delivery delayed or not possible - 017",
+  "018": "Delivery delayed or not possible - 018",
+  "020": "Lost in transit - 020",
+  "997": "Order could not be created at LSP - 997"
 }
 
 
 export const internalCancellationIdReasonMapping: { [k: string]: string } = {
-  "005": "Merchant Rejected(Client)",
-  "006": "Rider not moving(System)",
-  "008": "Pickup not ready(LSP)"
+  "005": "Merchant Rejected(Client) - 005",
+  "006": "Rider not moving(System) - 006",
+  "008": "Pickup not ready(LSP) - 008"
 }
 
 
