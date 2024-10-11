@@ -179,7 +179,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                         </div>
                         <div className={`flex flex-col justify-center items-center h-full flex-[5] ${rowBackground(eachOrder.orderState)} `}>
                             <input className={`border-none outline-none text-center w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderState} />
-                            {eachOrder.orderState==='Cancelled'?<p className='text-xs'><span className='text-gray-600'>By</span>: <span className='font-medium'>{eachOrder.cancelledBy}</span></p>:null}
+                            {eachOrder.orderState==='Cancelled'?<p className='text-xs font-medium'>{eachOrder.cancelledBy} - {eachOrder.cancellationReason}</p>:null}
                         </div>
                         <div className={`flex-col justify-center items-center h-full flex-[4] pt-1 ${rowBackground(eachOrder.orderState)} `}>
                             <p className='text-xs'>{trimTextValue(eachOrder.dropName, 12)}</p>

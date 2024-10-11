@@ -269,8 +269,8 @@ export default () => {
         <MarkAsUnfulfilled
             open={state.markAsUnfulfilledDisplay}
             onClose={() => dispatch({ type: 'update', payload: { markAsUnfulfilledDisplay: false } })}
-            markAsUnfulfilled={() => {
-                unfulfillOrder(token || '', state.toBeUnFulfilledOrder || '', (success, message) => {
+            markAsUnfulfilled={reason => {
+                unfulfillOrder(token || '', state.toBeUnFulfilledOrder || '', reason, (success, message) => {
                     if (success) {
                         setToast('Order marked as Unfulfilled.', 'success')
                         dispatch({ type: 'update', payload: { markAsUnfulfilledDisplay: false } })
