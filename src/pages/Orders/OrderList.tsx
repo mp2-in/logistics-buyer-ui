@@ -43,7 +43,7 @@ const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: str
 }
 
 
-export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail, onOrderFulfillment, token, role, markAsUnfulfilled }: {
+export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail, onOrderFulfillment, token, role, markAsUnfulfilled, accountId }: {
     onAddOrder: (orderId?: string) => void,
     onRefresh: () => void,
     onCancelOrder: (orderId: string) => void,
@@ -58,6 +58,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     onOrderFulfillment: (orderId: string) => void
     token?: string
     role: string
+    accountId: string
 }) => {
 
     const [sortOrder, setSortOrder] = useState<'asc' | 'dsc'>('dsc')
@@ -93,6 +94,10 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             setSortOrder('dsc')
         }
     }
+
+    useEffect(() => {
+        chooseOutlets([])
+    }, [accountId])
 
     const getLogo = (provider?: string) => {
         if (!provider) {
