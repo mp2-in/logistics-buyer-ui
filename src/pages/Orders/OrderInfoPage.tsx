@@ -219,7 +219,7 @@ export default () => {
             open={state.cancelOrderDisplay}
             onClose={() => dispatch({ type: 'update', payload: { cancelOrderDisplay: false } })}
             onCancel={reason => {
-                cancelOrder(token || '', orderInfo?.orderId || '', reason, (success, message) => {
+                cancelOrder(token || '', orderInfo?.orderId || '', reason, /super_admin/.test(role || ''), (success, message) => {
                     if (success) {
                         setToast('Order cancelled.', 'success')
                         dispatch({ type: 'update', payload: { cancelOrderDisplay: false } })
@@ -229,6 +229,8 @@ export default () => {
                 })
             }}
             loading={activity.cancelOrder}
+            orderState={orderInfo?.orderState || ''}
+            isInternalUser={/super_admin/.test(role || '')}
         />
         <RaiseIssue open={state.raiseIssueDisplay} onClose={() => dispatch({ type: 'update', payload: { raiseIssueDisplay: false } })}
             raiseIssue={(issue, description, refundAmount) => raiseIssue(token || '', orderInfo?.orderId || '', issue, description, refundAmount, (success, message) => {
