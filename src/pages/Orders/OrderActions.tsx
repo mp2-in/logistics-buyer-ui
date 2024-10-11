@@ -3,17 +3,25 @@ import cancelIcon from '@assets/cancel.png'
 import issueIcon from '@assets/warning.png'
 import driverSearch from "@assets/driver_search.png"
 import retryIcon from "@assets/retry.png"
+import blockIcon from "@assets/block.png"
 import { cancellable } from "@lib/utils"
 import { Order } from '@lib/interfaces'
 
-export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, onAddOrder }: {
+export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, onAddOrder, role, markOrderAsUnfulfilled }: {
     orderInfo: Order | undefined,
     onCancelOrder: (orderId: string) => void
+    markOrderAsUnfulfilled: (orderId: string) => void
     onIssueReport: (orderId: string) => void
     onOrderFulfillment: (orderId: string) => void
     onAddOrder: (orderId?: string) => void
+    role: string
 }) => {
-    return <div className="flex justify-between items-center px-2 py-1">
+
+    const canMarkAsUnfulfilled = (orderState: string) => {
+        return ['Pending', 'Searching-for-Agent', 'Agent-assigned', 'At-pickup'].includes(orderState) && /super_admin/.test(role)
+    }
+
+    return <div className="grid grid-cols-4 gap-5">
         <div className="flex items-center flex-col" onClick={() => {
             if (/unfulfilled/i.test(orderInfo?.orderState || '')) {
                 onOrderFulfillment(orderInfo?.orderId || '')
@@ -56,6 +64,16 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
                 <img src={retryIcon} className="w-6" />
             </div>
             <p className={`text-sm mt-1 hidden md:block text-blue-500 font-semibold ${orderInfo?.orderState !== 'Cancelled' ? 'opacity-30' : ''}`}>Re-Book</p>
+        </div>
+        <div className="flex items-center flex-col" onClick={() => {
+            if (canMarkAsUnfulfilled(orderInfo?.orderState || '')) {
+                markOrderAsUnfulfilled(orderInfo?.orderId || '')
+            }
+        }}>
+            <div className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center ${canMarkAsUnfulfilled(orderInfo?.orderState || '') ? 'cursor-pointer' : 'opacity-30'}`}>
+                <img src={blockIcon} className="w-6" />
+            </div>
+            <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold ${canMarkAsUnfulfilled(orderInfo?.orderState || '')? '' : 'opacity-30'}`}>Unfulfill</p>
         </div>
     </div>
 }
