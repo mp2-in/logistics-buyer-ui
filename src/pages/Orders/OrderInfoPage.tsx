@@ -260,8 +260,8 @@ export default () => {
         <MarkAsUnfulfilled
             open={state.unFulfillOrderDisplay}
             onClose={() => dispatch({ type: 'update', payload: { unFulfillOrderDisplay: false } })}
-            markAsUnfulfilled={() => {
-                unfulfillOrder(token || '', orderInfo?.orderId || '', (success, message) => {
+            markAsUnfulfilled={reason => {
+                unfulfillOrder(token || '', orderInfo?.orderId || '', reason, (success, message) => {
                     if (success) {
                         if(orderInfo) {
                             orderInfo.orderState = 'UnFulfilled'
