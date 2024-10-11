@@ -143,6 +143,7 @@ export default () => {
             token={token}
             role={role || ''}
             markAsUnfulfilled={orderId => dispatch({ type: 'update', payload: { toBeUnFulfilledOrder: orderId, markAsUnfulfilledDisplay: true } })}
+            accountId={accountId || ''}
         />
         <OrderInfo
             open={state.orderInfoDisplay}
@@ -270,8 +271,8 @@ export default () => {
         <MarkAsUnfulfilled
             open={state.markAsUnfulfilledDisplay}
             onClose={() => dispatch({ type: 'update', payload: { markAsUnfulfilledDisplay: false } })}
-            markAsUnfulfilled={() => {
-                unfulfillOrder(token || '', state.toBeUnFulfilledOrder || '', (success, message) => {
+            markAsUnfulfilled={reason => {
+                unfulfillOrder(token || '', state.toBeUnFulfilledOrder || '', reason, (success, message) => {
                     if (success) {
                         setToast('Order marked as Unfulfilled.', 'success')
                         dispatch({ type: 'update', payload: { markAsUnfulfilledDisplay: false } })

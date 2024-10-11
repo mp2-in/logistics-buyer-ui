@@ -16,14 +16,14 @@ import sortGreyUpIcon from "@assets/sort_grey_up.png"
 import blockIcon from "@assets/block.png"
 
 import addLoggs from "@assets/lsp_logos/adloggs.png"
-import lsn from "@assets/lsp_logos/lsn.jpeg"
+import lsn from "@assets/lsp_logos/lsn.png"
 import mp2 from "@assets/lsp_logos/mp2_logo.png"
 import ola from "@assets/lsp_logos/ola.png"
 import pidge from "@assets/lsp_logos/pidge.png"
 import porter from "@assets/lsp_logos/porter.png"
 import shadowFax from "@assets/lsp_logos/shadowfax.png"
 import zypp from "@assets/lsp_logos/zypp.png"
-import telyport from "@assets/lsp_logos/telyport.jpg"
+import telyport from "@assets/lsp_logos/telyport.png"
 import defaultLsp from "@assets/lsp_logos/lsp_default.png"
 
 import { Order } from '@lib/interfaces'
@@ -43,7 +43,7 @@ const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: str
 }
 
 
-export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail, onOrderFulfillment, token, role, markAsUnfulfilled }: {
+export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, activity, filterDate, chooseOrder, onIssueReport, isRetail, onOrderFulfillment, token, role, markAsUnfulfilled, accountId }: {
     onAddOrder: (orderId?: string) => void,
     onRefresh: () => void,
     onCancelOrder: (orderId: string) => void,
@@ -58,6 +58,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     onOrderFulfillment: (orderId: string) => void
     token?: string
     role: string
+    accountId: string
 }) => {
 
     const [sortOrder, setSortOrder] = useState<'asc' | 'dsc'>('dsc')
@@ -93,6 +94,10 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             setSortOrder('dsc')
         }
     }
+
+    useEffect(() => {
+        chooseOutlets([])
+    }, [accountId])
 
     const getLogo = (provider?: string) => {
         if (!provider) {
@@ -174,7 +179,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                         </div>
                         <div className={`flex flex-col justify-center items-center h-full flex-[5] ${rowBackground(eachOrder.orderState)} `}>
                             <input className={`border-none outline-none text-center w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderState} />
-                            {eachOrder.orderState==='Cancelled'?<p className='text-xs'><span className='text-gray-600'>By</span>: <span className='font-medium'>{eachOrder.cancelledBy}</span></p>:null}
+                            {eachOrder.orderState==='Cancelled'?<p className='text-xs font-medium'>{eachOrder.cancelledBy} - {eachOrder.cancellationReason}</p>:null}
                         </div>
                         <div className={`flex-col justify-center items-center h-full flex-[4] pt-1 ${rowBackground(eachOrder.orderState)} `}>
                             <p className='text-xs'>{trimTextValue(eachOrder.dropName, 12)}</p>
