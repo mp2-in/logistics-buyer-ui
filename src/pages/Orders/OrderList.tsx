@@ -13,6 +13,8 @@ import sortBlackDownIcon from "@assets/sort_black_down.png"
 import sortBlackUpIcon from "@assets/sort_black_up.png"
 import sortGreyDownIcon from "@assets/sort_grey_down.png"
 import sortGreyUpIcon from "@assets/sort_grey_up.png"
+import homeIcon from "@assets/home.png"
+import storeIcon from "@assets/store.png"
 import blockIcon from "@assets/block.png"
 
 import addLoggs from "@assets/lsp_logos/adloggs.png"
@@ -64,9 +66,11 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     const [sortOrder, setSortOrder] = useState<'asc' | 'dsc'>('dsc')
     const [sortField, setSortField] = useState<keyof Order>('createdAt')
     const [chosenOutlets, chooseOutlets] = useState<string[]>([])
+    const [chosenStatus, chooseStatus] = useState<string[]>([])
 
     const rowBackground = (orderState: string) => {
-        return orderState === 'Order-delivered' ? 'bg-green-100' : orderState === 'Cancelled' ? 'bg-red-100' : orderState === 'RTO-Delivered' ? 'bg-orange-100' : ''
+        return ['Order-picked-up', "Out-for-delivery", "At-delivery"].includes(orderState) ? 'bg-cyan-50' : orderState === 'Order-delivered' ?
+            'bg-green-100' : orderState === 'Cancelled' ? 'bg-red-100' : orderState === 'RTO-Delivered' ? 'bg-orange-100' : ''
     }
 
     useEffect(() => {
@@ -97,6 +101,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
 
     useEffect(() => {
         chooseOutlets([])
+        chooseStatus([])
     }, [accountId])
 
     const getLogo = (provider?: string) => {
@@ -136,6 +141,14 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
         })
     }
 
+    const getStatus = (): { label: string, value: string }[] => {
+        return orders.map(e => e.orderState).filter((v, i, a) => {
+            return a.indexOf(v) === i;
+        }).map(e => {
+            return { label: e, value: e }
+        })
+    }
+
     const copyOrderDataToClipboard = (order: Order) => {
         let keys: (keyof Order)[] = ['orderId', 'clientOrderId', 'networkOrderId', 'orderState', 'providerId', 'riderName', 'riderNumber', 'trackingUrl']
         navigator.clipboard.writeText(keys.map(e => `${e} : ${order[e]}`).join("\n"))
@@ -146,25 +159,25 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     }
 
     return <div className={`absolute left-0 right-0 top-14 bottom-3 lg:px-5 px-2 md:top-[70px]`} >
-        <ActionsAndFilters onAddOrder={isRetail ? onAddOrder : undefined} onRefresh={onRefresh} outlets={getOutlets()}
-            chooseOutlets={chooseOutlets} chosenOutlets={chosenOutlets} changeDate={changeDate} filterDate={filterDate} />
-        <div className='absolute top-[100px] left-2 right-2 bottom-1 overflow-auto md:top-[130px] lg:top-[70px]   '>
+        <ActionsAndFilters onAddOrder={isRetail ? onAddOrder : undefined} onRefresh={onRefresh} outlets={getOutlets()} chooseStatus={chooseStatus} chosenStatus={chosenStatus}
+            chooseOutlets={chooseOutlets} chosenOutlets={chosenOutlets} changeDate={changeDate} filterDate={filterDate} status={getStatus()} />
+        <div className='absolute top-[150px] left-2 right-2 bottom-1 overflow-auto md:top-[195px] lg:top-[140px] 2xl:top-[140px]'>
             <div className={`flex items-center bg-blue-300 *:text-center *:font-medium  *:text-sm xl:*:text-sm w-[1265px] xl:w-full`}>
                 <HeaderField cssClass='flex-[3] ml-0 bg-blue-300 py-2 pl-1' label='Creation' sort={sortField === 'createdAt' ? sortOrder : undefined} onClick={() => updateSortField('createdAt')} />
                 <HeaderField cssClass='flex-[6] bg-blue-300 py-2' label='Bill Number' sort={sortField === 'orderId' ? sortOrder : undefined} onClick={() => updateSortField('orderId')} />
                 <p className={`flex-[2] bg-blue-300 py-2`}>PCC</p>
                 <p className={`flex-[2] bg-blue-300 py-2`}>DCC</p>
                 <HeaderField cssClass='flex-[5] bg-blue-300 py-2' label='Status' sort={sortField === 'orderState' ? sortOrder : undefined} onClick={() => updateSortField('orderState')} />
-                <HeaderField cssClass='flex-[4] bg-blue-300 py-2' label='Customer' sort={sortField === 'dropName' ? sortOrder : undefined} onClick={() => updateSortField('dropName')} />
                 <HeaderField cssClass='flex-[2] bg-blue-300 py-2' label='LSP' sort={sortField === 'providerId' ? sortOrder : undefined} onClick={() => updateSortField('providerId')} />
                 <p className={`flex-[4] bg-blue-300 py-2`}>Rider</p>
                 <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Distance' sort={sortField === 'distance' ? sortOrder : undefined} onClick={() => updateSortField('distance')} />
                 <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Price' sort={sortField === 'deliveryFee' ? sortOrder : undefined} onClick={() => updateSortField('deliveryFee')} />
                 <HeaderField cssClass='flex-[4] bg-blue-300 py-2' label='Delivery' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} />
-                <p className={`flex-[5] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
+                <p className={`flex-[3] mr-0 bg-blue-300 py-2 pr-1`}>POD</p>
+                <p className={`flex-[6] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
             </div>
             <div className={`absolute  top-[35px] bottom-0 lg:right-5 left-0 w-[1265px] xl:w-full xl:overflow-auto`}>
-                {[...orders].filter(e => chosenOutlets.includes(e.pickupName) || chosenOutlets.length === 0).sort(sortOrders).map(eachOrder => {
+                {[...orders].filter(e => chosenOutlets.includes(e.pickupName) || chosenOutlets.length === 0).filter(e => chosenStatus.includes(e.orderState) || chosenStatus.length === 0).sort(sortOrders).map(eachOrder => {
                     return <div key={eachOrder.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center xl:text-sm ${rowBackground(eachOrder.orderState)} h-[40px]`}>
                         <p className={`flex-[3] ml-0 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
                         <div className={`flex-[6] flex items-center ${rowBackground(eachOrder.orderState)}`}>
@@ -179,11 +192,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                         </div>
                         <div className={`flex flex-col justify-center items-center h-full flex-[5] ${rowBackground(eachOrder.orderState)} `}>
                             <input className={`border-none outline-none text-center w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderState} />
-                            {eachOrder.orderState==='Cancelled'?<p className='text-xs font-medium'>{eachOrder.cancelledBy} - {eachOrder.cancellationReason}</p>:null}
-                        </div>
-                        <div className={`flex-col justify-center items-center h-full flex-[4] pt-1 ${rowBackground(eachOrder.orderState)} `}>
-                            <p className='text-xs'>{trimTextValue(eachOrder.dropName, 12)}</p>
-                            <p className='text-xs'>{eachOrder.dropPhone}</p>
+                            {eachOrder.orderState === 'Cancelled' ? <p className='text-xs font-medium'>{eachOrder.cancelledBy} - {eachOrder.cancellationReason}</p> : null}
                         </div>
                         <div className='flex-[2] flex justify-center items-center'>
                             <img src={getLogo(eachOrder.providerId)} className='w-7' alt={eachOrder.providerId} title={eachOrder.providerId} />
@@ -200,7 +209,19 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                             <p className='text-xs'>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
                             {eachOrder.deliveredAt && eachOrder.rtsAt ? <p className='text-xs font-medium'>{`(${dayjs(eachOrder.deliveredAt).diff(eachOrder.rtsAt, 'minute')} min)`}</p> : null}
                         </div>
-                        <div className={`flex-[5] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
+                        <div className={`flex-[3] h-full flex flex-col justify-center ${rowBackground(eachOrder.orderState)}`}>
+                            <div className='flex items-center'>
+                                <img src={storeIcon} className={`w-4 ${!eachOrder.pickupProof ? 'opacity-40' : ''}`} />
+                                {eachOrder.pickupProof ? <a href={eachOrder.pickupProof} className='text-xs ml-2 underline text-blue-600 font-medium' target='_blank'>Pickup</a> :
+                                    <p className='text-xs ml-2 text-gray-400 font-medium'>Pickup</p>}
+                            </div>
+                            <div className='flex items-center'>
+                                <img src={homeIcon} className={`w-4 ${!eachOrder.deliveryProof ? 'opacity-40' : ''}`} />
+                                {eachOrder.deliveryProof ? <a href={eachOrder.deliveryProof} className='text-xs ml-2 underline text-blue-600 font-medium' target='_blank'>Drop</a> :
+                                    <p className='text-xs ml-2 text-gray-400 font-medium'>Drop</p>}
+                            </div>
+                        </div>
+                        <div className={`flex-[6] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
                             <img src={driverSearch} onClick={e => {
                                 if (/unfulfilled/i.test(eachOrder.orderState)) {
                                     onOrderFulfillment(eachOrder.orderId)
@@ -217,7 +238,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                                     markAsUnfulfilled(eachOrder.orderId)
                                 }
                                 e.stopPropagation()
-                            }} title='Mark as Unfulfilled'  className={`w-5 ${canMarkAsUnfulfilled(eachOrder.orderState) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
+                            }} title='Mark as Unfulfilled' className={`w-5 ${canMarkAsUnfulfilled(eachOrder.orderState) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
                             <img src={warningIcon} onClick={e => {
                                 if (eachOrder.networkOrderId) {
                                     onIssueReport(eachOrder.orderId)

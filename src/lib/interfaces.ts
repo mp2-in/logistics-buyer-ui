@@ -54,6 +54,8 @@ export interface Order {
     rtoDeliveredAt: string
     riderName: string
     riderNumber: string
+    pickupProof: string
+    deliveryProof: string
     "f.distance": number
 }
 
