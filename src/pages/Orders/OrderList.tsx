@@ -69,7 +69,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     const [chosenStatus, chooseStatus] = useState<string[]>([])
 
     const rowBackground = (orderState: string) => {
-        return ['Order-picked-up', "Out-for-delivery", "At-delivery"].includes(orderState) ? 'bg-cyan-50' : orderState === 'Order-delivered' ?
+        return ['Order-picked-up', "Out-for-delivery", "At-delivery"].includes(orderState) ? 'bg-emerald-50' : orderState === 'Order-delivered' ?
             'bg-green-100' : orderState === 'Cancelled' ? 'bg-red-100' : orderState === 'RTO-Delivered' ? 'bg-orange-100' : ''
     }
 
