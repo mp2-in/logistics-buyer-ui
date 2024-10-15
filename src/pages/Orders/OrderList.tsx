@@ -13,8 +13,6 @@ import sortBlackDownIcon from "@assets/sort_black_down.png"
 import sortBlackUpIcon from "@assets/sort_black_up.png"
 import sortGreyDownIcon from "@assets/sort_grey_down.png"
 import sortGreyUpIcon from "@assets/sort_grey_up.png"
-import homeIcon from "@assets/home.png"
-import storeIcon from "@assets/store.png"
 import blockIcon from "@assets/block.png"
 
 import addLoggs from "@assets/lsp_logos/adloggs.png"
