@@ -8,7 +8,7 @@ interface Props<T> {
   label?: string,
   value: T[],
   onChange?: (a: T) => void,
-  size?: "xs" | "small" | "medium" | "large" | "extraLarge"
+  size?: "xs" | "small" | "medium" | "large" | "extraLarge" | "full"
   required?: boolean,
   readOnly?: boolean,
   options?: { label: string, value: T }[]
@@ -41,7 +41,7 @@ export default <T extends unknown>({ label, value, onChange, size, options, requ
   return <div className={`relative inline-flex flex-col justify-end ${label ? 'h-[30px] md:h-[46px]' : 'md:h-[35px]'}`}>
     <div className={`flex flex-col border border-gray-300 rounded relative h-[35px] justify-center py-0 px-[8px] bg-white group focus-within:border-blue-500
                                     ${size === 'small' ? `w-[150px] md:w-[196px]` : size === 'medium' || !size ? 'w-[300px] md:w-[400px]' : size === 'large' ?
-        'w-[320px] md:w-[500px]' : 'w-[300px] md:w-[620px]'} ${readOnly ? 'opacity-60' : ''}`} >
+        'w-[320px] md:w-[500px]' : size === 'full' ? 'w-full' : 'w-[300px] md:w-[620px]'} ${readOnly ? 'opacity-60' : ''}`} >
       <div onClick={() => !readOnly && options?.length ? setOptionDisplay(true) : null} className={`flex justify-between items-center`}>
         <input readOnly value={value?.length > 0 ? `${value?.length} Selected` : '--Select--'} className="w-full outline-none border-none text-sm" />
         <img src={downLogo} className='ml-5 w-6' />
