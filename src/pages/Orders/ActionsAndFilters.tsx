@@ -31,12 +31,12 @@ export default ({ onAddOrder, onRefresh, outlets, chosenOutlets, chooseOutlets, 
                     <div className="hidden sm:block">
                         <Button title="Refresh" icon={<img src={refreshIcon} />} variant="primary" onClick={onRefresh} />
                     </div>
-                    <div className="bg-blue-500 flex justify-center items-center p-1 rounded-md sm:hidden ml-4" onClick={() => onAddOrder && onAddOrder()}>
+                    {onAddOrder ? <div className="bg-blue-500 flex justify-center items-center p-1 rounded-md sm:hidden ml-4" onClick={() => onAddOrder()}>
                         <img src={addIcon} className="w-6" />
-                    </div>
-                    <div className="hidden sm:block ml-4">
+                    </div> : null}
+                    {onAddOrder ? <div className="hidden sm:block ml-4">
                         <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" onClick={onAddOrder} />
-                    </div>
+                    </div> : null}
                 </div>
             </div>
             <div className="flex flex-col *:my-2 sm:hidden">
@@ -55,7 +55,7 @@ export default ({ onAddOrder, onRefresh, outlets, chosenOutlets, chooseOutlets, 
         <div className="*:my-2 lg:flex flex-col hidden">
             <div className="flex items-center justify-between">
                 <Button title="Refresh" icon={<img src={refreshIcon} />} variant="primary" onClick={onRefresh} />
-                <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" onClick={onAddOrder} />
+                {onAddOrder ? <Button title="Add Order" icon={<img src={addIcon} />} variant="primary" onClick={onAddOrder} /> : null}
             </div>
             <div className="sm:flex-col lg:flex-row lg:items-center *:my-2 lg:*:my-0 lg:*:mr-2 hidden sm:flex">
                 <Input label='For Date' type='date' size='small' value={filterDate} onChange={val => {
