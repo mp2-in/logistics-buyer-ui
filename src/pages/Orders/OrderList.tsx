@@ -173,7 +173,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Distance' sort={sortField === 'distance' ? sortOrder : undefined} onClick={() => updateSortField('distance')} />
                 <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Price' sort={sortField === 'deliveryFee' ? sortOrder : undefined} onClick={() => updateSortField('deliveryFee')} />
                 <HeaderField cssClass='flex-[4] bg-blue-300 py-2' label='Delivery' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} />
-                <p className={`flex-[3] mr-0 bg-blue-300 py-2 pr-1`}>POD</p>
+                <p className={`flex-[2] mr-0 bg-blue-300 py-2 pr-1`}>POD</p>
                 <p className={`flex-[6] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
             </div>
             <div className={`absolute  top-[35px] bottom-0 lg:right-5 left-0 w-[1265px] xl:w-full xl:overflow-auto`}>
@@ -209,17 +209,11 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                             <p className='text-xs'>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
                             {eachOrder.deliveredAt && eachOrder.rtsAt ? <p className='text-xs font-medium'>{`(${dayjs(eachOrder.deliveredAt).diff(eachOrder.rtsAt, 'minute')} min)`}</p> : null}
                         </div>
-                        <div className={`flex-[3] h-full flex flex-col justify-center ${rowBackground(eachOrder.orderState)}`}>
-                            <div className='flex items-center'>
-                                <img src={storeIcon} className={`w-4 ${!eachOrder.pickupProof ? 'opacity-40' : ''}`} />
-                                {eachOrder.pickupProof ? <a href={eachOrder.pickupProof} className='text-xs ml-2 underline text-blue-600 font-medium' target='_blank'>Pickup</a> :
-                                    <p className='text-xs ml-2 text-gray-400 font-medium'>Pickup</p>}
-                            </div>
-                            <div className='flex items-center'>
-                                <img src={homeIcon} className={`w-4 ${!eachOrder.deliveryProof ? 'opacity-40' : ''}`} />
-                                {eachOrder.deliveryProof ? <a href={eachOrder.deliveryProof} className='text-xs ml-2 underline text-blue-600 font-medium' target='_blank'>Drop</a> :
-                                    <p className='text-xs ml-2 text-gray-400 font-medium'>Drop</p>}
-                            </div>
+                        <div className={`flex-[2] h-full flex flex-col justify-center items-start ${rowBackground(eachOrder.orderState)}`}>
+                            {eachOrder.pickupProof ? <a href={eachOrder.pickupProof} className='text-xs ml-2 underline text-blue-600 font-medium' target='_blank'>Pickup</a> :
+                                <p className='text-xs ml-2 text-gray-400 font-medium opacity-0'>Pickup</p>}
+                            {eachOrder.deliveryProof ? <a href={eachOrder.deliveryProof} className='text-xs ml-2 underline text-blue-600 font-medium' target='_blank'>Drop</a> :
+                                    <p className='text-xs ml-2 text-gray-400 font-medium opacity-0'>Drop</p>}
                         </div>
                         <div className={`flex-[6] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
                             <img src={driverSearch} onClick={e => {
