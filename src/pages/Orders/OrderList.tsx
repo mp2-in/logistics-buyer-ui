@@ -161,7 +161,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     return <div className={`absolute left-0 right-0 top-14 bottom-3 lg:px-5 px-2 md:top-[70px]`} >
         <ActionsAndFilters onAddOrder={isRetail ? onAddOrder : undefined} onRefresh={onRefresh} outlets={getOutlets()} chooseStatus={chooseStatus} chosenStatus={chosenStatus}
             chooseOutlets={chooseOutlets} chosenOutlets={chosenOutlets} changeDate={changeDate} filterDate={filterDate} status={getStatus()} />
-        <div className='absolute top-[150px] left-2 right-2 bottom-1 overflow-auto md:top-[195px] lg:top-[140px] 2xl:top-[140px]'>
+        <div className='absolute top-[150px] left-2 right-2 bottom-1 overflow-auto md:top-[195px] lg:top-[130px] 2xl:top-[130px]'>
             <div className={`flex items-center bg-blue-300 *:text-center *:font-medium  *:text-sm xl:*:text-sm w-[1265px] xl:w-full`}>
                 <HeaderField cssClass='flex-[3] ml-0 bg-blue-300 py-2 pl-1' label='Creation' sort={sortField === 'createdAt' ? sortOrder : undefined} onClick={() => updateSortField('createdAt')} />
                 <HeaderField cssClass='flex-[6] bg-blue-300 py-2' label='Bill Number' sort={sortField === 'orderId' ? sortOrder : undefined} onClick={() => updateSortField('orderId')} />
