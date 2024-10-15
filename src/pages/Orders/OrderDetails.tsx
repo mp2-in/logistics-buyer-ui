@@ -89,6 +89,10 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
                 <img src={trackIcon} className="w-6 mx-5" /></a> : <img src={trackIcon} className="w-6 mx-5 opacity-30" />}
             <ShowValue label="Pcc" value={orderInfo?.pcc} small />
         </div>
+        <div className="md:flex items-center">
+            <ShowValue label="Store Id" value={orderInfo?.storeId} />
+            {orderInfo?.pickupProof?<a href={orderInfo.pickupProof} className='text-blue-600 underline font-medium ml-5' target='_blank'>Pickup Proof</a>:<p className='text-gray-400 font-medium ml-5 underline'>Pickup Proof</p>}
+        </div>
         <p className="font-bold bg-slate-100 my-2 py-1 px-3 w-full rounded-md">Drop</p>
         <div className="md:flex justify-between">
             <ShowValue label="Name" value={orderInfo?.dropName} />
@@ -108,6 +112,7 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
                 <img src={trackIcon} className="w-6 mx-5" /></a> : <img src={trackIcon} className="w-6 mx-5 opacity-30" />}
             <ShowValue label="Dcc" value={orderInfo?.dcc} small />
         </div>
+        {orderInfo?.deliveryProof?<a href={orderInfo.deliveryProof} className='text-blue-600 underline font-medium ml-1 mb-4' target='_blank'>Delivery Proof</a>:<p className='text-gray-400 font-medium ml-1 underline mb-4'>Delivery Proof</p>}
         <p className="font-bold bg-slate-100 my-2 py-1 px-3 w-full rounded-md">Cancellation</p>
         <div className="md:flex justify-between">
             <ShowValue label="Cancelled At" value={orderInfo?.cancelledAt} isDate />

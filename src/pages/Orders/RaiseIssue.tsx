@@ -24,7 +24,9 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus, orderAmount, 
         "Food spillage",
         "MDND - Marked delivered without delivering",
         "Delay in pickup",
-        "Marked delivered without picking up items"
+        "Marked delivered without picking up items",
+        "Fake pickup",
+        "Rude agent"
     ]
     const [issue, setIssue] = useState('')
     const [description, setDescription] = useState('')
@@ -50,6 +52,10 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus, orderAmount, 
                 return orderStatus === 'Order-delivered'
             case "Delay in pickup":
                 return ['Created', 'UnFulfilled', 'Pending', 'Searching-for-Agent', 'Agent-assigned'].includes(orderStatus)
+            case "Fake pickup":
+                return ["Order-picked-up", "Out-for-delivery", "At-delivery"].includes(orderStatus)
+            case "Rude agent":
+                return ["Agent-assigned", "At-pickup", "Order-picked-up", "Out-for-delivery", "At-delivery", "Order-delivered", "Cancelled", "RTO-Initiated", "RTO-Disposed", "RTO-Delivered"].includes(orderStatus)
         }
     }
 
