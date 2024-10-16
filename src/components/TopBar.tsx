@@ -16,6 +16,7 @@ import AccountDetails from "./AccountDetails"
 import { useNavigate } from "react-router-dom"
 import LogoutConfirmation from "./LogoutConfirmation"
 import { useAppConfigStore } from "stores/appConfig"
+import { useWalletState } from "stores/wallet"
 
 
 const AccountMenuItem = ({ title, icon, onClick }: { title: string, icon: React.ReactNode, onClick: () => void }) => {
@@ -64,6 +65,12 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
         role: state.role
     }))
 
+    const { walletBalance, walletStatus, getWalletBalance } = useWalletState(state => ({
+        walletBalance: state.walletBalance,
+        walletStatus: state.walletStatus,
+        getWalletBalance: state.getWalletBalance
+    }))
+
 
     let divRef = createRef<HTMLInputElement>();
 
@@ -85,6 +92,10 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
         };
     });
 
+    useEffect(() => {
+        getWalletBalance(token || '')
+    }, [])
+
     const navigate = useNavigate()
 
     return <div>
@@ -93,10 +104,14 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
                 <img src={menuIcon} className="w-9 lg:w-10 mx-2 cursor-pointer" onClick={() => dispatch({ type: 'update', payload: { showMainMenu: true } })} />
                 <p className="font-medium text-2xl hidden md:block">{title}</p>
             </div>
-            <div className={'flex items-center cursor-pointer relative'} ref={divRef} onClick={() => dispatch({ type: 'update', payload: { showMenu: !state.showMenu } })}>
-                <p className="font-medium text-xs block md:hidden">{selectedAccount}</p>
-                <img src={userIcon} className="w-10 mx-1" />
-                <p className="font-medium text-lg hidden md:block">{selectedAccount}</p>
+            <div className={'relative'} ref={divRef} onClick={() => dispatch({ type: 'update', payload: { showMenu: !state.showMenu } })}>
+                <div className="flex items-center cursor-pointer">
+                    <p className="font-medium text-xs block md:hidden">{selectedAccount}</p>
+                    <img src={userIcon} className="w-10 mx-1" />
+                    <p className="font-medium text-lg hidden md:block">{selectedAccount}</p>
+                </div>
+                {walletBalance !== undefined && walletStatus !== undefined ? <p className={`absolute text-[11px] -bottom-1 right-12 md:right-0 md:-bottom-3 z-10 font-medium 
+                    ${walletStatus === 0 ? 'text-red-500' : walletStatus === 1 ? 'text-yellow-400' : ''}`}>{`Wallet Balance: ₹${walletBalance.toFixed(2)}`}</p> : null}
                 {state.showMenu ? <div className="absolute top-5 bg-gray-100 cursor-pointer z-20 w-44 right-10 md:top-12 md:right-0 md:bg-gray-100">
                     <AccountMenuItem icon={<img src={accountIcon} className="w-7" />} title="Profile" onClick={() => {
                         dispatch({ type: 'update', payload: { showMenu: false, showAccountInfo: true } })
@@ -117,6 +132,7 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
             switchAccount={(accountId) => switchAccount(token || '', accountId, (success, newToken, accountId) => {
                 if (success) {
                     onAccountSwitch && onAccountSwitch(newToken, accountId)
+                    getWalletBalance(newToken)
                     setTimeout(() => {
                         dispatch({ type: 'update', payload: { showAccountInfo: false } })
                     }, 200)
