@@ -5,6 +5,7 @@ import { Api } from '@lib/utils'
 interface Attributes {
     walletBalance: number | undefined
     walletStatus: number | undefined
+    enforceCreditLimit: boolean
     activity: { [k: string]: boolean }
 }
 
@@ -14,7 +15,7 @@ interface State extends Attributes {
     getWalletBalance: (token: string) => void
 }
 
-const initialState: Attributes = { activity: {}, walletBalance: undefined, walletStatus: undefined };
+const initialState: Attributes = { activity: {}, walletBalance: undefined, walletStatus: undefined, enforceCreditLimit: false };
 
 export const useWalletState = create<State>()((set) => ({
     ...initialState,
@@ -67,6 +68,7 @@ export const useWalletState = create<State>()((set) => ({
             .then(res => {
                 set(produce((state: State) => {
                     if (res.status === 1) {
+                        state.enforceCreditLimit = res.enforce_credit_limit
                         state.walletBalance = res.wallet_balance
                         state.walletStatus = res.wallet_status
                     }

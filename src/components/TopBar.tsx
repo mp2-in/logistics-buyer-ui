@@ -65,10 +65,11 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
         role: state.role
     }))
 
-    const { walletBalance, walletStatus, getWalletBalance } = useWalletState(state => ({
+    const { walletBalance, walletStatus, getWalletBalance,enforceCreditLimit } = useWalletState(state => ({
         walletBalance: state.walletBalance,
         walletStatus: state.walletStatus,
-        getWalletBalance: state.getWalletBalance
+        getWalletBalance: state.getWalletBalance,
+        enforceCreditLimit: state.enforceCreditLimit
     }))
 
 
@@ -110,7 +111,7 @@ export default ({ title, onAccountSwitch }: { title: string, onAccountSwitch?: (
                     <img src={userIcon} className="w-10 mx-1" />
                     <p className="font-medium text-lg hidden md:block">{selectedAccount}</p>
                 </div>
-                {walletBalance !== undefined && walletStatus !== undefined ? <p className={`absolute text-[11px] md:text-[14px] -bottom-1 right-12 md:right-0 md:-bottom-3 z-10 font-semibold
+                {walletBalance !== undefined && walletStatus !== undefined && enforceCreditLimit? <p className={`absolute text-[11px] md:text-[14px] -bottom-1 right-12 md:right-0 md:-bottom-3 z-10 font-semibold
                     ${walletStatus === 0 ? 'text-red-500' : walletStatus === 1 ? 'text-orange-400' : ''}`}>{`₹${parseInt((walletBalance||'0').toString())}`}</p> : null}
                 {state.showMenu ? <div className="absolute top-5 bg-gray-100 cursor-pointer z-20 w-44 right-10 md:top-12 md:right-0 md:bg-gray-100">
                     <AccountMenuItem icon={<img src={accountIcon} className="w-7" />} title="Profile" onClick={() => {
