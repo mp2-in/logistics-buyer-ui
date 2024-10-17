@@ -68,7 +68,6 @@ export default <T extends unknown>({ label, value, onChange, size, options, requ
                 if (onChange) {
                   onChange(eachOption.value)
                 }
-                setOptionDisplay(false)
               }} key={eachOption.label} className="px-3 py-1 hover:bg-slate-200 cursor-pointer text-nowrap flex items-center">
                 <img src={value.includes(eachOption.value) ? checkboxSelected : checkbox} className="md:w-6 w-4 mr-2" />
                 <p className="text-sm">{eachOption.label}</p>
