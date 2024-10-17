@@ -64,7 +64,6 @@ export default <T extends unknown>({ label, value, onChange, size, options, requ
           <div className="overflow-auto">
             {options?.filter(e => !searchFilter || e.label.toUpperCase().replace(/\s|_/g, "").indexOf(searchFilter.toUpperCase().replace(/\s|_/g, "")) > -1).map(eachOption => {
               return <div onClick={() => {
-                setSearchFilter('')
                 if (onChange) {
                   onChange(eachOption.value)
                 }
