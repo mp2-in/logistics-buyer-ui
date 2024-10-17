@@ -136,6 +136,8 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             return a.indexOf(v) === i;
         }).map(e => {
             return { label: e, value: e }
+        }).sort((a, b) => {
+            return a.label.toLocaleLowerCase() < b.label.toLocaleLowerCase() ? -1 : 1
         })
     }
 
@@ -211,7 +213,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                             {eachOrder.pickupProof ? <a href={eachOrder.pickupProof} className='text-xs ml-2 underline text-blue-600 font-medium' target='_blank'>Pickup</a> :
                                 <p className='text-xs ml-2 text-gray-400 font-medium opacity-0'>Pickup</p>}
                             {eachOrder.deliveryProof ? <a href={eachOrder.deliveryProof} className='text-xs ml-2 underline text-blue-600 font-medium' target='_blank'>Drop</a> :
-                                    <p className='text-xs ml-2 text-gray-400 font-medium opacity-0'>Drop</p>}
+                                <p className='text-xs ml-2 text-gray-400 font-medium opacity-0'>Drop</p>}
                         </div>
                         <div className={`flex-[6] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
                             <img src={driverSearch} onClick={e => {
