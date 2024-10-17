@@ -41,15 +41,15 @@ export default ({ onAddOrder, onRefresh, outlets, chosenOutlets, chooseOutlets, 
             </div>
             <div className="flex flex-col *:my-2 sm:hidden">
                 <Multiselect label='Choose Outlet' options={outlets} value={chosenOutlets}
-                    onChange={v => chosenOutlets.includes(v) ? chooseOutlets(chosenOutlets.filter(e => e !== v)) : chooseOutlets([...chosenOutlets, v])}  size="full" />
+                    onChange={v => chosenOutlets.includes(v) ? chooseOutlets(chosenOutlets.filter(e => e !== v)) : chooseOutlets([...chosenOutlets, v])}  size="full" clearValues={() => chooseOutlets([])}/>
                 <Multiselect label='Choose Status' options={status} value={chosenStatus}
-                    onChange={v => chosenStatus.includes(v) ? chooseStatus(chosenStatus.filter(e => e !== v)) : chooseStatus([...chosenStatus, v])} hideSearch size="full" />
+                    onChange={v => chosenStatus.includes(v) ? chooseStatus(chosenStatus.filter(e => e !== v)) : chooseStatus([...chosenStatus, v])} hideSearch size="full" clearValues={() => chooseStatus([])}/>
             </div>
             <div className="sm:flex-col lg:flex-row lg:items-center *:my-2 lg:*:my-0 lg:*:mr-2 hidden sm:flex">
                 <Multiselect label='Choose Outlet' options={outlets} value={chosenOutlets}
-                    onChange={v => chosenOutlets.includes(v) ? chooseOutlets(chosenOutlets.filter(e => e !== v)) : chooseOutlets([...chosenOutlets, v])} hideSearch />
+                    onChange={v => chosenOutlets.includes(v) ? chooseOutlets(chosenOutlets.filter(e => e !== v)) : chooseOutlets([...chosenOutlets, v])} hideSearch clearValues={() => chooseOutlets([])}/>
                 <Multiselect label='Choose Status' options={status} value={chosenStatus}
-                    onChange={v => chosenStatus.includes(v) ? chooseStatus(chosenStatus.filter(e => e !== v)) : chooseStatus([...chosenStatus, v])} hideSearch />
+                    onChange={v => chosenStatus.includes(v) ? chooseStatus(chosenStatus.filter(e => e !== v)) : chooseStatus([...chosenStatus, v])} hideSearch clearValues={() => chooseStatus([])}/>
             </div>
         </div>
         <div className="*:my-2 lg:flex flex-col hidden">
@@ -64,9 +64,9 @@ export default ({ onAddOrder, onRefresh, outlets, chosenOutlets, chooseOutlets, 
                     chooseStatus([])
                 }} />
                 <Multiselect label='Choose Outlet' options={outlets} value={chosenOutlets}
-                    onChange={v => chosenOutlets.includes(v) ? chooseOutlets(chosenOutlets.filter(e => e !== v)) : chooseOutlets([...chosenOutlets, v])} />
+                    onChange={v => chosenOutlets.includes(v) ? chooseOutlets(chosenOutlets.filter(e => e !== v)) : chooseOutlets([...chosenOutlets, v])} clearValues={() => chooseOutlets([])}/>
                 <Multiselect label='Choose Status' options={status} value={chosenStatus}
-                    onChange={v => chosenStatus.includes(v) ? chooseStatus(chosenStatus.filter(e => e !== v)) : chooseStatus([...chosenStatus, v])} hideSearch />
+                    onChange={v => chosenStatus.includes(v) ? chooseStatus(chosenStatus.filter(e => e !== v)) : chooseStatus([...chosenStatus, v])} hideSearch clearValues={() => chooseStatus([])}/>
             </div>
         </div>
     </div>
