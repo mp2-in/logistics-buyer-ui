@@ -51,7 +51,7 @@ export default <T extends unknown>({ label, value, onChange, size, options, requ
         <div ref={selectContainerRef} className={`absolute top-[33px] z-50 left-2 right-2 bg-white shadow-3xl rounded max-h-[250px] overflow-auto flex flex-col`}>
           {options.length >= 6 && !hideSearch ?
             <div className={'flex flex-row items-center mx-2'}>
-              <input placeholder='Search' value={searchFilter} onChange={e => setSearchFilter(e.target.value)} className="outline-none border bg-white rounded my-2 mx-3 px-2" />
+              <input placeholder='Search' value={searchFilter} onChange={e => setSearchFilter(e.target.value)} className="outline-none border bg-white rounded my-2 mx-3 px-2 font-sans h-8" />
               <img src={close} onClick={() => setSearchFilter('')} className="w-6 cursor-pointer" />
             </div> : null}
           {options?.filter(e => !searchFilter || e.label.toUpperCase().replace(/\s|_/g, "").indexOf(searchFilter.toUpperCase().replace(/\s|_/g, "")) > -1).map(eachOption => {
