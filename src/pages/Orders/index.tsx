@@ -17,6 +17,7 @@ import OrderFulfillment from "./OrderFulfillment";
 import OrderList from "./OrderList";
 import InsufficientBalanceDialog from "./InsufficientBalanceDialog";
 import MarkAsUnfulfilled from "./MarkAsUnfulfilled";
+import BlockRider from "./BlockRider";
 
 
 interface State {
@@ -29,6 +30,7 @@ interface State {
     fulfillOrderDisplay: boolean
     insufficientBalanceDialogDisplay: boolean
     markAsUnfulfilledDisplay: boolean
+    blockRiderDisplay: boolean
     billNumber?: string
     storeId?: string
     drop?: LocationAddress
@@ -42,13 +44,14 @@ interface State {
     toBeFulfilledOrder?: string
     toBeUnFulfilledOrder?: string
     toBeRebookedOrder?: string
+    toBeBlockedRider?: { riderNumber: string, riderName: string, bppId: string, lsp: string }
     walletBalanceErrorMsg: string
     readyToShip: boolean
 }
 
 const initialValue: State = {
     addOrderDisplay: false, priceQuotesDisplay: false, orderInfoDisplay: false, raiseIssueDisplay: false, insufficientBalanceDialogDisplay: false, readyToShip: true, markAsUnfulfilledDisplay: false,
-    addOutletDisplay: false, cancelOrderDisplay: false, fulfillOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD'), walletBalanceErrorMsg: ''
+    addOutletDisplay: false, cancelOrderDisplay: false, fulfillOrderDisplay: false, orderFilterDate: dayjs().format('YYYY-MM-DD'), walletBalanceErrorMsg: '', blockRiderDisplay: false
 }
 
 
@@ -76,8 +79,8 @@ export default () => {
         accountId: state.selectedAccount
     }))
 
-    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, assignAgent,unfulfillOrder,
-        getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, orderPriceQuote, getCustomerInfo, raiseIssue, clearPickupList } = useOrdersStore(state => ({
+    const { getOrders, orders, googlePlacesApi, getPickupList, activity, pickupStores, createOrder, cancelOrder, assignAgent, unfulfillOrder,
+        getPriceQuote, addOutlet, saveInStorage, googlePlaceDetailsApi, orderPriceQuote, getCustomerInfo, raiseIssue, clearPickupList, blockRider } = useOrdersStore(state => ({
             orders: state.orders,
             getOrders: state.getOrders,
             googlePlacesApi: state.googlePlacesApi,
@@ -95,7 +98,8 @@ export default () => {
             raiseIssue: state.raiseIssue,
             assignAgent: state.assignAgent,
             clearPickupList: state.clearPickupList,
-            unfulfillOrder: state.unfulfillOrder
+            unfulfillOrder: state.unfulfillOrder,
+            blockRider: state.blockRider
         }))
 
     const navigate = useNavigate()
@@ -111,6 +115,7 @@ export default () => {
 
     useEffect(() => {
         if (token) {
+            console.log(state.orderFilterDate)
             getOrders(token, state.orderFilterDate)
         }
     }, [state.orderFilterDate])
@@ -161,6 +166,7 @@ export default () => {
             onAddOrder={(orderId) => dispatch({ type: 'update', payload: { addOrderDisplay: true, toBeRebookedOrder: orderId } })}
             role={role || ''}
             unfulfillOrder={orderId => dispatch({ type: 'update', payload: { toBeUnFulfilledOrder: orderId, markAsUnfulfilledDisplay: true } })}
+            blockRider={(riderNumber, riderName, bppId, lsp) => dispatch({ type: 'update', payload: { blockRiderDisplay: true, toBeBlockedRider: { riderNumber, riderName, bppId, lsp } } })}
         />
         <AddOrder
             open={state.addOrderDisplay}
@@ -267,6 +273,24 @@ export default () => {
             loading={activity.cancelOrder}
             orderState={orders.find(e => e.orderId === state.toBeCancelledOrder)?.orderState || ''}
             isInternalUser={/super_admin/.test(role || '')}
+        />
+        <BlockRider
+            open={state.blockRiderDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { blockRiderDisplay: false } })}
+            blockRider={comments => {
+                blockRider(token || '', state.toBeBlockedRider?.riderNumber || '', state.toBeBlockedRider?.riderName || '', comments, state.toBeBlockedRider?.bppId || '', (success, message) => {
+                    if (success) {
+                        setToast(message, 'success')
+                        dispatch({ type: 'update', payload: { blockRiderDisplay: false } })
+                    } else {
+                        setToast(message, 'error')
+                    }
+                })
+            }}
+            loading={activity.blockRider}
+            riderName={state.toBeBlockedRider?.riderName || ''}
+            riderNumber={state.toBeBlockedRider?.riderNumber || ''}
+            lsp={state.toBeBlockedRider?.lsp || ''}
         />
         <MarkAsUnfulfilled
             open={state.markAsUnfulfilledDisplay}

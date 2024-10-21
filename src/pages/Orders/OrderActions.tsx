@@ -4,16 +4,18 @@ import issueIcon from '@assets/warning.png'
 import driverSearch from "@assets/driver_search.png"
 import retryIcon from "@assets/retry.png"
 import blockIcon from "@assets/block.png"
+import unfulfilledIcon from "@assets/revert_status.png"
 import { cancellable } from "@lib/utils"
 import { Order } from '@lib/interfaces'
 
-export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, onAddOrder, role, markOrderAsUnfulfilled }: {
+export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, onAddOrder, role, markOrderAsUnfulfilled, blockRider }: {
     orderInfo: Order | undefined,
     onCancelOrder: (orderId: string) => void
     markOrderAsUnfulfilled: (orderId: string) => void
     onIssueReport: (orderId: string) => void
     onOrderFulfillment: (orderId: string) => void
     onAddOrder: (orderId?: string) => void
+    blockRider: () => void
     role: string
 }) => {
 
@@ -71,9 +73,15 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
             }
         }}>
             <div className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center ${canMarkAsUnfulfilled(orderInfo?.orderState || '') ? 'cursor-pointer' : 'opacity-30'}`}>
+                <img src={unfulfilledIcon} className="w-6" />
+            </div>
+            <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold ${canMarkAsUnfulfilled(orderInfo?.orderState || '') ? '' : 'opacity-30'}`}>Unfulfill</p>
+        </div>
+        {/super_admin/.test(role) && orderInfo?.riderName && orderInfo?.riderNumber ? <div className="flex items-center flex-col" onClick={blockRider}>
+            <div className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center cursor-pointer`}>
                 <img src={blockIcon} className="w-6" />
             </div>
-            <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold ${canMarkAsUnfulfilled(orderInfo?.orderState || '')? '' : 'opacity-30'}`}>Unfulfill</p>
-        </div>
+            <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold`}>Block Rider</p>
+        </div> : null}
     </div>
 }

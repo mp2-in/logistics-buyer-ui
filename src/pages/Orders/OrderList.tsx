@@ -13,7 +13,7 @@ import sortBlackDownIcon from "@assets/sort_black_down.png"
 import sortBlackUpIcon from "@assets/sort_black_up.png"
 import sortGreyDownIcon from "@assets/sort_grey_down.png"
 import sortGreyUpIcon from "@assets/sort_grey_up.png"
-import blockIcon from "@assets/block.png"
+import unfulfillIcon from "@assets/revert_status.png"
 
 import addLoggs from "@assets/lsp_logos/adloggs.png"
 import lsn from "@assets/lsp_logos/lsn.png"
@@ -227,7 +227,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                             </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-5'>
                                 <img src={trackIcon} title='Track Shipment' className='w-5 opacity-40' />
                             </a>}
-                            <img src={blockIcon} onClick={e => {
+                            <img src={unfulfillIcon} onClick={e => {
                                 if (canMarkAsUnfulfilled(eachOrder.orderState)) {
                                     markAsUnfulfilled(eachOrder.orderId)
                                 }

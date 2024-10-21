@@ -25,6 +25,7 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus, orderAmount, 
         "MDND - Marked delivered without delivering",
         "Delay in pickup",
         "Marked delivered without picking up items",
+        "Physically Delivered but not marked delivered in app",
         "Fake pickup",
         "Rude agent"
     ]
@@ -52,6 +53,8 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus, orderAmount, 
                 return orderStatus === 'Order-delivered'
             case "Delay in pickup":
                 return ['Created', 'UnFulfilled', 'Pending', 'Searching-for-Agent', 'Agent-assigned'].includes(orderStatus)
+            case "Physically Delivered but not marked delivered in app":
+                return ["Order-picked-up", "At-delivery"].includes(orderStatus)
             case "Fake pickup":
                 return ["Order-picked-up", "Out-for-delivery", "At-delivery"].includes(orderStatus)
             case "Rude agent":
