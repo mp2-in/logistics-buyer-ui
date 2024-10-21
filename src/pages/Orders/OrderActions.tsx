@@ -77,7 +77,11 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
             </div>
             <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold ${canMarkAsUnfulfilled(orderInfo?.orderState || '') ? '' : 'opacity-30'}`}>Unfulfill</p>
         </div> : null}
-        {/super_admin/.test(role) ? <div className="flex items-center flex-col" onClick={blockRider}>
+        {/super_admin/.test(role) ? <div className="flex items-center flex-col" onClick={() => {
+            if(orderInfo?.riderName && orderInfo?.riderNumber) {
+                blockRider()
+            }
+        }}>
             <div className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center cursor-pointer ${orderInfo?.riderName && orderInfo?.riderNumber ? 'cursor-pointer' : 'opacity-30'}`}>
                 <img src={blockIcon} className="w-6" />
             </div>
