@@ -27,9 +27,9 @@ export default ({ open, onClose, blockRider, loading, riderName, riderNumber, ls
             </div>
             <div className={'flex flex-col items-center mt-5'}>
                 <div className="w-full px-3 py-1 *:m-1 mb-3">
-                    <p className="font-medium text-gray-500">Rider Name: <span className="font-semibold text-black">{riderName}</span></p>
-                    <p className="font-medium text-gray-500">Rider Phone: <span className="font-semibold text-black">{riderNumber}</span></p>
-                    <p className="font-medium text-gray-500">LSP: <span className="font-semibold text-black">{lsp}</span></p>
+                    <p className="font-medium text-gray-500 text-sm">Rider Name: <span className="font-semibold text-black">{riderName}</span></p>
+                    <p className="font-medium text-gray-500 text-sm">Rider Phone: <span className="font-semibold text-black">{riderNumber}</span></p>
+                    <p className="font-medium text-gray-500 text-sm">LSP: <span className="font-semibold text-black">{lsp}</span></p>
                 </div>
                 <TextArea label="Comments" value={comment} onChange={val => setComment(val)} />
                 <div className="mt-[40px] mb-[25px]">
