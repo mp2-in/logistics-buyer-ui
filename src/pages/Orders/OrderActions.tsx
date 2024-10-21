@@ -67,19 +67,21 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
             </div>
             <p className={`text-sm mt-1 hidden md:block text-blue-500 font-semibold ${orderInfo?.orderState !== 'Cancelled' ? 'opacity-30' : ''}`}>Re-Book</p>
         </div>
-        {canMarkAsUnfulfilled(orderInfo?.orderState || '') ? <div className="flex items-center flex-col" onClick={() => {
-            markOrderAsUnfulfilled(orderInfo?.orderId || '')
+        {/super_admin/.test(role) ? <div className="flex items-center flex-col" onClick={() => {
+            if (canMarkAsUnfulfilled(orderInfo?.orderState || '')) {
+                markOrderAsUnfulfilled(orderInfo?.orderId || '')
+            }
         }}>
-            <div className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center`}>
+            <div className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center ${canMarkAsUnfulfilled(orderInfo?.orderState || '') ? 'cursor-pointer' : 'opacity-30'}`}>
                 <img src={unfulfilledIcon} className="w-6" />
             </div>
-            <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold`}>Unfulfill</p>
+            <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold ${canMarkAsUnfulfilled(orderInfo?.orderState || '') ? '' : 'opacity-30'}`}>Unfulfill</p>
         </div> : null}
-        {/super_admin/.test(role) && orderInfo?.riderName && orderInfo?.riderNumber ? <div className="flex items-center flex-col" onClick={blockRider}>
-            <div className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center cursor-pointer`}>
+        {/super_admin/.test(role) ? <div className="flex items-center flex-col" onClick={blockRider}>
+            <div className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center cursor-pointer ${orderInfo?.riderName && orderInfo?.riderNumber ? 'cursor-pointer' : 'opacity-30'}`}>
                 <img src={blockIcon} className="w-6" />
             </div>
-            <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold`}>Block Rider</p>
+            <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold ${orderInfo?.riderName && orderInfo?.riderNumber ? '' : 'opacity-30'}`}>Block Rider</p>
         </div> : null}
     </div>
 }
