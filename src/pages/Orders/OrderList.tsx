@@ -227,12 +227,10 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                             </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-5'>
                                 <img src={trackIcon} title='Track Shipment' className='w-5 opacity-40' />
                             </a>}
-                            <img src={unfulfillIcon} onClick={e => {
-                                if (canMarkAsUnfulfilled(eachOrder.orderState)) {
-                                    markAsUnfulfilled(eachOrder.orderId)
-                                }
+                            {canMarkAsUnfulfilled(eachOrder.orderState) ? <img src={unfulfillIcon} onClick={e => {
+                                markAsUnfulfilled(eachOrder.orderId)
                                 e.stopPropagation()
-                            }} title='Mark as Unfulfilled' className={`w-5 ${canMarkAsUnfulfilled(eachOrder.orderState) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
+                            }} title='Mark as Unfulfilled' className={`w-5`} /> : null}
                             <img src={warningIcon} onClick={e => {
                                 if (eachOrder.networkOrderId) {
                                     onIssueReport(eachOrder.orderId)

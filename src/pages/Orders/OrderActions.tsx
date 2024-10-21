@@ -67,16 +67,14 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
             </div>
             <p className={`text-sm mt-1 hidden md:block text-blue-500 font-semibold ${orderInfo?.orderState !== 'Cancelled' ? 'opacity-30' : ''}`}>Re-Book</p>
         </div>
-        <div className="flex items-center flex-col" onClick={() => {
-            if (canMarkAsUnfulfilled(orderInfo?.orderState || '')) {
-                markOrderAsUnfulfilled(orderInfo?.orderId || '')
-            }
+        {canMarkAsUnfulfilled(orderInfo?.orderState || '') ? <div className="flex items-center flex-col" onClick={() => {
+            markOrderAsUnfulfilled(orderInfo?.orderId || '')
         }}>
-            <div className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center ${canMarkAsUnfulfilled(orderInfo?.orderState || '') ? 'cursor-pointer' : 'opacity-30'}`}>
+            <div className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center`}>
                 <img src={unfulfilledIcon} className="w-6" />
             </div>
-            <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold ${canMarkAsUnfulfilled(orderInfo?.orderState || '') ? '' : 'opacity-30'}`}>Unfulfill</p>
-        </div>
+            <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold`}>Unfulfill</p>
+        </div> : null}
         {/super_admin/.test(role) && orderInfo?.riderName && orderInfo?.riderNumber ? <div className="flex items-center flex-col" onClick={blockRider}>
             <div className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center cursor-pointer`}>
                 <img src={blockIcon} className="w-6" />
