@@ -18,6 +18,7 @@ import RaiseIssue from './RaiseIssue'
 import OrderFulfillment from './OrderFulfillment'
 import InsufficientBalanceDialog from './InsufficientBalanceDialog'
 import MarkAsUnfulfilled from './MarkAsUnfulfilled'
+import BlockRider from './BlockRider'
 
 dayjs.extend(advancedFormat)
 
@@ -38,11 +39,12 @@ interface State {
     raiseIssueDisplay: boolean
     fulfillOrderDisplay: boolean
     unFulfillOrderDisplay: boolean
+    blockRiderDisplay: boolean
 }
 
 const initialValue: State = {
     addOrderDisplay: false, insufficientBalanceDialogDisplay: false, walletBalanceErrorMsg: '',
-    priceQuotesDisplay: false, addOutletDisplay: false, cancelOrderDisplay: false,
+    priceQuotesDisplay: false, addOutletDisplay: false, cancelOrderDisplay: false, blockRiderDisplay: false,
     raiseIssueDisplay: false, fulfillOrderDisplay: false, unFulfillOrderDisplay: false
 }
 
@@ -70,7 +72,7 @@ export default () => {
     }))
 
     const { getOrderInfo, googlePlacesApi, googlePlaceDetailsApi, getPickupList, activity, orderPriceQuote, addOutlet, assignAgent, unfulfillOrder,
-        pickupStores, createOrder, getPriceQuote, saveInStorage, getCustomerInfo, cancelOrder, raiseIssue } = useOrdersStore(state => ({
+        pickupStores, createOrder, getPriceQuote, saveInStorage, getCustomerInfo, cancelOrder, raiseIssue, blockRider } = useOrdersStore(state => ({
             getOrderInfo: state.getOrderInfo,
             googlePlacesApi: state.googlePlacesApi,
             googlePlaceDetailsApi: state.googlePlaceDetailsApi,
@@ -86,7 +88,8 @@ export default () => {
             cancelOrder: state.cancelOrder,
             raiseIssue: state.raiseIssue,
             assignAgent: state.assignAgent,
-            unfulfillOrder: state.unfulfillOrder
+            unfulfillOrder: state.unfulfillOrder,
+            blockRider: state.blockRider
         }))
 
     const [orderInfo, setOrderInfo] = useState<Order | undefined>(undefined)
@@ -130,7 +133,8 @@ export default () => {
                     onCancelOrder={() => dispatch({ type: 'update', payload: { cancelOrderDisplay: true } })}
                     onIssueReport={() => dispatch({ type: 'update', payload: { raiseIssueDisplay: true } })}
                     onOrderFulfillment={() => dispatch({ type: 'update', payload: { fulfillOrderDisplay: true } })} actionAtTop role={role || ''}
-                    markOrderAsUnfulfilled={() => dispatch({ type: 'update', payload: { unFulfillOrderDisplay: true } })} />
+                    markOrderAsUnfulfilled={() => dispatch({ type: 'update', payload: { unFulfillOrderDisplay: true } })} 
+                    blockRider={() => dispatch({ type: 'update', payload: { blockRiderDisplay: true } })}/>
             </div>
         </div>
         <AddOrder
@@ -235,6 +239,24 @@ export default () => {
             loading={activity.cancelOrder}
             orderState={orderInfo?.orderState || ''}
             isInternalUser={/super_admin/.test(role || '')}
+        />
+        <BlockRider
+            open={state.blockRiderDisplay}
+            onClose={() => dispatch({ type: 'update', payload: { blockRiderDisplay: false } })}
+            blockRider={comments => {
+                blockRider(token || '', orderInfo?.riderNumber || '', orderInfo?.riderName || '', comments, orderInfo?.bppId || '', (success, message) => {
+                    if (success) {
+                        setToast(message, 'success')
+                        dispatch({ type: 'update', payload: { blockRiderDisplay: false } })
+                    } else {
+                        setToast(message, 'error')
+                    }
+                })
+            }}
+            loading={activity.blockRider}
+            riderName={orderInfo?.riderName || ''}
+            riderNumber={orderInfo?.riderNumber || ''}
+            lsp={orderInfo?.providerId || ''}
         />
         <RaiseIssue open={state.raiseIssueDisplay} onClose={() => dispatch({ type: 'update', payload: { raiseIssueDisplay: false } })}
             raiseIssue={(issue, description, refundAmount) => raiseIssue(token || '', orderInfo?.orderId || '', issue, description, refundAmount, (success, message) => {

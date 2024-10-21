@@ -27,6 +27,7 @@ interface State extends Attributes {
     getCustomerInfo: (token: string, phone: string, callback: (customerInfo: LocationAddress) => void) => void
     raiseIssue: (token: string, orderId: string, issue: string, description: string, refundAmount: number | undefined, callback: (sucess: boolean, message?: string) => void) => void
     assignAgent: (token: string, orderId: string, pickupCode: string, callback: (success: boolean, message: string) => void) => void
+    blockRider: (token: string, riderNumber: string, riderName: string, comments: string, bppId: string, callback: (success: boolean, message: string) => void) => void
 }
 
 const initialState: Attributes = { orders: [], activity: {}, pickupStores: [], orderPriceQuote: [] };
@@ -378,6 +379,33 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 state.activity.assignAgent = false
             }))
             callback(false, 'Error proceeding with fulfillment of the order')
+        })
+    },
+    blockRider: async (token, riderNumber, riderName, comments, bppId, callback) => {
+        set(produce((state: State) => {
+            state.activity.blockRider = true
+        }))
+        Api('/webui/internal/block_rider', {
+            method: 'post', headers: { token }, data: {
+                rider_number : riderNumber, 
+                rider_name : riderName,
+                comments,
+                bpp_id: bppId
+            }
+        }).then(res => {
+            set(produce((state: State) => {
+                state.activity.blockRider = false
+            }))
+            if (res.status === 1) {
+                callback(true, res.message || 'Succesfully blocked the rider')
+            } else {
+                callback(false, res.message || 'Error blocking the rider')
+            }
+        }).catch(() => {
+            set(produce((state: State) => {
+                state.activity.blockRider    = false
+            }))
+            callback(false, 'Error blocking the rider')
         })
     }
 }))

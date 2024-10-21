@@ -11,19 +11,22 @@ import OrderActions from "./OrderActions"
 dayjs.extend(advancedFormat)
 
 
-export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, onAddOrder, actionAtTop, markOrderAsUnfulfilled, role }: {
+export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, onAddOrder, actionAtTop, markOrderAsUnfulfilled, role, blockRider }: {
     orderInfo: Order | undefined,
     onCancelOrder: (orderId: string) => void
     markOrderAsUnfulfilled: (orderId: string) => void
     onIssueReport: (orderId: string) => void
     onOrderFulfillment: (orderId: string) => void
     onAddOrder: (orderId?: string) => void
+    blockRider: (riderNumber: string, riderName: string, bppId: string, lsp: string) => void
     actionAtTop?: boolean
     role: string
 }) => {
     return <>
         {actionAtTop ? <div className='sticky top-0 bg-white z-[1] py-5 w-full'>
-            <OrderActions orderInfo={orderInfo} onAddOrder={onAddOrder} onCancelOrder={onCancelOrder} onOrderFulfillment={onOrderFulfillment} onIssueReport={onIssueReport} role={role} markOrderAsUnfulfilled={markOrderAsUnfulfilled}/>
+            <OrderActions orderInfo={orderInfo} onAddOrder={onAddOrder} onCancelOrder={onCancelOrder} onOrderFulfillment={onOrderFulfillment}
+                onIssueReport={onIssueReport} role={role} markOrderAsUnfulfilled={markOrderAsUnfulfilled}
+                blockRider={() => blockRider(orderInfo?.riderNumber || '', orderInfo?.riderName || '', orderInfo?.bppId || '', orderInfo?.providerId || '')} />
         </div> : null}
         <div className="md:flex justify-between">
             <ShowValue label="Order Id" value={orderInfo?.orderId} />
@@ -64,7 +67,9 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
             <ShowValue label="RTO Initiated At" value={orderInfo?.rtoPickedupAt} isDate />
             <ShowValue label="RTO Delivered At" value={orderInfo?.rtoDeliveredAt} isDate />
         </div>
-        {!actionAtTop?<OrderActions orderInfo={orderInfo} onAddOrder={onAddOrder} onCancelOrder={onCancelOrder} onOrderFulfillment={onOrderFulfillment} onIssueReport={onIssueReport} role={role} markOrderAsUnfulfilled={markOrderAsUnfulfilled}/>:null}
+        {!actionAtTop ? <OrderActions orderInfo={orderInfo} onAddOrder={onAddOrder} onCancelOrder={onCancelOrder} onOrderFulfillment={onOrderFulfillment}
+            onIssueReport={onIssueReport} role={role} markOrderAsUnfulfilled={markOrderAsUnfulfilled}
+            blockRider={() => blockRider(orderInfo?.riderNumber || '', orderInfo?.riderName || '', orderInfo?.bppId || '', orderInfo?.providerId || '')} /> : null}
         <p className="font-bold bg-slate-100 my-2 py-1 px-3 w-full rounded-md">Rider</p>
         <div className="md:flex justify-between">
             <ShowValue label="Name" value={orderInfo?.riderName} />
@@ -91,7 +96,8 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
         </div>
         <div className="md:flex items-center">
             <ShowValue label="Store Id" value={orderInfo?.storeId} />
-            {orderInfo?.pickupProof?<a href={orderInfo.pickupProof} className='text-blue-600 underline font-medium ml-5' target='_blank'>Pickup Proof</a>:<p className='text-gray-400 font-medium ml-5 underline'>Pickup Proof</p>}
+            {orderInfo?.pickupProof ? <a href={orderInfo.pickupProof} className='text-blue-600 underline font-medium ml-5' target='_blank'>Pickup Proof</a> :
+                <p className='text-gray-400 font-medium ml-5 underline'>Pickup Proof</p>}
         </div>
         <p className="font-bold bg-slate-100 my-2 py-1 px-3 w-full rounded-md">Drop</p>
         <div className="md:flex justify-between">
@@ -112,7 +118,8 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
                 <img src={trackIcon} className="w-6 mx-5" /></a> : <img src={trackIcon} className="w-6 mx-5 opacity-30" />}
             <ShowValue label="Dcc" value={orderInfo?.dcc} small />
         </div>
-        {orderInfo?.deliveryProof?<a href={orderInfo.deliveryProof} className='text-blue-600 underline font-medium ml-1 mb-4' target='_blank'>Delivery Proof</a>:<p className='text-gray-400 font-medium ml-1 underline mb-4'>Delivery Proof</p>}
+        {orderInfo?.deliveryProof ? <a href={orderInfo.deliveryProof} className='text-blue-600 underline font-medium ml-1 mb-4' target='_blank'>Delivery Proof</a> :
+            <p className='text-gray-400 font-medium ml-1 underline mb-4'>Delivery Proof</p>}
         <p className="font-bold bg-slate-100 my-2 py-1 px-3 w-full rounded-md">Cancellation</p>
         <div className="md:flex justify-between">
             <ShowValue label="Cancelled At" value={orderInfo?.cancelledAt} isDate />
