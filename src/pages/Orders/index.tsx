@@ -111,13 +111,6 @@ export default () => {
         } else {
             navigate('/login')
         }
-    }, [])
-
-    useEffect(() => {
-        if (token) {
-            console.log(state.orderFilterDate)
-            getOrders(token, state.orderFilterDate)
-        }
     }, [state.orderFilterDate])
 
     return <div>
