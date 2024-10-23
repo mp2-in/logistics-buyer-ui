@@ -1,5 +1,6 @@
 export interface Order {
     orderId: string
+    bppId: string
     clientOrderId: string
     networkOrderId: string
     orderState: string
