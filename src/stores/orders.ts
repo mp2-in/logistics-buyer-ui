@@ -168,12 +168,20 @@ export const useOrdersStore = create<State>()((set, get) => ({
         set(produce((state: State) => {
             state.activity.cancelOrder = true
         }))
+        let cancelledBy = 'client'
+        if (isSuperAdmin) {
+            if (cancellationReason === '008') {
+                cancelledBy = 'lsp'
+            } else if (cancellationReason === '006') {
+                cancelledBy = 'system'
+            }
+        }
         Api('/webui/order/cancel', {
             method: 'post', headers: { token }, data: {
                 order: {
                     id: orderId,
                     cancellation_reason_id: cancellationReason,
-                    cancelled_by: isSuperAdmin && cancellationReason !== '008' ? 'system' : 'lsp'
+                    cancelled_by: cancelledBy
                 }
             }
         }).then(res => {
@@ -387,8 +395,8 @@ export const useOrdersStore = create<State>()((set, get) => ({
         }))
         Api('/webui/internal/block_rider', {
             method: 'post', headers: { token }, data: {
-                rider_number : riderNumber, 
-                rider_name : riderName,
+                rider_number: riderNumber,
+                rider_name: riderName,
                 comments,
                 bpp_id: bppId
             }
@@ -403,7 +411,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
             }
         }).catch(() => {
             set(produce((state: State) => {
-                state.activity.blockRider    = false
+                state.activity.blockRider = false
             }))
             callback(false, 'Error blocking the rider')
         })

@@ -20,15 +20,15 @@ export default ({ open, onClose, blockRider, loading, riderName, riderNumber, ls
     const [comment, setComment] = useState('')
 
     return <Modal open={open} onClose={onClose}>
-        <div className={'bg-white rounded flex flex-col items-center py-[10px] px-[20px] md:w-[600px] w-[320px] relative'} onMouseDown={e => e.stopPropagation()}>
+        <div className={'bg-white rounded flex flex-col items-center py-[10px] px-[20px] md:w-[500px] w-[320px] relative'} onMouseDown={e => e.stopPropagation()}>
             <div className={'flex justify-between w-full items-center mb-[10px]'}>
                 <p className="text-xl font-semibold">Block Rider</p>
                 <img src={closeIcon} onClick={onClose} className="w-6 absolute top-1 right-1" />
             </div>
-            <div className={'flex flex-col items-center mt-5'}>
+            <div className={'flex flex-col items-center mt-1'}>
                 <div className="w-full px-3 py-1 *:m-1 mb-3">
-                    <p className="font-medium text-gray-500 text-sm">Rider Name: <span className="font-semibold text-black">{riderName}</span></p>
-                    <p className="font-medium text-gray-500 text-sm">Rider Phone: <span className="font-semibold text-black">{riderNumber}</span></p>
+                    <p className="font-medium text-gray-500 text-sm">Name: <span className="font-semibold text-black">{riderName}</span></p>
+                    <p className="font-medium text-gray-500 text-sm">Phone: <span className="font-semibold text-black">{riderNumber}</span></p>
                     <p className="font-medium text-gray-500 text-sm">LSP: <span className="font-semibold text-black">{lsp}</span></p>
                 </div>
                 <TextArea label="Comments" value={comment} onChange={val => setComment(val)} />
