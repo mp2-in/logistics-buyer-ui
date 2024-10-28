@@ -32,6 +32,7 @@ interface State {
     markAsUnfulfilledDisplay: boolean
     blockRiderDisplay: boolean
     billNumber?: string
+    pickupOtp?: string
     storeId?: string
     drop?: LocationAddress
     orderAmount?: string
@@ -173,8 +174,8 @@ export default () => {
             getPickupList={callback => token ? getPickupList(token, callback) : null}
             activity={activity}
             pickupStores={pickupStores}
-            createOrder={(billNumber, storeId, amount, drop, readyToShip) => {
-                createOrder(token || '', billNumber, storeId, drop, amount, undefined, undefined, undefined, readyToShip, (success, message, insufficientBalance) => {
+            createOrder={(billNumber, pickupOtp, storeId, amount, drop, readyToShip) => {
+                createOrder(token || '', billNumber, pickupOtp, storeId, drop, amount, undefined, undefined, undefined, readyToShip, (success, message, insufficientBalance) => {
                     if (success) {
                         dispatch({ type: 'update', payload: { addOrderDisplay: false } })
                         getOrders(token || '', state.orderFilterDate)
@@ -188,10 +189,10 @@ export default () => {
                     }
                 })
             }}
-            checkPrice={(billNumber, storeId, orderAmount, drop, readyToShip) => {
+            checkPrice={(billNumber, pickupOtp, storeId, orderAmount, drop, readyToShip) => {
                 getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), (success, quoteId, message) => {
                     if (success) {
-                        dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, drop, quoteId, readyToShip } })
+                        dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, drop, quoteId, readyToShip, pickupOtp } })
                     } else {
                         setToast(message || 'Error fetching price quotes', 'error')
                     }
@@ -208,20 +209,21 @@ export default () => {
             onClose={() => dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })}
             priceQuotes={orderPriceQuote} createOrder={(chosenLsp, chosenItem) => {
                 if (state.billNumber && state.storeId && state.orderAmount && state.drop) {
-                    createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, chosenLsp, state.quoteId, chosenItem, state.readyToShip, (success, message, insufficientBalance) => {
-                        if (success) {
-                            dispatch({ type: 'update', payload: { addOrderDisplay: false, priceQuotesDisplay: false } })
-                            getOrders(token || '', state.orderFilterDate)
-                            setToast('Order created successfully', 'success')
-                        } else {
-                            if (insufficientBalance) {
-                                dispatch({ type: 'update', payload: { insufficientBalanceDialogDisplay: true, walletBalanceErrorMsg: message, priceQuotesDisplay: false } })
+                    createOrder(token || '', state.billNumber, state.pickupOtp || '', state.storeId, state.drop, state.orderAmount, chosenLsp, state.quoteId, chosenItem, state.readyToShip,
+                        (success, message, insufficientBalance) => {
+                            if (success) {
+                                dispatch({ type: 'update', payload: { addOrderDisplay: false, priceQuotesDisplay: false } })
+                                getOrders(token || '', state.orderFilterDate)
+                                setToast('Order created successfully', 'success')
                             } else {
-                                dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })
-                                setToast(message || 'Error creating order', 'error')
+                                if (insufficientBalance) {
+                                    dispatch({ type: 'update', payload: { insufficientBalanceDialogDisplay: true, walletBalanceErrorMsg: message, priceQuotesDisplay: false } })
+                                } else {
+                                    dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })
+                                    setToast(message || 'Error creating order', 'error')
+                                }
                             }
-                        }
-                    })
+                        })
                 }
             }}
             loading={activity.createOrder}
