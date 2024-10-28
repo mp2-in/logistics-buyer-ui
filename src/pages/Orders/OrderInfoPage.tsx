@@ -29,6 +29,7 @@ interface State {
     walletBalanceErrorMsg: string
     priceQuotesDisplay: boolean
     billNumber?: string
+    pickupOtp?: string
     storeId?: string
     orderAmount?: string
     drop?: LocationAddress
@@ -149,8 +150,8 @@ export default () => {
             getPickupList={callback => token ? getPickupList(token, callback) : null}
             activity={activity}
             pickupStores={pickupStores}
-            createOrder={(billNumber, storeId, amount, drop) => {
-                createOrder(token || '', billNumber, storeId, drop, amount, undefined, undefined, undefined, (success, message, insufficientBalance) => {
+            createOrder={(billNumber, pickupOtp, storeId, amount, drop) => {
+                createOrder(token || '', billNumber, pickupOtp, storeId, drop, amount, undefined, undefined, undefined, (success, message, insufficientBalance) => {
                     if (success) {
                         dispatch({ type: 'update', payload: { addOrderDisplay: false } })
                         setToast('Order created successfully', 'success')
@@ -163,10 +164,10 @@ export default () => {
                     }
                 })
             }}
-            checkPrice={(billNumber, storeId, orderAmount, drop) => {
+            checkPrice={(billNumber, pickupOtp, storeId, orderAmount, drop) => {
                 getPriceQuote(token || '', storeId, drop, parseFloat(orderAmount), (success, quoteId, message) => {
                     if (success) {
-                        dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, drop, quoteId } })
+                        dispatch({ type: 'update', payload: { priceQuotesDisplay: true, billNumber, storeId, orderAmount, drop, quoteId, pickupOtp } })
                     } else {
                         setToast(message || 'Error fetching price quotes', 'error')
                     }
@@ -183,7 +184,7 @@ export default () => {
             onClose={() => dispatch({ type: 'update', payload: { priceQuotesDisplay: false } })}
             priceQuotes={orderPriceQuote} createOrder={(chosenLsp, chosenItem) => {
                 if (state.billNumber && state.storeId && state.orderAmount && state.drop) {
-                    createOrder(token || '', state.billNumber, state.storeId, state.drop, state.orderAmount, chosenLsp, state.quoteId, chosenItem, (success, message, insufficientBalance) => {
+                    createOrder(token || '', state.billNumber, state.pickupOtp || '', state.storeId, state.drop, state.orderAmount, chosenLsp, state.quoteId, chosenItem, (success, message, insufficientBalance) => {
                         if (success) {
                             dispatch({ type: 'update', payload: { addOrderDisplay: false, priceQuotesDisplay: false } })
                             setToast('Order created successfully', 'success')

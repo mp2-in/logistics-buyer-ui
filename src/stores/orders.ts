@@ -17,7 +17,7 @@ interface State extends Attributes {
     clearPickupList: () => void,
     googlePlacesApi: (searchText: string, callback: (data: PlaceAutoComplete[]) => void, latitude?: number, longitude?: number) => void
     googlePlaceDetailsApi: (placeId: string, callback: (data: PlaceDetails) => void) => void
-    createOrder: (token: string, billNumber: string, storeId: string, drop: LocationAddress, amount: string, lspId: string | undefined,
+    createOrder: (token: string, billNumber: string, pickupOtp: string, storeId: string, drop: LocationAddress, amount: string, lspId: string | undefined,
         quoteId: string | undefined, itemId: string | undefined, callback: (success: boolean, message?: string, insufficientBalance?: boolean) => void) => void
     cancelOrder: (token: string, orderId: string, cancellationReason: string, isSuperAdmin: boolean, callback: (success: boolean, message?: string) => void) => void
     unfulfillOrder: (token: string, orderId: string, reasonCode: string, callback: (success: boolean, message: string) => void) => void
@@ -117,16 +117,17 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 }))
             })
     },
-    createOrder: async (token, billNumber, storeId, drop, amount, lspId, quoteId, itemId, callback) => {
+    createOrder: async (token, billNumber, pickupOtp, storeId, drop, amount, lspId, quoteId, itemId, callback) => {
         set(produce((state: State) => {
             state.activity.createOrder = true
         }))
 
-        let data: { [k: string]: string | number | string[] | LocationAddress | { [j: string]: string }, select_criteria: { mode: string, lsp_id?: string, quote_id?: string, item_id?: string } } = {
+        let data: { [k: string]: string | number | string[] | LocationAddress | { [j: string]: string | undefined }, select_criteria: { mode: string, lsp_id?: string, quote_id?: string, item_id?: string } } = {
             client_order_id: billNumber,
             pickup: {
-                code: billNumber.slice(-4),
-                store_id: storeId
+                otp: pickupOtp,
+                store_id: storeId,
+                rto_otp: drop.code
             },
             drop,
             ready_to_ship: "yes",

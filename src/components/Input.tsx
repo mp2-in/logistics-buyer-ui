@@ -81,7 +81,7 @@ const Input = ({ label, type, value, onChange, size, placeholder, readOnly, onBl
                         onChange(e.target.value)
                     }
                 }} onClick={() => !readOnly ? optionsDisplay(true) : null} />
-            {label ? <p className={`absolute group-focus-within:text-blue-500 bg-white left-[10px] -top-[8px] text-xs leading-3 font-medium px-1 text-slate-500 ${required ? "after:content-['*'] after:leading-3  after:font-bold after:text-sm after:ml-1" : ''} ${error ? `text-red-600` : ''} `}>{label}</p> : null}
+            {label ? <p className={`absolute group-focus-within:text-blue-500 bg-white left-[10px] -top-[8px] text-xs leading-3 font-medium px-1 text-slate-500 ${required ? "after:content-['*'] after:leading-3  after:font-bold after:text-xs after:ml-1" : ''} ${error ? `text-red-600` : ''} `}>{label}</p> : null}
             {showOptions && autoCompleteOptions && autoCompleteOptions.length > 0 ?
                 <div ref={selectContainerRef} className={`absolute border border-gray-300 top-[34px] left-0 z-10 rounded overflow-auto bg-white max-h-[160px] 
                 ${size === 'small' ? `w-[196px]` : size === 'medium' || !size ? 'w-[400px]' : size === 'large' ? 'w-[500px]' : 'w-[620px]'}`}>
