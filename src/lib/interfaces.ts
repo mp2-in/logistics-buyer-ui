@@ -45,6 +45,7 @@ export interface Order {
     dropPincode: string
     dropPhone: string
     distance: number
+    pickupOtp: string
     assignedAt: string
     atpickupAt: string
     atdeliveryAt: string
