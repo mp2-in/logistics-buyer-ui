@@ -124,11 +124,12 @@ export const useOrdersStore = create<State>()((set, get) => ({
             state.activity.createOrder = true
         }))
 
-        let data: { [k: string]: string | number | string[] | LocationAddress | { [j: string]: string }, select_criteria: { mode: string, lsp_id?: string, quote_id?: string, item_id?: string } } = {
+        let data: { [k: string]: string | number | string[] | LocationAddress | { [j: string]: string | undefined }, select_criteria: { mode: string, lsp_id?: string, quote_id?: string, item_id?: string } } = {
             client_order_id: billNumber,
             pickup: {
                 otp: pickupOtp,
-                store_id: storeId
+                store_id: storeId,
+                rto_otp: drop.code
             },
             drop,
             ready_to_ship: readyToShip?"yes":"no",

@@ -136,6 +136,8 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 }
             }
 
+            const numbers = state.phoneNumber.split(/,/)
+
             if (latitude && longitude) {
                 let drop: {
                     lat: number,
@@ -150,6 +152,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                     pincode: string
                     phone: string
                     code: string
+                    pin?: string
                 } = {
                     lat: latitude,
                     lng: longitude,
@@ -161,8 +164,9 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                         state: state.state
                     },
                     pincode: state.pincode,
-                    phone: state.phoneNumber,
-                    code: state.dropCode
+                    phone: numbers[0],
+                    code: state.dropCode,
+                    pin: numbers.length > 1 ? numbers[1] : undefined
                 }
 
                 if (action === 'checkPrice' && drop) {
