@@ -215,7 +215,6 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                                 }
                             }
                         }} />
-                        <p className="text-blue-800 md:ml-5 font-medium">This is the max liability amount.</p>
                     </div>
                 </div>
                 <p className={'text-lg font-semibold my-3 mx-1'}>Drop</p>
@@ -237,7 +236,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 </div>
                 <SpecifyAddress onPlacesSearch={onPlacesSearch} onUpdate={payload => dispatch({ type: 'update', payload })} payload={state} onPlaceChoose={onPlaceChoose}
                     module="addOrder" storeLocation={storeGeolocation()} />
-                <div className="mt-2">
+                <div className="mt-2 flex">
                     <Input label="Drop/RTO OTP" size="small" type='number' value={state.dropCode || ''} onChange={val => /^[0-9]{0,4}$/.test(val) && dispatch({ type: 'update', payload: { dropCode: val } })} />
                     <div className="flex items-center mt-4 md:mt-0 md:ml-10">
                         <p className="mr-2">Ready to ship</p>
