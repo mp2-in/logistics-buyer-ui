@@ -425,8 +425,8 @@ export const useOrdersStore = create<State>()((set, get) => ({
         }))
         Api('/webui/internal/block_rider', {
             method: 'post', headers: { token }, data: {
-                rider_number : riderNumber, 
-                rider_name : riderName,
+                rider_number: riderNumber,
+                rider_name: riderName,
                 comments,
                 bpp_id: bppId
             }
@@ -441,7 +441,6 @@ export const useOrdersStore = create<State>()((set, get) => ({
             }
         }).catch(() => {
             set(produce((state: State) => {
-                state.activity.blockRider    = false
                 state.activity.blockRider = false
             }))
             callback(false, 'Error blocking the rider')
