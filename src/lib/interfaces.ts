@@ -11,7 +11,6 @@ export interface Order {
     orderCategory: string
     orderAmount: number
     pcc: string
-    pickupOtp: string
     dcc: string
     cancelledBy: string
     cancellationReason: string
