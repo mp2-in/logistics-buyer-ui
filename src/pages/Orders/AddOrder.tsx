@@ -15,16 +15,17 @@ import SpecifyAddress from "./SpecifyAddress"
 
 interface State {
     placesResponse: { placeId: string, address: string, offset: number }[]
-    billNumber: string,
+    billNumber: string
+    pickupOtp: string
     address: string
-    placeId: string,
-    name: string,
-    phoneNumber: string,
-    orderAmount: string,
+    placeId: string
+    name: string
+    phoneNumber: string
+    orderAmount: string
     latitude?: number
     longitude?: number
-    rto: boolean,
-    storeId: string,
+    rto: boolean
+    storeId: string
     addrLine1: string
     addrLine2: string
     city: string
@@ -36,7 +37,7 @@ interface State {
 
 const initialValue: State = {
     placesResponse: [], billNumber: '', address: '', placeId: '', name: '', phoneNumber: '', orderAmount: '', pincode: '',
-    rto: false, storeId: '', addrLine1: '', addrLine2: '', city: '', state: '', geoLocation: '', dropCode: ''
+    rto: false, storeId: '', addrLine1: '', addrLine2: '', city: '', state: '', geoLocation: '', dropCode: '', pickupOtp: ''
 }
 
 const reducer = (state: State, action: { type: 'reset', payload: Partial<State> } | { type: 'update', payload: Partial<State> }) => {
@@ -57,8 +58,8 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
     getPickupList: (callback: (stores?: PickupStore[]) => void) => void,
     activity: { [k: string]: boolean },
     pickupStores: PickupStore[],
-    createOrder: (billNumber: string, storeId: string, amount: string, drop: LocationAddress) => void,
-    checkPrice: (billNumber: string, storeId: string, amount: string, drop: LocationAddress) => void,
+    createOrder: (billNumber: string, pickupOtp: string, storeId: string, amount: string, drop: LocationAddress) => void,
+    checkPrice: (billNumber: string, pickupOtp: string, storeId: string, amount: string, drop: LocationAddress) => void,
     showNewOutletForm: (storeId?: string) => void,
     saveInStorage: (keyName: string, value: string) => void
     getCustomerInfo: (phone: string, callback: (info: LocationAddress) => void) => void
@@ -77,7 +78,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
             payload.state = storeDetails.state
         }
 
-        if(orderDetails) {
+        if (orderDetails) {
             payload.billNumber = orderDetails.clientOrderId
             payload.phoneNumber = orderDetails.dropPhone
             payload.name = orderDetails.dropName
@@ -89,7 +90,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
             payload.geoLocation = `${orderDetails.dropLatitude}, ${orderDetails.dropLongitude}`
 
             const store = pickupStores.find(e => e.storeId === orderDetails.storeId)
-            if(store) {
+            if (store) {
                 payload.storeId = orderDetails.storeId
                 payload.city = store.address.city
                 payload.state = store.address.state
@@ -163,9 +164,9 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 }
 
                 if (action === 'checkPrice' && drop) {
-                    checkPrice(state.billNumber, state.storeId, state.orderAmount, drop)
+                    checkPrice(state.billNumber, state.pickupOtp, state.storeId, state.orderAmount, drop)
                 } else if (action === 'createOrder' && drop) {
-                    createOrder(state.billNumber, state.storeId, state.orderAmount, { ...drop })
+                    createOrder(state.billNumber, state.pickupOtp, state.storeId, state.orderAmount, { ...drop })
                 }
             }
         }
@@ -197,12 +198,15 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                             onClick={() => showNewOutletForm(state.storeId)}>Edit Outlet</p> : null}
                     </div>
                 </div>
-                <div className={'md:flex md:items-center'}>
-                    <Input label="Bill Number" value={state.billNumber || ''} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} />
-                    <div className="md:ml-3 mt-4 md:mt-0">
+                <div>
+                    <div className={'md:flex md:items-center *:mr-4'}>
+                        <Input label="Bill Number" value={state.billNumber || ''} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} size='small' />
+                        <Input label="Pickup OTP" value={state.pickupOtp || ''} onChange={val => /^\d{0,4}$/.test(val) &&  dispatch({ type: 'update', payload: { pickupOtp: val } })} size='small'/>
+                    </div>
+                    <div className="mt-4">
                         <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => {
-                            if(/^[0-9.]*$/.test(val)) {
-                                if(!state.dropCode || state.dropCode.length < 4) {
+                            if (/^[0-9.]*$/.test(val)) {
+                                if (!state.dropCode || state.dropCode.length < 4) {
                                     dispatch({ type: 'update', payload: { orderAmount: val, dropCode: Math.floor(1000 + Math.random() * 9000).toString() } })
                                 } else {
                                     dispatch({ type: 'update', payload: { orderAmount: val } })
@@ -214,10 +218,11 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 <p className={'text-lg font-semibold my-3 mx-1'}>Drop</p>
                 <div className={'md:flex md:items-center *:mb-3 md:*:mb-0'}>
                     <Input label="Phone Number" size="small" value={state.phoneNumber || ''} onChange={val => {
-                        if (/^[0-9]{0,10}$/.test(val)) {
+                        if (!val || (/^[0-9,]+$/.test(val) && !/^,/.test(val))) {
                             dispatch({ type: 'update', payload: { phoneNumber: val } })
-                            if (val.length === 10) {
-                                getCustomerInfo(val, (info) => {
+                            const numbers = val.split(/,/).filter(e => e.length >= 10)
+                            if (numbers.length > 0) {
+                                getCustomerInfo(numbers[0], (info) => {
                                     dispatch({ type: 'update', payload: { name: info.address.name, addrLine1: info.address.line1, addrLine2: info.address.line2, pincode: info.pincode, latitude: info.lat, longitude: info.lng, geoLocation: `${info.lat}, ${info.lng}` } })
                                 })
                             }
@@ -230,16 +235,16 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 <SpecifyAddress onPlacesSearch={onPlacesSearch} onUpdate={payload => dispatch({ type: 'update', payload })} payload={state} onPlaceChoose={onPlaceChoose}
                     module="addOrder" storeLocation={storeGeolocation()} />
                 <div className="mt-2">
-                    <Input label="Drop Code" size="small" type='number' value={state.dropCode || ''} onChange={val => /^\d{0,4}$/.test(val) && dispatch({ type: 'update', payload: { dropCode: val } })} />
+                    <Input label="Drop/RTO OTP" size="small" type='number' value={state.dropCode || ''} onChange={val => /^[0-9]{0,4}$/.test(val) && dispatch({ type: 'update', payload: { dropCode: val } })} />
                 </div>
             </div>
             <div className="absolute flex justify-end mt-5 *:ml-3 pt-2 md:mb-0 md:bottom-5 bottom-2">
-                <Button title="Check Price" onClick={() => processOrder('checkPrice')} disabled={!state.billNumber || !state.storeId ||
+                <Button title="Check Price" onClick={() => processOrder('checkPrice')} disabled={!state.billNumber || !state.storeId || (!!state.pickupOtp && state.pickupOtp.length < 4) ||
                     (!/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation) && (!state.latitude || !state.longitude)) || !state.phoneNumber || !state.orderAmount || activity.getPriceQuote}
                     loading={activity.getPriceQuote} variant="info" />
                 <Button title="Create Order" variant="primary" onClick={() => processOrder('createOrder')}
                     disabled={!state.billNumber || !state.storeId || (!/^([0-9.]+)\s*,\s*([0-9.]+)$/.test(state.geoLocation) && (!state.latitude || !state.longitude)) || !state.phoneNumber ||
-                        !state.orderAmount || activity.getPriceQuote} loading={activity.createOrder} />
+                        !state.orderAmount || activity.getPriceQuote || (!!state.pickupOtp && state.pickupOtp.length < 4)} loading={activity.createOrder} />
             </div>
         </div>
     </Modal>
