@@ -37,6 +37,7 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus, orderAmount, 
     useEffect(() => {
         setIssue('')
         setDescription('')
+        setImageUrl(undefined)
         setRefundAmount(undefined)
     }, [open])
 
