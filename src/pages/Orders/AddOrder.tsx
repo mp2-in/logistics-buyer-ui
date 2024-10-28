@@ -179,7 +179,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
     }
 
     return <Modal open={open} onClose={onClose} loading={activity.getPickupList || activity.getCustomerInfo}>
-        <div className={`bg-white rounded flex flex-col items-center py-3 px-5  w-[370px] h-[500px] relative md:w-[650px] md:h-[600px] xl:h-[690px]`} onMouseDown={e => e.stopPropagation()}>
+        <div className={`bg-white rounded flex flex-col items-center py-3 px-5  w-[370px] h-[500px] relative md:w-[670px] md:h-[600px] xl:h-[690px]`} onMouseDown={e => e.stopPropagation()}>
             <div className={`flex justify-between w-full items-center mb-3`}>
                 <p className="text-xl font-semibold">Add Order</p>
                 <img src={closeIcon} onClick={onClose} className="w-6 cursor-pointer absolute right-1 top-1" />
@@ -205,11 +205,22 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                     </div>
                 </div>
                 <div>
-                    <div className={'md:flex md:items-center *:mr-4'}>
+                    <div className={'flex items-center *:mr-4'}>
                         <Input label="Bill Number" value={state.billNumber || ''} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} size='small' />
                         <Input label="Pickup OTP" value={state.pickupOtp || ''} onChange={val => /^\d{0,4}$/.test(val) && dispatch({ type: 'update', payload: { pickupOtp: val } })} size='small' />
+                        <div className={'hidden md:block'}>
+                            <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => {
+                                if (/^[0-9.]*$/.test(val)) {
+                                    if (!state.dropCode || state.dropCode.length < 4) {
+                                        dispatch({ type: 'update', payload: { orderAmount: val, dropCode: Math.floor(1000 + Math.random() * 9000).toString() } })
+                                    } else {
+                                        dispatch({ type: 'update', payload: { orderAmount: val } })
+                                    }
+                                }
+                            }} />
+                        </div>
                     </div>
-                    <div className="mt-4">
+                    <div className="mt-4 md:hidden">
                         <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => {
                             if (/^[0-9.]*$/.test(val)) {
                                 if (!state.dropCode || state.dropCode.length < 4) {
@@ -219,7 +230,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                                 }
                             }
                         }} />
-                    </div>
+                    </div> 
                 </div>
                 <p className={'text-lg font-semibold my-3 mx-1'}>Drop</p>
                 <div className={'md:flex md:items-center *:mb-3 md:*:mb-0'}>
