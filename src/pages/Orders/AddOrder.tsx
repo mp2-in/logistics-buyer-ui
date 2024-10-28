@@ -188,7 +188,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                         const storeDetails = pickupStores.find(e => e.storeId === val)
                         dispatch({ type: 'update', payload: { storeId: val, city: storeDetails?.address.city, state: storeDetails?.address.state } })
                         saveInStorage('storeDetails', JSON.stringify({ storeId: val, city: storeDetails?.address.city || '', state: storeDetails?.address.state || '' }))
-                    }} value={state.storeId} hideSearch size="large" />
+                    }} value={state.storeId} hideSearch size="large" required/>
                     <div onClick={() => /admin/.test(role) && showNewOutletForm()} className={`bg-blue-500 md:w-8 rounded-full ml-4 mb-1 w-6 hidden md:block ${/admin/.test(role) ? `cursor-pointer` : 'opacity-30'}`} title="Add Outlet">
                         <img src={addIcon} />
                     </div>
@@ -204,21 +204,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 </div>
                 <div>
                     <div className={'flex items-center *:mr-4'}>
-                        <Input label="Bill Number" value={state.billNumber || ''} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} size='small' />
-                        <Input label="Pickup OTP" value={state.pickupOtp || ''} onChange={val => /^\d{0,4}$/.test(val) && dispatch({ type: 'update', payload: { pickupOtp: val } })} size='small' />
-                        <div className={'hidden md:block'}>
-                            <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => {
-                                if (/^[0-9.]*$/.test(val)) {
-                                    if (!state.dropCode || state.dropCode.length < 4) {
-                                        dispatch({ type: 'update', payload: { orderAmount: val, dropCode: Math.floor(1000 + Math.random() * 9000).toString() } })
-                                    } else {
-                                        dispatch({ type: 'update', payload: { orderAmount: val } })
-                                    }
-                                }
-                            }} />
-                        </div>
-                    </div>
-                    <div className="mt-4 md:hidden">
+                        <Input label="Bill Number" value={state.billNumber || ''} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} size='small' required />
                         <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => {
                             if (/^[0-9.]*$/.test(val)) {
                                 if (!state.dropCode || state.dropCode.length < 4) {
@@ -227,8 +213,14 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                                     dispatch({ type: 'update', payload: { orderAmount: val } })
                                 }
                             }
-                        }} />
-                    </div> 
+                        }} required />
+                        <div className={'hidden md:block'}>
+                            <Input label="Pickup OTP" value={state.pickupOtp || ''} onChange={val => /^\d{0,4}$/.test(val) && dispatch({ type: 'update', payload: { pickupOtp: val } })} size='small' />
+                        </div>
+                    </div>
+                    <div className="mt-4 md:hidden">
+                        <Input label="Pickup OTP" value={state.pickupOtp || ''} onChange={val => /^\d{0,4}$/.test(val) && dispatch({ type: 'update', payload: { pickupOtp: val } })} size='small' />
+                    </div>
                 </div>
                 <p className={'text-lg font-semibold my-3 mx-1'}>Drop</p>
                 <div className={'md:flex md:items-center *:mb-3 md:*:mb-0'}>
@@ -242,7 +234,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                                 })
                             }
                         }
-                    }} />
+                    }} required />
                     <div className="md:ml-3">
                         <Input label="Name" value={state.name || ''} onChange={val => dispatch({ type: 'update', payload: { name: val } })} />
                     </div>
