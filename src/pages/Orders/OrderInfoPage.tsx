@@ -260,7 +260,7 @@ export default () => {
             lsp={orderInfo?.providerId || ''}
         />
         <RaiseIssue open={state.raiseIssueDisplay} onClose={() => dispatch({ type: 'update', payload: { raiseIssueDisplay: false } })}
-            raiseIssue={(issue, description, refundAmount) => raiseIssue(token || '', orderInfo?.orderId || '', issue, description, refundAmount, (success, message) => {
+            raiseIssue={(issue, description, refundAmount, image) => raiseIssue(token || '', orderInfo?.orderId || '', issue, description, refundAmount, image, (success, message) => {
                 if (success) {
                     setToast('Issue had been registered', 'success')
                     dispatch({ type: 'update', payload: { raiseIssueDisplay: false } })

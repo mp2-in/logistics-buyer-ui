@@ -12,7 +12,7 @@ import Input from "@components/Input"
 export default ({ open, onClose, raiseIssue, loading, orderStatus, orderAmount, deliveryFee }: {
     open: boolean,
     onClose: () => void,
-    raiseIssue: (issue: string, description: string, refundAmount: number | undefined) => void,
+    raiseIssue: (issue: string, description: string, refundAmount: number | undefined, url: string | undefined) => void,
     loading: boolean
     orderStatus: string
     orderAmount: number
@@ -31,11 +31,13 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus, orderAmount, 
     ]
     const [issue, setIssue] = useState('')
     const [description, setDescription] = useState('')
+    const [imageUrl, setImageUrl] = useState<string|undefined>(undefined)
     const [refundAmount, setRefundAmount] = useState<number | undefined>(undefined)
 
     useEffect(() => {
         setIssue('')
         setDescription('')
+        setImageUrl(undefined)
         setRefundAmount(undefined)
     }, [open])
 
@@ -92,8 +94,11 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus, orderAmount, 
                 <div className="w-full">
                     <Input label="Refund Amount" type='number' value={refundAmount} onChange={val => /^[0-9.]*$/.test(val) && setRefundAmount(parseFloat(val))} size='small' />
                 </div>
+                <div className="w-full">
+                    <Input label="File URL" value={imageUrl} onChange={val => setImageUrl(val)} size='large' />
+                </div>
                 <div className="py-3">
-                    <Button title="Raise Issue" variant="primary" onClick={() => raiseIssue(issue, description, refundAmount)} loading={loading} disabled={!issue || !description} />
+                    <Button title="Raise Issue" variant="primary" onClick={() => raiseIssue(issue, description, refundAmount, imageUrl)} loading={loading} disabled={!issue || !description} />
                 </div>
             </div>
         </div>
