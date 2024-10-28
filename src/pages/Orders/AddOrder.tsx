@@ -251,9 +251,9 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 </div>
                 <SpecifyAddress onPlacesSearch={onPlacesSearch} onUpdate={payload => dispatch({ type: 'update', payload })} payload={state} onPlaceChoose={onPlaceChoose}
                     module="addOrder" storeLocation={storeGeolocation()} />
-                <div className="mt-2 flex">
+                <div className="mt-2 flex items-center">
                     <Input label="Drop/RTO OTP" size="small" type='number' value={state.dropCode || ''} onChange={val => /^[0-9]{0,4}$/.test(val) && dispatch({ type: 'update', payload: { dropCode: val } })} />
-                    <div className="flex items-center mt-4 md:mt-0 md:ml-10">
+                    <div className="flex items-center md:mt-0 ml-3 md:ml-10">
                         <p className="mr-2">Ready to ship</p>
                         <Switch on={state.readyToShip} onClick={() => dispatch({ type: 'update', payload: { readyToShip: !state.readyToShip } })} />
                     </div>
