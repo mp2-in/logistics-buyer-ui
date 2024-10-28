@@ -331,7 +331,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                 }))
             })
     },
-    raiseIssue: async (token, orderId, issue, description, image, refundAmount, callback) => {
+    raiseIssue: async (token, orderId, issue, description, refundAmount, image, callback) => {
         set(produce((state: State) => {
             state.activity.raiseIssue = true
         }))
