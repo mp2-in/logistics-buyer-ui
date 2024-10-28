@@ -185,7 +185,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                             <img src={copyIcon} className='w-4 cursor-pointer ml-1 active:opacity-30' onClick={() => copyOrderDataToClipboard(eachOrder)} title='Copy order details' />
                         </div>
                         <div className={`flex justify-center items-center h-full flex-[2] ${rowBackground(eachOrder.orderState)} `}>
-                            <p>{eachOrder.pcc || ' '}</p>
+                            <p>{eachOrder.pickupOtp || eachOrder.pcc || ' '}</p>
                         </div>
                         <div className={`flex justify-center items-center h-full flex-[2] ${rowBackground(eachOrder.orderState)} `}>
                             <p>{eachOrder.dcc || ' '}</p>
