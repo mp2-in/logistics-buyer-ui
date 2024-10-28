@@ -134,6 +134,8 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 }
             }
 
+            const numbers = state.phoneNumber.split(/,/)
+
             if (latitude && longitude) {
                 let drop: {
                     lat: number,
@@ -148,6 +150,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                     pincode: string
                     phone: string
                     code: string
+                    pin?: string
                 } = {
                     lat: latitude,
                     lng: longitude,
@@ -159,8 +162,9 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                         state: state.state
                     },
                     pincode: state.pincode,
-                    phone: state.phoneNumber,
-                    code: state.dropCode
+                    phone: numbers[0],
+                    code: state.dropCode,
+                    pin: numbers.length > 1 ? numbers[1] : undefined
                 }
 
                 if (action === 'checkPrice' && drop) {
@@ -201,7 +205,7 @@ export default ({ open, onClose, onPlacesSearch, getPickupList, createOrder, che
                 <div>
                     <div className={'md:flex md:items-center *:mr-4'}>
                         <Input label="Bill Number" value={state.billNumber || ''} onChange={val => dispatch({ type: 'update', payload: { billNumber: val } })} size='small' />
-                        <Input label="Pickup OTP" value={state.pickupOtp || ''} onChange={val => /^\d{0,4}$/.test(val) &&  dispatch({ type: 'update', payload: { pickupOtp: val } })} size='small'/>
+                        <Input label="Pickup OTP" value={state.pickupOtp || ''} onChange={val => /^\d{0,4}$/.test(val) && dispatch({ type: 'update', payload: { pickupOtp: val } })} size='small' />
                     </div>
                     <div className="mt-4">
                         <Input label="Order Amount" size="small" value={state.orderAmount} onChange={val => {
