@@ -209,7 +209,8 @@ export const useOrdersStore = create<State>()((set, get) => ({
             method: 'post', headers: { token }, data: {
                 order: {
                     id: orderId,
-                    cancellation_reason_id: reasonCode
+                    cancellation_reason_id: reasonCode,
+                    reset_rts: reasonCode === '005'
                 }
             }
         }).then(res => {
