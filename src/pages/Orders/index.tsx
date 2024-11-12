@@ -301,6 +301,7 @@ export default () => {
                 })
             }}
             loading={activity.unfulfillOrder}
+            accountId={accountId || ''}
         />
         <RaiseIssue open={state.raiseIssueDisplay} onClose={() => dispatch({ type: 'update', payload: { raiseIssueDisplay: false } })}
             raiseIssue={(issue, description, refundAmount, image) => raiseIssue(token || '', state.reportedOrderIssue || '', issue, description, refundAmount, image, (success, message) => {

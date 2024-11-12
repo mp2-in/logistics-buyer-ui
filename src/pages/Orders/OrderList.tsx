@@ -24,6 +24,10 @@ import porter from "@assets/lsp_logos/porter.png"
 import shadowFax from "@assets/lsp_logos/shadowfax.png"
 import zypp from "@assets/lsp_logos/zypp.png"
 import telyport from "@assets/lsp_logos/telyport.png"
+import supr from "@assets/lsp_logos/supr.png"
+import shiprocket from "@assets/lsp_logos/shiprocket.png"
+import yulu from "@assets/lsp_logos/yulu.png"
+import qwqer from "@assets/lsp_logos/qwqer.png"
 import defaultLsp from "@assets/lsp_logos/lsp_default.png"
 
 import { Order } from '@lib/interfaces'
@@ -126,6 +130,14 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 return mp2
             case 'Telyport':
                 return telyport
+            case 'Supr':
+                return supr
+            case 'Shiprocket':
+                return shiprocket
+            case 'Yulu':
+                return yulu
+            case 'Qwqer':
+                return qwqer
             default:
                 return defaultLsp
         }
