@@ -14,7 +14,7 @@ import moreIcon from "@assets/info.png"
 import closeIcon from "@assets/cancel.png"
 import retryIcon from "@assets/retry.png"
 import copyIcon from "@assets/copy.png"
-import IssueInfo from "./IssueInfo"
+import IssueInfo from "./IssueInfoModal"
 import CloseIssueConfirmation from "./CloseIssueConfirmation"
 import parse from 'html-react-parser';
 import IssueResolution from "./IssueResolution"
@@ -74,8 +74,18 @@ export default () => {
         getIssues(token || '', state.filterDate)
     }, [state.filterDate])
 
-    const rowBackground = (resolutionStatus: string) => {
-        return resolutionStatus === 'Resolved' ? 'bg-green-100' : 'bg-red-100'
+    const rowBackground = (issueStatus: string, resolutionStatus: string) => {
+        if (issueStatus.toLowerCase() === 'open') {
+            if (resolutionStatus.toLowerCase() === 'created') {
+                return 'bg-red-100'
+            } else if (resolutionStatus.toLowerCase() === 'processing') {
+                return 'bg-red-200'
+            } else if (resolutionStatus.toLowerCase() === 'resolved') {
+                return 'bg-green-100'
+            }
+        } else {
+            return 'bg-green-200'
+        }
     }
 
     const updateSortField = (field: keyof Issue) => {
@@ -116,30 +126,32 @@ export default () => {
                 </div>
                 <div className={`absolute  top-[35px] bottom-0 lg:right-5 left-0 w-[1265px] xl:w-full xl:overflow-auto`}>
                     {[...issues].sort(sortOrders).map(eachIssue => {
-                        return <div key={eachIssue.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center xl:text-sm h-[40px] ${rowBackground(eachIssue.resolutionStatus)}`}>
+                        return <div key={eachIssue.issueId} className={`flex items-center w-full text-xs relative border-b *:text-center xl:text-sm h-[40px] ${rowBackground(eachIssue.issueStatus, eachIssue.resolutionStatus)}`}>
                             <p className={`flex-[4] ml-0`}>{eachIssue.createdat ? dayjs(eachIssue.createdat).format('MMM Do,hh:mm A') : '--'}</p>
                             <div className={`flex-[6] flex items-center`}>
-                                <input className={`w-full outline-none  border-none text-center ${rowBackground(eachIssue.resolutionStatus)}`} readOnly value={eachIssue.clientOrderId} />
-                                <img src={copyIcon} className='w-4 cursor-pointer ml-1 active:opacity-30' onClick={() => copyIssueDataToClipboard(eachIssue)} title="Copy issue details"/>
+                                <input className={`w-full outline-none  border-none text-center ${rowBackground(eachIssue.issueStatus, eachIssue.resolutionStatus)}`} readOnly value={eachIssue.clientOrderId} />
+                                <img src={copyIcon} className='w-4 cursor-pointer ml-1 active:opacity-30' onClick={() => copyIssueDataToClipboard(eachIssue)} title="Copy issue details" />
                             </div>
                             <div className={`flex justify-center items-center h-full flex-[5]`}>
                                 <p>{eachIssue.statusUpdatedat ? dayjs(eachIssue.statusUpdatedat).format('MMM Do,hh:mm A') : ''}</p>
                             </div>
-                            <div className={`flex justify-center items-center h-full flex-[3] ${rowBackground(eachIssue.resolutionStatus)}`}>
+                            <div className={`flex justify-center items-center h-full flex-[3] ${rowBackground(eachIssue.issueStatus, eachIssue.resolutionStatus)}`}>
                                 <input className={`border-none outline-none text-center w-full bg-inherit`} readOnly value={eachIssue.resolutionStatus} />
                             </div>
-                            <textarea readOnly className={`h-[38px] flex-[5] text-xs resize-none outline-none border-none ${rowBackground(eachIssue.resolutionStatus)}`} value={(eachIssue.shortDescription || '').length > 40 ? `${eachIssue.shortDescription.substring(0, 40)}...` : (eachIssue.shortDescription || '')} />
+                            <textarea readOnly className={`h-[38px] flex-[5] text-xs resize-none outline-none border-none ${rowBackground(eachIssue.issueStatus, eachIssue.resolutionStatus)}`}
+                                value={(eachIssue.shortDescription || '').length > 40 ? `${eachIssue.shortDescription.substring(0, 40)}...` : (eachIssue.shortDescription || '')} />
                             <p className={`flex-[3] h-full py-1 text-xs`}>{eachIssue.resolutionAction}</p>
-                            {!!eachIssue.resolutionDescription ? <div className={`h-[36px] flex-[5] text-xs pt-[2px] cursor-pointer rounded-md ${rowBackground(eachIssue.resolutionStatus)} border border-transparent overflow-hidden hover:border-slate-400`} onClick={() => {
-                                if (eachIssue.resolutionDescription) {
-                                    dispatch({ type: 'update', payload: { issueResolution: eachIssue.resolutionDescription } })
-                                }
-                            }}>
+                            {!!eachIssue.resolutionDescription ? <div className={`h-[36px] flex-[5] text-xs pt-[2px] cursor-pointer rounded-md 
+                            ${rowBackground(eachIssue.issueStatus, eachIssue.resolutionStatus)} border border-transparent overflow-hidden hover:border-slate-400`} onClick={() => {
+                                    if (eachIssue.resolutionDescription) {
+                                        dispatch({ type: 'update', payload: { issueResolution: eachIssue.resolutionDescription } })
+                                    }
+                                }}>
                                 {/<\/?\w+>/.test((eachIssue.resolutionDescription || '').toString()) ? parse(eachIssue.resolutionDescription) :
                                     <p className="h-full flex-[5] text-xs resize-none bg-inherit border-none outline-none">
                                         {(eachIssue.resolutionDescription || '').length > 40 ? `${eachIssue.resolutionDescription.substring(0, 40)}...` : (eachIssue.resolutionDescription || '')}
                                     </p>}
-                            </div> : <p className="flex-[5]"/>}
+                            </div> : <p className="flex-[5]" />}
                             <div className={`flex justify-center items-center h-full flex-[3]`}>
                                 <p className={`text-center w-full`}>{eachIssue.refundAmount}</p>
                             </div>
@@ -166,14 +178,15 @@ export default () => {
         </div>
         {activity.getIssues || activity.refreshIssue ? <ActivityIndicator /> : null}
         <IssueInfo open={state.showIssueDetails} onClose={() => dispatch({ type: 'update', payload: { showIssueDetails: false } })} issueDetails={issues.find(e => e.issueId === state.chosenIssue)} />
-        <CloseIssueConfirmation open={!!state.closeIssue} onClose={() => dispatch({ type: 'update', payload: { closeIssue: undefined } })} closeIssue={() => state.closeIssue && closeIssue(token || '', state.closeIssue, (success, message) => {
-            if (success) {
-                dispatch({ type: 'update', payload: { closeIssue: undefined } })
-                setToast('Issue closed  successfully', 'success')
-            } else {
-                setToast(message, 'error')
-            }
-        })} loading={activity.closeIssue} />
+        <CloseIssueConfirmation open={!!state.closeIssue} onClose={() => dispatch({ type: 'update', payload: { closeIssue: undefined } })}
+            closeIssue={() => state.closeIssue && closeIssue(token || '', state.closeIssue, (success, message) => {
+                if (success) {
+                    dispatch({ type: 'update', payload: { closeIssue: undefined } })
+                    setToast('Issue closed  successfully', 'success')
+                } else {
+                    setToast(message, 'error')
+                }
+            })} loading={activity.closeIssue} />
         <IssueResolution open={!!state.issueResolution} onClose={() => dispatch({ type: 'update', payload: { issueResolution: undefined } })} issueResolution={state.issueResolution || ''} />
     </div>
 }   

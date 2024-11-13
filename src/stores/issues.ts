@@ -11,7 +11,8 @@ interface Attributes {
 interface State extends Attributes {
     getIssues: (token: string, filterDate?: string) => void
     closeIssue: (token: string, issueId: string, callback: (success: boolean, message: string) => void) => void
-    refreshIssue: (token: string, issueId: string) => void
+    refreshIssue: (token: string, issueId: string, callback?: (issueDetails: Issue) => void) => void
+    getIssueInfo: (token: string, issueId: string, callback: (success: boolean, issueInfo?: Issue) => void) => void
 }
 
 const initialState: Attributes = { activity: {}, issues: [] };
@@ -48,9 +49,9 @@ export const useIssuesStore = create<State>()((set) => ({
                 set(produce((state: State) => {
                     state.activity.closeIssue = false
                 }))
-                
+
                 if (res.status === 1) {
-                    callback(true, '')
+                    callback(true, 'Issue closed successfully')
                 } else {
                     callback(false, res.message || 'Error closing issue')
                 }
@@ -62,7 +63,7 @@ export const useIssuesStore = create<State>()((set) => ({
                 callback(false, 'Error closing issue')
             })
     },
-    refreshIssue: async (token, issueId) => {
+    refreshIssue: async (token, issueId, callback) => {
         set(produce((state: State) => {
             state.activity.refreshIssue = true
         }))
@@ -73,15 +74,37 @@ export const useIssuesStore = create<State>()((set) => ({
                 set(produce((state: State) => {
                     state.activity.refreshIssue = false
                     const index = state.issues.findIndex(e => e.issueId === issueId)
-                    if(index > -1) {
+                    if (index > -1) {
                         state.issues[index] = res.issue
                     }
                 }))
+                callback && callback(res.issue)
             })
             .catch(() => {
                 set(produce((state: State) => {
                     state.activity.refreshIssue = false
                 }))
             })
-    }
+    },
+    getIssueInfo: async (token, issueId, callback) => {
+        set(produce((state: State) => {
+            state.activity.getIssueInfo = true
+        }))
+        Api('/webui/issue/info', { method: 'post', headers: { 'Content-Type': 'application/json', token }, data: { issue_id: issueId } })
+            .then(res => {
+                set(produce((state: State) => {
+                    state.activity.getIssueInfo = false
+                    if (res.status === 1) {
+                        callback(true, res.issue)
+                    } else {
+                        callback(false)
+                    }
+                }))
+            })
+            .catch(() => {
+                set(produce((state: State) => {
+                    state.activity.getIssueInfo = false
+                }))
+            })
+    },
 }))
