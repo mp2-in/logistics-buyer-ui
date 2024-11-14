@@ -7,6 +7,7 @@ import dayjs from "dayjs"
 import { cancellationIdReasonMapping } from "@lib/utils"
 import ShowValue from "@components/ShowValue"
 import OrderActions from "./OrderActions"
+import openLinkIcon from "@assets/open.png"
 
 dayjs.extend(advancedFormat)
 
@@ -67,6 +68,12 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
             <ShowValue label="RTO Initiated At" value={orderInfo?.rtoPickedupAt} isDate />
             <ShowValue label="RTO Delivered At" value={orderInfo?.rtoDeliveredAt} isDate />
         </div>
+        {orderInfo?.issueid ? <a href={`/issue/${orderInfo.issueid}`}>
+            <div className='flex items-center underline py-4 px-2'>
+                <p>Open Issue</p>
+                <img src={openLinkIcon} className='w-6 ml-3'/>
+            </div>
+        </a> : null}
         {!actionAtTop ? <OrderActions orderInfo={orderInfo} onAddOrder={onAddOrder} onCancelOrder={onCancelOrder} onOrderFulfillment={onOrderFulfillment}
             onIssueReport={onIssueReport} role={role} markOrderAsUnfulfilled={markOrderAsUnfulfilled}
             blockRider={() => blockRider(orderInfo?.riderNumber || '', orderInfo?.riderName || '', orderInfo?.bppId || '', orderInfo?.providerId || '')} /> : null}
