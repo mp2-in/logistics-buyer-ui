@@ -104,6 +104,17 @@ export default () => {
         setPage('issues')
     }, [])
 
+    const getResolutionDuration = (createdAt: string, resolvedAt: string) => {
+        let totalSeconds = dayjs(resolvedAt).diff(createdAt, 'second');
+
+        const totalHours = Math.floor(totalSeconds / (60 * 60))
+        totalSeconds = totalSeconds - (totalHours * 60 * 60)
+
+        const totalMinutes = Math.floor(totalSeconds / 60)  
+
+        return `${('0' + totalHours).slice(-2)}:${('0' + totalMinutes).slice(-2)}`
+    }
+
     return <div>
         <TopBar title='Issues' onAccountSwitch={(newToken) => {
             getIssues(newToken || '', state.filterDate)
@@ -135,8 +146,9 @@ export default () => {
                             <div className={`flex justify-center items-center h-full flex-[5]`}>
                                 <p>{eachIssue.statusUpdatedat ? dayjs(eachIssue.statusUpdatedat).format('MMM Do,hh:mm A') : ''}</p>
                             </div>
-                            <div className={`flex justify-center items-center h-full flex-[3] ${rowBackground(eachIssue.issueStatus, eachIssue.resolutionStatus)}`}>
+                            <div className={`flex flex-col justify-center items-center h-full flex-[3] ${rowBackground(eachIssue.issueStatus, eachIssue.resolutionStatus)}`}>
                                 <input className={`border-none outline-none text-center w-full bg-inherit`} readOnly value={eachIssue.resolutionStatus} />
+                                {eachIssue.resolvedat ? <p className="text-xs font-medium">{`(${getResolutionDuration(eachIssue.createdat, eachIssue.resolvedat)})`}</p> : null}
                             </div>
                             <textarea readOnly className={`h-[38px] flex-[5] text-xs resize-none outline-none border-none ${rowBackground(eachIssue.issueStatus, eachIssue.resolutionStatus)}`}
                                 value={(eachIssue.shortDescription || '').length > 40 ? `${eachIssue.shortDescription.substring(0, 40)}...` : (eachIssue.shortDescription || '')} />

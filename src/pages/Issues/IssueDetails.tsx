@@ -40,6 +40,7 @@ export default ({ issueDetails, actionOnTop, onClose, onRefresh }: {
         </div>
         <div className="md:flex justify-between">
             <ShowValue label="Updated At" value={issueDetails?.updatedat} isDate />
+            <ShowValue label="Resolved At" value={issueDetails?.resolvedat} isDate />
         </div>
         <div className="md:flex justify-between">
             <ShowValue label="Category" value={issueDetails?.category} />

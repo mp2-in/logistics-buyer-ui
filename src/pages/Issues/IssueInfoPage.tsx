@@ -78,7 +78,8 @@ export default () => {
             </div>
             <div className={`w-[350px] md:w-[700px] border overflow-auto py-3 px-3 md:py-10 md:px-10 lg:px-40 lg:w-[1000px] rounded-xl flex flex-col 
                 items-center md:block ${state.error || !state.issueInfo ? `opacity-35` : ''} relative`}>
-                <IssueDetails issueDetails={state.issueInfo} actionOnTop onClose={issueId ? () => dispatch({ type: 'update', payload: { showCloseConfirmation: true } }) : undefined}
+                <IssueDetails issueDetails={state.issueInfo} actionOnTop onClose={issueId && state.issueInfo && state.issueInfo.issueStatus !== 'CLOSED' ?
+                    () => dispatch({ type: 'update', payload: { showCloseConfirmation: true } }) : undefined}
                     onRefresh={issueId ? () => refreshIssue(token || '', issueId, (issueInfo) => {
                         dispatch({ type: 'update', payload: { issueInfo } })
                     }) : undefined} />
