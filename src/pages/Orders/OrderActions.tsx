@@ -1,4 +1,5 @@
 import trackIcon from '@assets/track.png'
+import openUrlIcon from '@assets/open.png'
 import cancelIcon from '@assets/cancel.png'
 import issueIcon from '@assets/warning.png'
 import driverSearch from "@assets/driver_search.png"
@@ -45,7 +46,7 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
             }
         }}>
             <div className={`w-10 h-10 rounded-full border-2 border-red-500 flex items-center justify-center ${orderInfo?.networkOrderId && orderInfo?.orderId ? 'cursor-pointer' : 'opacity-30'}`}><img src={issueIcon} className="w-6" /></div>
-            <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold ${orderInfo?.networkOrderId && orderInfo?.orderId ? '' : 'opacity-30'}`}>Issue</p>
+            <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold ${orderInfo?.networkOrderId && orderInfo?.orderId ? '' : 'opacity-30'}`}>Raise Issue</p>
         </div>
         <div className="flex items-center flex-col" onClick={() => {
             if (orderInfo?.orderId && cancellable(orderInfo?.orderState || '')) {
@@ -87,5 +88,10 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
             </div>
             <p className={`text-sm mt-1 hidden md:block text-red-500 font-semibold ${orderInfo?.riderName && orderInfo?.riderNumber ? '' : 'opacity-30'}`}>Block Rider</p>
         </div> : null}
+        <div className="flex items-center flex-col">
+            {orderInfo?.issueid ? <a className={`w-10 h-10 rounded-full border-2 border-blue-500 flex items-center justify-center`} href={`/issue/${orderInfo.issueid}`} target="_blank">
+                <img src={openUrlIcon} className="w-6" /></a> : <a className={`w-10 h-10 rounded-full border-2 border-blue-500 flex items-center justify-center opacity-25`}><img src={openUrlIcon} className="w-6" /></a>}
+            <p className={`text-sm mt-1 hidden md:block text-blue-500 font-semibold ${!orderInfo?.issueid ? 'opacity-30' : ''}`}>Go to Issue</p>
+        </div>
     </div>
 }

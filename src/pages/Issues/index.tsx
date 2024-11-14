@@ -105,14 +105,31 @@ export default () => {
     }, [])
 
     const getResolutionDuration = (createdAt: string, resolvedAt: string) => {
+        let durationStr = ''
         let totalSeconds = dayjs(resolvedAt).diff(createdAt, 'second');
+
+        const totalDays = Math.floor(totalSeconds / (60 * 60 * 24))
+        totalSeconds = totalSeconds - (totalDays * 60 * 60 * 24)
 
         const totalHours = Math.floor(totalSeconds / (60 * 60))
         totalSeconds = totalSeconds - (totalHours * 60 * 60)
 
-        const totalMinutes = Math.floor(totalSeconds / 60)  
+        const totalMinutes = Math.floor(totalSeconds / 60)
 
-        return `${('0' + totalHours).slice(-2)}:${('0' + totalMinutes).slice(-2)}`
+        if(totalDays> 0) {
+            durationStr += `${totalDays}d`
+            durationStr += `${('0' + totalHours).slice(-2)}h`
+            durationStr += `${('0' + totalMinutes).slice(-2)}m`
+        }else {
+            if(totalHours > 0) {
+                durationStr += `${('0' + totalHours).slice(-2)}h`
+                durationStr += `${('0' + totalMinutes).slice(-2)}m`
+            } else {
+                durationStr += `${('0' + totalMinutes).slice(-2)}m`
+            }
+        }
+
+        return durationStr
     }
 
     return <div>

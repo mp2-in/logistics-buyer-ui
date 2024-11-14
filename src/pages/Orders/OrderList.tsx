@@ -173,6 +173,14 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             keys.push('pickedupAt')
         } else if (order.orderState === 'Order-delivered') {
             keys.push('deliveredAt')
+        } else if (order.orderState === 'At-delivery') {
+            keys.push('atdeliveryAt')
+        } else if (order.orderState === 'Cancelled') {
+            keys.push('atdeliveryAt')
+        } else if (order.orderState === 'RTO-Initiated') {
+            keys.push('rtoPickedupAt')
+        } else if (order.orderState === 'RTO-Disposed' || order.orderState === 'RTO-Delivered') {
+            keys.push('rtoDeliveredAt')
         }
 
         navigator.clipboard.writeText(keys.map(e => `${e} : ${order[e] && ['atpickupAt', 'assignedAt', 'pickedupAt', 'deliveredAt'].includes(e) ? dayjs(order[e].toString()).format('HH:mm') : order[e]}`).join("\n"))
