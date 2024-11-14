@@ -19,7 +19,10 @@ export default ({ open, onClose, markAsUnfulfilled, loading, accountId }: {
     const reasons = [
         { label: "Order / fulfillment not ready for pickup", value: "008", accountId: 'any' },
         { label: "Rider not moving", value: "006", accountId: 'any' },
-        { label: "More Retail - Another rider picked up item already", value: "005", accountId: 'moreretail' }
+        { label: "More Retail - Another rider picked up item already", value: "005", accountId: 'moreretail' },
+        { label: "Order / fulfillment not ready for pickup", value: "008", accountId: undefined },
+        { label: "Rider not moving", value: "006", accountId: undefined },
+        { label: "More Retail - Another rider picked up item already", value: "005", accountId: ['moreretail'] }
     ]
 
 
@@ -30,7 +33,7 @@ export default ({ open, onClose, markAsUnfulfilled, loading, accountId }: {
                 <img src={closeIcon} onClick={onClose} className="w-6 absolute top-1 right-1 cursor-pointer" />
             </div>
             <div className={'flex flex-col items-center mt-5'}>
-                <Select options={reasons.filter(e => e.accountId === 'any' || e.accountId === accountId)}
+                <Select options={reasons.filter(e => e.accountId === undefined || e.accountId.includes(accountId))}
                     onChange={val => setReason(val)} value={reason} label="Reason" hideSearch />
                 <div className="mt-[40px] mb-[25px]">
                     <Button title="Mark as Unfulfilled" variant="primary" onClick={() => markAsUnfulfilled(reason)} loading={loading} disabled={!reason}/>
