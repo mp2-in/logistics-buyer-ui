@@ -7,7 +7,6 @@ import dayjs from "dayjs"
 import { cancellationIdReasonMapping } from "@lib/utils"
 import ShowValue from "@components/ShowValue"
 import OrderActions from "./OrderActions"
-import openLinkIcon from "@assets/open.png"
 
 dayjs.extend(advancedFormat)
 
