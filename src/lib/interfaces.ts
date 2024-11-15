@@ -58,6 +58,7 @@ export interface Order {
     riderNumber: string
     pickupProof: string
     deliveryProof: string
+    issueid: string
     "f.distance": number
 }
 
@@ -138,11 +139,13 @@ export interface Issue {
     orderId: string,
     clientOrderId: string,
     accountId: string,
+    bppId: string,
     issueStatus: string,
     resolutionStatus: string,
     createdat: string,
     statusUpdatedat: string,
     relayedat: string,
+    resolvedat: string,
     closedat: string,
     updatedat: string,
     category: string,
@@ -152,6 +155,9 @@ export interface Issue {
     resolutionAction: string,
     resolutionDescription: string,
     refundAmount: number
+    expectedRefundAmount: number
+    issuedRefundAmount: number
+    rating: string
 }
 
 export interface User {

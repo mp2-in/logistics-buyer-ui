@@ -8,6 +8,7 @@ import warningIcon from "@assets/warning.png"
 import driverSearch from "@assets/driver_search.png"
 import trackIcon from "@assets/track.png"
 import copyIcon from "@assets/copy.png"
+import openLinkIcon from "@assets/open.png"
 import ActivityIndicator from '@components/ActivityIndicator';
 import sortBlackDownIcon from "@assets/sort_black_down.png"
 import sortBlackUpIcon from "@assets/sort_black_up.png"
@@ -162,8 +163,27 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     }
 
     const copyOrderDataToClipboard = (order: Order) => {
-        let keys: (keyof Order)[] = ['orderId', 'clientOrderId', 'networkOrderId', 'orderState', 'providerId', 'riderName', 'riderNumber', 'trackingUrl']
-        navigator.clipboard.writeText(keys.map(e => `${e} : ${order[e]}`).join("\n"))
+        let keys: (keyof Order)[] = ['orderId', 'clientOrderId', 'networkOrderId', 'orderState', 'providerId', 'riderName', 'riderNumber', 'trackingUrl', 'cancelledBy']
+
+        if (order.orderState === 'At-pickup') {
+            keys.push('atpickupAt')
+        } else if (order.orderState === 'Agent-assigned') {
+            keys.push('assignedAt')
+        } else if (order.orderState === 'Order-picked-up') {
+            keys.push('pickedupAt')
+        } else if (order.orderState === 'Order-delivered') {
+            keys.push('deliveredAt')
+        } else if (order.orderState === 'At-delivery') {
+            keys.push('atdeliveryAt')
+        } else if (order.orderState === 'Cancelled') {
+            keys.push('cancelledAt')
+        } else if (order.orderState === 'RTO-Initiated') {
+            keys.push('rtoPickedupAt')
+        } else if (order.orderState === 'RTO-Disposed' || order.orderState === 'RTO-Delivered') {
+            keys.push('rtoDeliveredAt')
+        }
+
+        navigator.clipboard.writeText(keys.map(e => `${e} : ${order[e] && /At$/.test(e) ? dayjs(order[e].toString()).format('HH:mm') : order[e]}`).join("\n"))
     }
 
     const canMarkAsUnfulfilled = (orderState: string) => {
@@ -191,43 +211,45 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             <div className={`absolute  top-[35px] bottom-0 lg:right-5 left-0 w-[1265px] xl:w-full xl:overflow-auto`}>
                 {[...orders].filter(e => chosenOutlets.includes(e.pickupName) || chosenOutlets.length === 0).filter(e => chosenStatus.includes(e.orderState) || chosenStatus.length === 0).sort(sortOrders).map(eachOrder => {
                     return <div key={eachOrder.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center xl:text-sm ${rowBackground(eachOrder.orderState)} h-[40px]`}>
-                        <p className={`flex-[3] ml-0 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p>
-                        <div className={`flex-[6] flex items-center ${rowBackground(eachOrder.orderState)}`}>
+                        <p className={`flex-[3] ml-0 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p> {/*created at*/}
+                        <div className={`flex-[6] flex items-center ${rowBackground(eachOrder.orderState)}`}> {/*order id*/}
                             <input className={`w-full outline-none  border-none ${rowBackground(eachOrder.orderState)} text-center`} readOnly value={eachOrder.clientOrderId} />
                             <img src={copyIcon} className='w-4 cursor-pointer ml-1 active:opacity-30' onClick={() => copyOrderDataToClipboard(eachOrder)} title='Copy order details' />
+                            {eachOrder.issueid ? <a href={`/issue/${eachOrder.issueid}`}><img src={openLinkIcon} className='w-4 cursor-pointer ml-1 active:opacity-30' title='Go to issue' /></a> : <p className='w-4 ml-[6px]' />}
                         </div>
-                        <div className={`flex justify-center items-center h-full flex-[2] ${rowBackground(eachOrder.orderState)} `}>
+                        <div className={`flex justify-center items-center h-full flex-[2] ${rowBackground(eachOrder.orderState)} `}> {/*pcc*/}
                             <p>{eachOrder.pickupOtp || eachOrder.pcc || ' '}</p>
                         </div>
-                        <div className={`flex justify-center items-center h-full flex-[2] ${rowBackground(eachOrder.orderState)} `}>
+                        <div className={`flex justify-center items-center h-full flex-[2] ${rowBackground(eachOrder.orderState)} `}> {/*dcc*/}
                             <p>{eachOrder.dcc || ' '}</p>
                         </div>
-                        <div className={`flex flex-col justify-center items-center h-full flex-[5] ${rowBackground(eachOrder.orderState)} `}>
+                        <div className={`flex flex-col justify-center items-center h-full flex-[5] ${rowBackground(eachOrder.orderState)} `}> {/*status*/}
                             <input className={`border-none outline-none text-center w-full ${rowBackground(eachOrder.orderState)}`} readOnly value={eachOrder.orderState} />
                             {eachOrder.orderState === 'Cancelled' ? <p className='text-xs font-medium'>{eachOrder.cancelledBy} - {eachOrder.cancellationReason}</p> : null}
                         </div>
-                        <div className='flex-[2] flex justify-center items-center'>
+                        <div className='flex-[2] flex justify-center items-center'> {/*LSP*/}
                             <img src={getLogo(eachOrder.providerId)} className='w-7' alt={eachOrder.providerId} title={eachOrder.providerId} />
                         </div>
-                        {eachOrder.riderNumber ? <div className={`flex-col justify-center items-center h-full py-1 flex-[4] ${rowBackground(eachOrder.orderState)}`}>
+                        {eachOrder.riderNumber ? <div className={`flex-col justify-center items-center h-full py-1 flex-[4] ${rowBackground(eachOrder.orderState)}`}> {/*Rider*/}
                             <p className='text-xs'>{trimTextValue(eachOrder.riderName, 12)}</p>
                             <p className='text-xs'>{eachOrder.riderNumber}</p>
                         </div> : <p className={`flex-[4] h-full py-1 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.riderName}</p>}
+                        {/*Distance*/}
                         {(eachOrder.distance || eachOrder['f.distance']) && mapLink(eachOrder) ? <a className={`flex-[3] text-blue-600 underline font-semibold py-3 h-full ${rowBackground(eachOrder.orderState)}`}
                             href={mapLink(eachOrder)} target='_blank'>{`${(eachOrder.distance || eachOrder['f.distance']).toFixed(2)} km`}</a> :
                             <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{(eachOrder.distance || eachOrder['f.distance']) ? `${(eachOrder.distance || eachOrder['f.distance']).toFixed(2)} km` : 0}</p>}
-                        <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.priceWithGST ? `₹ ${eachOrder.priceWithGST.toFixed(2)}` : 0}</p>
-                        <div className={`flex-[4] h-full flex flex-col justify-center items-center ${rowBackground(eachOrder.orderState)}`}>
+                        <p className={`flex-[3] py-3 h-full ${rowBackground(eachOrder.orderState)}`}>{eachOrder.priceWithGST ? `₹ ${eachOrder.priceWithGST.toFixed(2)}` : 0}</p>{/*Price*/}
+                        <div className={`flex-[4] h-full flex flex-col justify-center items-center ${rowBackground(eachOrder.orderState)}`}> {/*Delivery*/}
                             <p className='text-xs'>{eachOrder.deliveredAt ? dayjs(eachOrder.deliveredAt).format('hh:mm A') : '--'}</p>
                             {eachOrder.deliveredAt && eachOrder.rtsAt ? <p className='text-xs font-medium'>{`(${dayjs(eachOrder.deliveredAt).diff(eachOrder.rtsAt, 'minute')} min)`}</p> : null}
                         </div>
-                        <div className={`flex-[2] h-full flex flex-col justify-center items-start ${rowBackground(eachOrder.orderState)}`}>
+                        <div className={`flex-[2] h-full flex flex-col justify-center items-start ${rowBackground(eachOrder.orderState)}`}> {/*POD*/}
                             {eachOrder.pickupProof ? <a href={eachOrder.pickupProof} className='text-xs ml-2 underline text-blue-600 font-medium' target='_blank'>Pickup</a> :
                                 <p className='text-xs ml-2 text-gray-400 font-medium opacity-0'>Pickup</p>}
                             {eachOrder.deliveryProof ? <a href={eachOrder.deliveryProof} className='text-xs ml-2 underline text-blue-600 font-medium' target='_blank'>Drop</a> :
                                 <p className='text-xs ml-2 text-gray-400 font-medium opacity-0'>Drop</p>}
                         </div>
-                        <div className={`flex-[6] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}>
+                        <div className={`flex-[6] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}> {/*Actions*/}
                             <img src={driverSearch} onClick={e => {
                                 if (/unfulfilled/i.test(eachOrder.orderState)) {
                                     onOrderFulfillment(eachOrder.orderId)

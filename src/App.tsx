@@ -19,6 +19,7 @@ import Issues from "@pages/Issues";
 import RedirectOldLink from "@components/RedirectOldLink";
 import OrderInfoPage from "@pages/Orders/OrderInfoPage";
 import Manage from "@pages/Manage";
+import IssueInfoPage from "@pages/Issues/IssueInfoPage";
 
 
 const RequireAuth = ({ children, loggedIn }: { children: React.ReactNode, loggedIn: boolean }) => {
@@ -46,6 +47,8 @@ export default function App() {
       <Route path="/" element={<RequireAuth loggedIn={loggedIn}><><Outlet /></></RequireAuth>}>
         <Route path="order/:orderId" element={<OrderInfoPage />} />
         <Route path="orders/:orderId" element={<OrderInfoPage />} />
+        <Route path="issue/:issueId" element={<IssueInfoPage />} />
+        <Route path="issues/:issueId" element={<IssueInfoPage />} />
         <Route path="order" element={<OrderInfoPage />} />
         <Route path="orders" element={<Orders />} />
         <Route path="wallet" element={<Wallet />} />
