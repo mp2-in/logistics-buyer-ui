@@ -163,7 +163,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
     }
 
     const copyOrderDataToClipboard = (order: Order) => {
-        let keys: (keyof Order)[] = ['orderId', 'clientOrderId', 'networkOrderId', 'orderState', 'providerId', 'riderName', 'riderNumber', 'trackingUrl', 'cancelledBy']
+        let keys: (keyof Order)[] = ['orderId', 'clientOrderId', 'networkOrderId', 'orderState', 'providerId', 'riderName', 'riderNumber', 'trackingUrl']
 
         if (order.orderState === 'At-pickup') {
             keys.push('atpickupAt')
@@ -177,6 +177,7 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
             keys.push('atdeliveryAt')
         } else if (order.orderState === 'Cancelled') {
             keys.push('cancelledAt')
+            keys.push('cancelledBy')
         } else if (order.orderState === 'RTO-Initiated') {
             keys.push('rtoPickedupAt')
         } else if (order.orderState === 'RTO-Disposed' || order.orderState === 'RTO-Delivered') {
