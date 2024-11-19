@@ -10,7 +10,7 @@ interface Attributes {
 
 interface State extends Attributes {
     getIssues: (token: string, filterDate?: string) => void
-    closeIssue: (token: string, issueId: string, callback: (success: boolean, message: string) => void) => void
+    closeIssue: (token: string, issueId: string, rating: 'THUMBS-UP' | 'THUMBS-DOWN' | undefined, callback: (success: boolean, message: string) => void) => void
     refreshIssue: (token: string, issueId: string, callback?: (issueDetails: Issue) => void) => void
     getIssueInfo: (token: string, issueId: string, callback: (success: boolean, issueInfo?: Issue) => void) => void
 }
@@ -38,12 +38,12 @@ export const useIssuesStore = create<State>()((set) => ({
                 }))
             })
     },
-    closeIssue: async (token, issueId, callback) => {
+    closeIssue: async (token, issueId, rating, callback) => {
         set(produce((state: State) => {
             state.activity.closeIssue = true
         }))
         Api('/webui/order/issue_close', {
-            method: 'post', headers: { 'Content-Type': 'application/json', token }, data: { issue: { id: issueId } }
+            method: 'post', headers: { 'Content-Type': 'application/json', token }, data: { issue: { id: issueId }, rating: rating || null }
         })
             .then(res => {
                 set(produce((state: State) => {
