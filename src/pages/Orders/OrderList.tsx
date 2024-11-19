@@ -213,10 +213,10 @@ export default ({ onAddOrder, onRefresh, changeDate, onCancelOrder, orders, acti
                 {[...orders].filter(e => chosenOutlets.includes(e.pickupName) || chosenOutlets.length === 0).filter(e => chosenStatus.includes(e.orderState) || chosenStatus.length === 0).sort(sortOrders).map(eachOrder => {
                     return <div key={eachOrder.orderId} className={`flex items-center w-full text-xs relative border-b *:text-center xl:text-sm ${rowBackground(eachOrder.orderState)} h-[40px]`}>
                         <p className={`flex-[3] ml-0 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p> {/*created at*/}
-                        <div className={`flex-[6] flex items-center ${rowBackground(eachOrder.orderState)}`}> {/*bill number*/}
+                        <div className={`flex-[6] flex items-center ${rowBackground(eachOrder.orderState)} justify-between`}> {/*bill number*/}
                             <input className={`w-full outline-none  border-none ${rowBackground(eachOrder.orderState)} text-center`} readOnly value={eachOrder.clientOrderId} />
                             <img src={copyIcon} className='w-4 cursor-pointer ml-1 active:opacity-30' onClick={() => copyOrderDataToClipboard(eachOrder)} title='Copy order details' />
-                            {eachOrder.issueid ? <a href={`/issue/${eachOrder.issueid}`} target='_blank'><img src={openLinkIcon} className='w-4 cursor-pointer ml-1 active:opacity-30' title='Go to issue' /></a> : <p className='w-4 ml-[6px]' />}
+                            {eachOrder.issueid ? <a href={`/issue/${eachOrder.issueid}`} target='_blank'><img src={openLinkIcon} className='w-4 cursor-pointer mx-[3px] active:opacity-30' title='Go to issue' /></a> : <p className='w-4 mx-[3px]' />}
                         </div>
                         <div className={`flex justify-center items-center h-full flex-[2] ${rowBackground(eachOrder.orderState)} `}> {/*pcc*/}
                             <p>{eachOrder.pickupOtp || eachOrder.pcc || ' '}</p>
