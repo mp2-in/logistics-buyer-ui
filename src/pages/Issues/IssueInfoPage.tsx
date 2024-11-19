@@ -86,9 +86,9 @@ export default () => {
             </div>
         </div>
         <CloseIssueConfirmation open={state.showCloseConfirmation} onClose={() => dispatch({ type: 'update', payload: { showCloseConfirmation: false } })}
-            closeIssue={() => {
+            closeIssue={(rating) => {
                 if (issueId) {
-                    closeIssue(token || '', issueId, (success, message) => {
+                    closeIssue(token || '', issueId, rating, (success, message) => {
                         if (success) {
                             dispatch({ type: 'update', payload: { showCloseConfirmation: false } })
                             setToast(message, 'success')
