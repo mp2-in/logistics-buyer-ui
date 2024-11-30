@@ -14,6 +14,7 @@ export interface Order {
     pickupOtp: string
     dcc: string
     cancelledBy: string
+    cancellingUser: string
     cancellationReason: string
     storeId: string
     trackingUrl: string
