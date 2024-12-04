@@ -6,6 +6,8 @@ import sortBlackDownIcon from "@assets/sort_black_down.png"
 import sortBlackUpIcon from "@assets/sort_black_up.png"
 import sortGreyDownIcon from "@assets/sort_grey_down.png"
 import sortGreyUpIcon from "@assets/sort_grey_up.png"
+import thumbsDownFilled from '@assets/thumb_down_grey_filled.png'
+import thumbsUpFilled from '@assets/thumb_up_grey_filled.png'
 import { Issue } from "@lib/interfaces"
 import dayjs from "dayjs"
 import TopBar from "@components/TopBar"
@@ -116,12 +118,12 @@ export default () => {
 
         const totalMinutes = Math.floor(totalSeconds / 60)
 
-        if(totalDays> 0) {
+        if (totalDays > 0) {
             durationStr += `${totalDays}d`
             durationStr += `${('0' + totalHours).slice(-2)}h`
             durationStr += `${('0' + totalMinutes).slice(-2)}m`
-        }else {
-            if(totalHours > 0) {
+        } else {
+            if (totalHours > 0) {
                 durationStr += `${('0' + totalHours).slice(-2)}h`
                 durationStr += `${('0' + totalMinutes).slice(-2)}m`
             } else {
@@ -155,21 +157,25 @@ export default () => {
                 <div className={`absolute  top-[35px] bottom-0 lg:right-5 left-0 w-[1265px] xl:w-full xl:overflow-auto`}>
                     {[...issues].sort(sortOrders).map(eachIssue => {
                         return <div key={eachIssue.issueId} className={`flex items-center w-full text-xs relative border-b *:text-center xl:text-sm h-[40px] ${rowBackground(eachIssue.issueStatus, eachIssue.resolutionStatus)}`}>
-                            <p className={`flex-[4] ml-0`}>{eachIssue.createdat ? dayjs(eachIssue.createdat).format('MMM Do,hh:mm A') : '--'}</p>
-                            <div className={`flex-[6] flex items-center`}>
+                            <p className={`flex-[4] ml-0`}>{eachIssue.createdat ? dayjs(eachIssue.createdat).format('MMM Do,hh:mm A') : '--'}</p> {/*created at*/}
+                            <div className={`flex-[6] flex items-center`}> {/*bill number*/}
                                 <input className={`w-full outline-none  border-none text-center ${rowBackground(eachIssue.issueStatus, eachIssue.resolutionStatus)}`} readOnly value={eachIssue.clientOrderId} />
                                 <img src={copyIcon} className='w-4 cursor-pointer ml-1 active:opacity-30' onClick={() => copyIssueDataToClipboard(eachIssue)} title="Copy issue details" />
                             </div>
-                            <div className={`flex justify-center items-center h-full flex-[5]`}>
+                            <div className={`flex justify-center items-center h-full flex-[5]`}> {/*updated at*/}
                                 <p>{eachIssue.statusUpdatedat ? dayjs(eachIssue.statusUpdatedat).format('MMM Do,hh:mm A') : ''}</p>
                             </div>
-                            <div className={`flex flex-col justify-center items-center h-full flex-[3] ${rowBackground(eachIssue.issueStatus, eachIssue.resolutionStatus)}`}>
+                            <div className={`flex flex-col justify-center items-center h-full flex-[3] ${rowBackground(eachIssue.issueStatus, eachIssue.resolutionStatus)}`}> {/*status*/}
                                 <input className={`border-none outline-none text-center w-full bg-inherit`} readOnly value={eachIssue.resolutionStatus} />
-                                {eachIssue.resolvedat ? <p className="text-xs font-medium">{`(${getResolutionDuration(eachIssue.createdat, eachIssue.resolvedat)})`}</p> : null}
+                                <div className="flex items-center">
+                                    {eachIssue.resolvedat ? <p className="text-xs font-medium">{`(${getResolutionDuration(eachIssue.createdat, eachIssue.resolvedat)})`}</p> : null}
+                                    {eachIssue.rating ? <img src={eachIssue.rating === 'THUMBS-UP' ? thumbsUpFilled : thumbsDownFilled} className="w-[14px] ml-2"/> : null}
+                                </div>
                             </div>
                             <textarea readOnly className={`h-[38px] flex-[5] text-xs resize-none outline-none border-none ${rowBackground(eachIssue.issueStatus, eachIssue.resolutionStatus)}`}
-                                value={(eachIssue.shortDescription || '').length > 40 ? `${eachIssue.shortDescription.substring(0, 40)}...` : (eachIssue.shortDescription || '')} />
-                            <p className={`flex-[3] h-full py-1 text-xs`}>{eachIssue.resolutionAction}</p>
+                                value={(eachIssue.shortDescription || '').length > 40 ? `${eachIssue.shortDescription.substring(0, 40)}...` : (eachIssue.shortDescription || '')} /> {/*description*/}
+                            <p className={`flex-[3] h-full py-1 text-xs`}>{eachIssue.resolutionAction}</p> {/*action*/}
+                            {/*resolution*/}
                             {!!eachIssue.resolutionDescription ? <div className={`h-[36px] flex-[5] text-xs pt-[2px] cursor-pointer rounded-md 
                             ${rowBackground(eachIssue.issueStatus, eachIssue.resolutionStatus)} border border-transparent overflow-hidden hover:border-slate-400`} onClick={() => {
                                     if (eachIssue.resolutionDescription) {
@@ -181,10 +187,10 @@ export default () => {
                                         {(eachIssue.resolutionDescription || '').length > 40 ? `${eachIssue.resolutionDescription.substring(0, 40)}...` : (eachIssue.resolutionDescription || '')}
                                     </p>}
                             </div> : <p className="flex-[5]" />}
-                            <div className={`flex justify-center items-center h-full flex-[3]`}>
+                            <div className={`flex justify-center items-center h-full flex-[3]`}> {/*Refund amt*/}
                                 <p className={`text-center w-full`}>{eachIssue.refundAmount}</p>
                             </div>
-                            <div className={`flex-[2] h-full py-1 flex justify-between items-center`}>
+                            <div className={`flex-[2] h-full py-1 flex justify-between items-center`}> {/*actions*/}
                                 <img src={closeIcon} onClick={e => {
                                     if (eachIssue.issueStatus !== 'CLOSED') {
                                         dispatch({ type: 'update', payload: { closeIssue: eachIssue.issueId } })

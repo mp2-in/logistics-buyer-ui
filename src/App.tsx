@@ -19,8 +19,8 @@ import Issues from "@pages/Issues";
 import RedirectOldLink from "@components/RedirectOldLink";
 import OrderInfoPage from "@pages/Orders/OrderInfoPage";
 import Manage from "@pages/Manage";
-import Serviceability from "@pages/Serviceability";
 import IssueInfoPage from "@pages/Issues/IssueInfoPage";
+import PaytmHome from "@pages/Paytm/Home";
 
 
 const RequireAuth = ({ children, loggedIn }: { children: React.ReactNode, loggedIn: boolean }) => {
@@ -45,7 +45,6 @@ export default function App() {
     {checkStatus ? <Routes>
       <Route path="" element={<Navigate to={'/login'} />} />
       <Route path="/login" element={<Login />} />
-      <Route path="serviceability" element={<Serviceability />} />
       <Route path="/" element={<RequireAuth loggedIn={loggedIn}><><Outlet /></></RequireAuth>}>
         <Route path="order/:orderId" element={<OrderInfoPage />} />
         <Route path="orders/:orderId" element={<OrderInfoPage />} />
@@ -57,6 +56,7 @@ export default function App() {
         <Route path="reports" element={<Reports />} />
         <Route path="issues" element={<Issues />} />
         <Route path="manage" element={<Manage />} />
+        <Route path="paytm/home" element={<PaytmHome />} />
         <Route path="u/:component" element={<RedirectOldLink />} />
       </Route>
     </Routes> : <ActivityIndicator />}

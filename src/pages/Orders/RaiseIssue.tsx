@@ -31,7 +31,7 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus, orderAmount, 
     ]
     const [issue, setIssue] = useState('')
     const [description, setDescription] = useState('')
-    const [imageUrl, setImageUrl] = useState<string|undefined>(undefined)
+    const [imageUrl, setImageUrl] = useState<string | undefined>(undefined)
     const [refundAmount, setRefundAmount] = useState<number | undefined>(undefined)
 
     useEffect(() => {
@@ -73,31 +73,25 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus, orderAmount, 
     // }
 
     return <Modal open={open} onClose={onClose}>
-        <div className={'bg-white rounded flex flex-col items-center py-[10px] px-[20px] md:w-[600px] w-[350px] relative'} onMouseDown={e => e.stopPropagation()}>
+        <div className={'bg-white rounded flex flex-col items-center py-[10px] px-[20px] md:w-[460px] w-[350px] relative'} onMouseDown={e => e.stopPropagation()}>
             <div className={'flex justify-between w-full items-center mb-[10px]'}>
                 <p className="text-xl font-semibold">Raise Issue</p>
                 <img src={closeIcon} onClick={onClose} className="w-6 absolute top-1 right-1 cursor-pointer" />
             </div>
-            <div className={'flex flex-col items-center mt-3 *:my-2'}>
+            <div className={'flex flex-col items-start mt-3 *:my-2 w-full px-2'}>
                 <Select options={issuesList.filter(filterIssueReasons).map(e => ({ label: e, value: e }))}
                     onChange={val => {
                         setIssue(val)
                         //setRefundAmount(getRefundAmount(val))
-                    }} value={issue} label="Issue" size={'large'} />
-                <div>
-                    <TextArea label="Description" value={description} onChange={val => setDescription(val)} size="large" />
-                </div>
-                <div className="w-full flex flex-col items-start text-sm">
+                    }} value={issue} label="Issue" />
+                <TextArea label="Description" value={description} onChange={val => setDescription(val)} />
+                <div className="w-full flex flex-col items-start text-sm *:my-2">
                     <p className="bg-gray-200 px-2 py-1 mb-1 rounded-md">Order Amount: <span className="font-bold">₹ {orderAmount}</span></p>
                     <p className="bg-gray-200 px-2 py-1 rounded-md">Delivery Fee: <span className="font-bold">₹ {deliveryFee}</span></p>
-                </div>
-                <div className="w-full">
                     <Input label="Refund Amount" type='number' value={refundAmount} onChange={val => /^[0-9.]*$/.test(val) && setRefundAmount(parseFloat(val))} size='small' />
+                    <Input label="File URL" value={imageUrl} onChange={val => setImageUrl(val)} />
                 </div>
-                <div className="w-full">
-                    <Input label="File URL" value={imageUrl} onChange={val => setImageUrl(val)} size='large' />
-                </div>
-                <div className="py-3">
+                <div className="py-3 flex justify-center w-full items-center">
                     <Button title="Raise Issue" variant="primary" onClick={() => raiseIssue(issue, description, refundAmount, imageUrl)} loading={loading} disabled={!issue || !description} />
                 </div>
             </div>

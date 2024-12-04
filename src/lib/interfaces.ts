@@ -13,6 +13,7 @@ export interface Order {
     pcc: string
     dcc: string
     cancelledBy: string
+    cancellingUser: string
     cancellationReason: string
     storeId: string
     trackingUrl: string

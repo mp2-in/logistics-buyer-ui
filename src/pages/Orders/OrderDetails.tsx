@@ -123,10 +123,10 @@ export default ({ orderInfo, onCancelOrder, onIssueReport, onOrderFulfillment, o
         <p className="font-bold bg-slate-100 my-2 py-1 px-3 w-full rounded-md">Cancellation</p>
         <div className="md:flex justify-between">
             <ShowValue label="Cancelled At" value={orderInfo?.cancelledAt} isDate />
-            <ShowValue label="Cancelled by" value={orderInfo?.cancelledBy} />
+            <ShowValue label="Cancelled by" value={`${orderInfo?.cancelledBy} ${orderInfo?.cancellingUser}`} />
         </div>
         <div className="flex justify-between">
             <ShowValue label="Reason" value={cancellationIdReasonMapping[orderInfo?.cancellationReason || '']} large />
         </div>
     </>
-}   
+}
