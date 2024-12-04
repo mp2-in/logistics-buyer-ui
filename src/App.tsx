@@ -2,7 +2,8 @@ import {
   Routes,
   Route,
   Navigate,
-  Outlet
+  Outlet,
+  useLocation
 } from "react-router-dom";
 
 import './index.css'
@@ -22,13 +23,18 @@ import Manage from "@pages/Manage";
 import IssueInfoPage from "@pages/Issues/IssueInfoPage";
 import PaytmHome from "@pages/Paytm/Home";
 
-
-const RequireAuth = ({ children, loggedIn }: { children: React.ReactNode, loggedIn: boolean }) => {
-  return loggedIn ? children : <Navigate to={'/login'} />;
+const RequireAuth = ({ children, loggedIn, setRedirectPath }: { children: React.ReactNode, loggedIn: boolean, setRedirectPath: (path: string) => void }) => {
+  if (loggedIn) {
+    return children
+  } else {
+    const loc = useLocation()
+    setRedirectPath(loc.pathname)
+    return <Navigate to={'/login'} />
+  }
 }
 
 export default function App() {
-  let { loggedIn, checkLoginStatus } = useAppConfigStore(state => ({ loggedIn: state.loggedIn, checkLoginStatus: state.checkLoginStatus }));
+  let { loggedIn, checkLoginStatus, setRedirectPath } = useAppConfigStore(state => ({ loggedIn: state.loggedIn, checkLoginStatus: state.checkLoginStatus, setRedirectPath: state.setRedirectPath }));
   const [checkStatus, setStatus] = useState(false)
 
   useEffect(() => {
@@ -45,7 +51,7 @@ export default function App() {
     {checkStatus ? <Routes>
       <Route path="" element={<Navigate to={'/login'} />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/" element={<RequireAuth loggedIn={loggedIn}><><Outlet /></></RequireAuth>}>
+      <Route path="/" element={<RequireAuth loggedIn={loggedIn} setRedirectPath={path => setRedirectPath(path)}><><Outlet /></></RequireAuth>}>
         <Route path="order/:orderId" element={<OrderInfoPage />} />
         <Route path="orders/:orderId" element={<OrderInfoPage />} />
         <Route path="issue/:issueId" element={<IssueInfoPage />} />
