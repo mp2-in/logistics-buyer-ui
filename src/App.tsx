@@ -20,6 +20,7 @@ import RedirectOldLink from "@components/RedirectOldLink";
 import OrderInfoPage from "@pages/Orders/OrderInfoPage";
 import Manage from "@pages/Manage";
 import IssueInfoPage from "@pages/Issues/IssueInfoPage";
+import PaytmHome from "@pages/Paytm/Home";
 
 
 const RequireAuth = ({ children, loggedIn }: { children: React.ReactNode, loggedIn: boolean }) => {
@@ -55,6 +56,7 @@ export default function App() {
         <Route path="reports" element={<Reports />} />
         <Route path="issues" element={<Issues />} />
         <Route path="manage" element={<Manage />} />
+        <Route path="paytm/home" element={<PaytmHome />} />
         <Route path="u/:component" element={<RedirectOldLink />} />
       </Route>
     </Routes> : <ActivityIndicator />}
