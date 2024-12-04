@@ -34,19 +34,20 @@ export default () => {
     const [errMsg, setErrMsg] = useState<string | undefined>(undefined)
     let inputRef = createRef<HTMLInputElement>();
 
-    const { sendOtp, verifyOtp, activity, loggedIn, verifyGmail } = useAppConfigStore(state => ({
+    const { sendOtp, verifyOtp, activity, loggedIn, verifyGmail, redirectPath } = useAppConfigStore(state => ({
         sendOtp: state.sendOtp,
         verifyOtp: state.verifyOtp,
         activity: state.activity,
         loggedIn: state.loggedIn,
-        verifyGmail: state.verifyGmail
+        verifyGmail: state.verifyGmail,
+        redirectPath: state.redirectPath
     }))
 
     const navigate = useNavigate()
 
     useEffect(() => {
         if (loggedIn) {
-            navigate('/orders')
+            navigate(redirectPath)
         }
     }, [loggedIn])
 
@@ -111,7 +112,7 @@ export default () => {
                     } else {
                         verifyOtp(phoneNumber, otp, (success, message) => {
                             if (success) {
-                                navigate('/orders')
+                                navigate(redirectPath)
                             } else {
                                 setOtp('')
                                 setErrMsg(message)
@@ -129,7 +130,7 @@ export default () => {
                     const decoded = jwtDecode(credentialResponse.credential || '') as IJwtPayload;
                     verifyGmail(decoded.email || '', decoded.jti || '', (success, message) => {
                         if (success) {
-                            navigate('/orders')
+                            navigate(redirectPath)
                         } else {
                             setErrMsg(message)
                         }
