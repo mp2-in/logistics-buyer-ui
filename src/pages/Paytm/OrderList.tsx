@@ -1,16 +1,15 @@
 import dayjs from 'dayjs'
 import { useState } from 'react';
-
-import copyIcon from "@assets/copy.png"
-import openLinkIcon from "@assets/open.png"
 import sortBlackDownIcon from "@assets/sort_black_down.png"
 import sortBlackUpIcon from "@assets/sort_black_up.png"
 import sortGreyDownIcon from "@assets/sort_grey_down.png"
 import sortGreyUpIcon from "@assets/sort_grey_up.png"
+import trackIcon from "@assets/track.png"
+import cancelIcon from "@assets/cancel.png"
 
 import { Order } from '@lib/interfaces'
 
-import { trimTextValue } from '@lib/utils';
+import { cancellable, trimTextValue } from '@lib/utils';
 
 
 const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: string, label: string, sort?: 'asc' | 'dsc', hidden?: boolean, onClick: () => void }) => {
@@ -24,7 +23,7 @@ const HeaderField = ({ cssClass, label, sort, hidden, onClick }: { cssClass: str
 }
 
 
-export default ({orders}: {orders: Order[]}) => {
+export default ({ orders, onCancelOrder }: { orders: Order[], onCancelOrder: (orderId: string) => void }) => {
 
     const [sortOrder, setSortOrder] = useState<'asc' | 'dsc'>('dsc')
     const [sortField, setSortField] = useState<keyof Order>('createdAt')
@@ -49,31 +48,6 @@ export default ({orders}: {orders: Order[]}) => {
         }
     }
 
-    const copyOrderDataToClipboard = (order: Order) => {
-        let keys: (keyof Order)[] = ['orderId', 'clientOrderId', 'networkOrderId', 'orderState', 'providerId', 'riderName', 'riderNumber', 'trackingUrl']
-
-        if (order.orderState === 'At-pickup') {
-            keys.push('atpickupAt')
-        } else if (order.orderState === 'Agent-assigned') {
-            keys.push('assignedAt')
-        } else if (order.orderState === 'Order-picked-up') {
-            keys.push('pickedupAt')
-        } else if (order.orderState === 'Order-delivered') {
-            keys.push('deliveredAt')
-        } else if (order.orderState === 'At-delivery') {
-            keys.push('atdeliveryAt')
-        } else if (order.orderState === 'Cancelled') {
-            keys.push('cancelledAt')
-            keys.push('cancelledBy')
-        } else if (order.orderState === 'RTO-Initiated') {
-            keys.push('rtoPickedupAt')
-        } else if (order.orderState === 'RTO-Disposed' || order.orderState === 'RTO-Delivered') {
-            keys.push('rtoDeliveredAt')
-        }
-
-        navigator.clipboard.writeText(keys.map(e => `${e} : ${order[e] && /At$/.test(e) ? dayjs(order[e].toString()).format('HH:mm') : order[e]}`).join("\n"))
-    }
-
     return <div className={`absolute left-0 right-0 top-14 bottom-14 lg:px-5 px-2 md:top-[70px]`} >
         <div className='absolute top-[15px] left-2 right-2 bottom-1 overflow-auto md:top-[195px] lg:top-[130px] 2xl:top-[130px]'>
             <div className={`flex items-center bg-blue-300 *:text-center *:font-medium  *:text-sm xl:*:text-sm w-[1265px] xl:w-full`}>
@@ -87,6 +61,7 @@ export default ({orders}: {orders: Order[]}) => {
                 <HeaderField cssClass='flex-[3] bg-blue-300 py-2' label='Price' sort={sortField === 'deliveryFee' ? sortOrder : undefined} onClick={() => updateSortField('deliveryFee')} />
                 <HeaderField cssClass='flex-[4] bg-blue-300 py-2' label='Delivery' sort={sortField === 'deliveredAt' ? sortOrder : undefined} onClick={() => updateSortField('deliveredAt')} />
                 <p className={`flex-[2] mr-0 bg-blue-300 py-2 pr-1`}>POD</p>
+                <p className={`flex-[3] mr-0 bg-blue-300 py-2 pr-1`}>Actions</p>
             </div>
             <div className={`absolute  top-[35px] bottom-0 lg:right-5 left-0 w-[1265px] xl:w-full xl:overflow-auto`}>
                 {orders.map(eachOrder => {
@@ -94,8 +69,6 @@ export default ({orders}: {orders: Order[]}) => {
                         <p className={`flex-[3] ml-0 ${rowBackground(eachOrder.orderState)}`}>{eachOrder.createdAt ? dayjs(eachOrder.createdAt).format('hh:mm A') : '--'}</p> {/*created at*/}
                         <div className={`flex-[6] flex items-center ${rowBackground(eachOrder.orderState)} justify-between`}> {/*bill number*/}
                             <input className={`w-full outline-none  border-none ${rowBackground(eachOrder.orderState)} text-center`} readOnly value={eachOrder.clientOrderId} />
-                            <img src={copyIcon} className='w-4 cursor-pointer ml-1 active:opacity-30' onClick={() => copyOrderDataToClipboard(eachOrder)} title='Copy order details' />
-                            {eachOrder.issueid ? <a href={`/issue/${eachOrder.issueid}`} target='_blank'><img src={openLinkIcon} className='w-4 cursor-pointer mx-[3px] active:opacity-30' title='Go to issue' /></a> : <p className='w-4 mx-[3px]' />}
                         </div>
                         <div className={`flex justify-center items-center h-full flex-[2] ${rowBackground(eachOrder.orderState)} `}> {/*pcc*/}
                             <p>{eachOrder.pickupOtp || eachOrder.pcc || ' '}</p>
@@ -125,6 +98,19 @@ export default ({orders}: {orders: Order[]}) => {
                                 <p className='text-xs ml-2 text-gray-400 font-medium opacity-0'>Pickup</p>}
                             {eachOrder.deliveryProof ? <a href={eachOrder.deliveryProof} className='text-xs ml-2 underline text-blue-600 font-medium' target='_blank'>Drop</a> :
                                 <p className='text-xs ml-2 text-gray-400 font-medium opacity-0'>Drop</p>}
+                        </div>
+                        <div className={`flex-[6] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}> {/*Actions*/}
+                            {eachOrder.trackingUrl ? <a href={eachOrder.trackingUrl} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-5' onClick={e => e.stopPropagation()}>
+                                <img src={trackIcon} title='Track Shipment' className='w-5' />
+                            </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-5'>
+                                <img src={trackIcon} title='Track Shipment' className='w-5 opacity-40' />
+                            </a>}
+                            <img src={cancelIcon} onClick={e => {
+                                if (cancellable(eachOrder.orderState)) {
+                                    onCancelOrder(eachOrder.orderId)
+                                }
+                                e.stopPropagation()
+                            }} title='Cancel Order' className={`w-5 ${cancellable(eachOrder.orderState) ? 'cursor-pointer' : 'opacity-30 cursor-default'}`} />
                         </div>
                     </div>
                 })}

@@ -17,6 +17,8 @@ export interface OrderFormData {
     orderAmount: string
     showQuotes: boolean
     pickupOtp: string
+    showCancelOrderModal: boolean
+    toBeCancelledOrder?: string
     quote?: {
         minPrice: number
         maxPrice: number

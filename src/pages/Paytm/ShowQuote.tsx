@@ -37,7 +37,7 @@ export default ({ onClick, distance, pickupEta, sla, minPrice, maxPrice, loading
             </div>}
         </div>
         {orderId ?
-            <div className="absolute bottom-10 w-full px-4">
+            <div className="absolute bottom-10 w-full px-4 border">
                 <div className="flex w-full items-center justify-center my-4 flex-col *:mb-10">
                     <Button title="Place another Order" onClick={() => {
                         reset()
@@ -48,7 +48,7 @@ export default ({ onClick, distance, pickupEta, sla, minPrice, maxPrice, loading
                         navigate('/paytm/orders')
                     }}/>
                 </div>
-            </div> : <div className="absolute bottom-10 w-full px-4">
+            </div> : <div className="absolute bottom-10 w-full px-4 border">
                 <p>Available wallet balance: Rs 254</p>
                 <div className="flex w-full items-center justify-center my-4">
                     <Button title="Place Order" onClick={() => onClick((orderId) => {

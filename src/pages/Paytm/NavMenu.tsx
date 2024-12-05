@@ -1,4 +1,4 @@
-import walletIcon from "@assets/wallet.png"
+import manageIcon from "@assets/manage_account.png"
 import overviewIcon from "@assets/overview.png"
 import headsetIcon from "@assets/headset.png"
 import homeIcon from "./home.png"
@@ -12,7 +12,7 @@ const MainMenuItem = ({ icon, onClick, selected, disabled }: { icon: React.React
     </div>
 }
 
-export default ({ onClick, disabled, loading }: { onClick?: () => void, disabled?: boolean, loading?: boolean }) => {
+export default ({ onClick, disabled, loading, page }: { onClick?: () => void, disabled?: boolean, loading?: boolean, page: string }) => {
     const navigate = useNavigate()
 
     return <div className="absolute -bottom-1 w-full">
@@ -27,9 +27,9 @@ export default ({ onClick, disabled, loading }: { onClick?: () => void, disabled
             </div>
         </div> : null}
         <div className="flex justify-between w-full border-t border-gray-400 h-[60px] items-center px-2">
-            <MainMenuItem icon={<img src={homeIcon} className={`w-8`}/>} selected={!!onClick} onClick={() => navigate('/paytm/home')}/>
-            <MainMenuItem icon={<img src={overviewIcon} className={`w-8`} />} selected={!onClick} onClick={() => navigate('/paytm/orders')}/>
-            <MainMenuItem icon={<img src={walletIcon} className={`w-8`} />} disabled/>
+            <MainMenuItem icon={<img src={homeIcon} className={`w-8`}/>} selected={page === 'neworder'} onClick={() => navigate('/paytm/neworder')}/>
+            <MainMenuItem icon={<img src={overviewIcon} className={`w-8`} />} selected={page === 'orders'} onClick={() => navigate('/paytm/orders')}/>
+            <MainMenuItem icon={<img src={manageIcon} className={`w-8`} />} selected={page === 'settings'} onClick={() => navigate('/paytm/settings')}/>
             <MainMenuItem icon={<img src={headsetIcon} className={`w-8`} />} disabled/>
         </div>
     </div>
