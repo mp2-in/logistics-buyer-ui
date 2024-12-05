@@ -74,7 +74,7 @@ export default () => {
                             line2: state.dropFormattedAddressLine2,
                             city: state.city, state: state.state
                         }, pincode: state.pincode, phone: state.phoneNumber
-                    }, state.orderAmount, undefined, undefined, undefined, (success, message) => {
+                    }, state.orderAmount, undefined, undefined, undefined, false, (success, message) => {
                         if (success) {
                             getOrders(token||'', dayjs().format('YYYY-MM-DD'))
                             callback(message || '')
