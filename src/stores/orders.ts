@@ -21,7 +21,7 @@ interface State extends Attributes {
         quoteId: string | undefined, itemId: string | undefined, callback: (success: boolean, message?: string, insufficientBalance?: boolean) => void) => void
     cancelOrder: (token: string, orderId: string, cancellationReason: string, isSuperAdmin: boolean, callback: (success: boolean, message?: string) => void) => void
     unfulfillOrder: (token: string, orderId: string, reasonCode: string, callback: (success: boolean, message: string) => void) => void
-    getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, callback: (success: boolean, quoteId: string, message?: string) => void) => void
+    getPriceQuote: (token: string, storeId: string, drop: LocationAddress, orderAmount: number, callback: (success: boolean, quoteId: string, message?: string, priceQuotes?: PriceQuote[]) => void) => void
     addOutlet: (action: 'create' | 'update', token: string, storeId: string, drop: LocationAddress, placesId: string, callback: (success: boolean, message?: string) => void) => void
     saveInStorage: (keyName: string, value: string) => void
     getCustomerInfo: (token: string, phone: string, callback: (customerInfo: LocationAddress) => void) => void
@@ -153,7 +153,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                     state.activity.createOrder = false
                 }))
                 if (res.status === 1) {
-                    callback(true)
+                    callback(true, res.order.id)
                 } else {
                     callback(false, res.message || 'Error creating order', res.error_code === 2)
                 }
@@ -263,7 +263,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                             state.activity.getPriceQuote = false
                             state.orderPriceQuote = res.quotes
                         }))
-                        callback(true, res.quote_id)
+                        callback(true, res.quote_id, undefined, res.quotes)
                     } else {
                         set(produce((state: State) => {
                             state.activity.getPriceQuote = false

@@ -18,6 +18,7 @@ interface Attributes {
     toastVisibility: boolean
     activity: { [k: string]: boolean }
     page?: string
+    redirectPath: string
 }
 
 interface State extends Attributes {
@@ -35,9 +36,10 @@ interface State extends Attributes {
     addUser: (token: string, phoneNumber: string, username: string, email: string | undefined, role: string, accountId: string, callback: (success: boolean, message: string) => void) => void
     validateGst: (token: string, gstIn: string, callback: (valid: boolean) => void) => void
     getAccountUsers: (token: string, accountId: string, callback: (users: User[]) => void) => void
+    setRedirectPath: (path: string) => void
 }
 
-const initialState: Attributes = { loggedIn: false, activity: {}, toastMessage: '', toastVisibility: false, accountIds: [] };
+const initialState: Attributes = { loggedIn: false, activity: {}, toastMessage: '', toastVisibility: false, accountIds: [], redirectPath: '/orders' };
 
 export const useAppConfigStore = create<State>()((set) => ({
     ...initialState,
@@ -360,5 +362,10 @@ export const useAppConfigStore = create<State>()((set) => ({
                     state.activity.getAccountUsers = false
                 }))
             })
+    },
+    setRedirectPath: (path) => {
+        set(produce((state: State) => {
+            state.redirectPath = path
+        }))
     },
 }))

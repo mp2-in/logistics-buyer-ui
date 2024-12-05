@@ -132,6 +132,7 @@ export interface PriceQuote {
     price_rto: number
     logistics_seller: string
     price_with_gst: number
+    distance: number
 }
 
 export interface Issue {

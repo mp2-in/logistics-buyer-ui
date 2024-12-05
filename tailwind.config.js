@@ -11,7 +11,11 @@ export default {
     extend: {
       boxShadow: {
         '3xl': '0 1px 3px #666'
-      }
+      },
+      colors: {
+        'dark-midnight': '#002e6e',
+        'process-cyan': '#00b9f1',
+      },
     }
   },
   plugins: [],
