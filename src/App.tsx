@@ -62,7 +62,7 @@ export default function App() {
         <Route path="reports" element={<Reports />} />
         <Route path="issues" element={<Issues />} />
         <Route path="manage" element={<Manage />} />
-        <Route path="paytm/home" element={<PaytmHome />} />
+        <Route path="paytm/:page" element={<PaytmHome />} />
         <Route path="u/:component" element={<RedirectOldLink />} />
       </Route>
     </Routes> : <ActivityIndicator />}
