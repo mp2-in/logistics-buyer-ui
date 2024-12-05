@@ -9,6 +9,8 @@ import { OrderFormData } from "./interfaces"
 import NavMenu from "./NavMenu"
 import ShowQuote from "./ShowQuote"
 import { useParams } from "react-router-dom"
+import OrderList from "./OrderList"
+import dayjs from "dayjs"
 
 
 const initialValue: OrderFormData = {
@@ -29,7 +31,7 @@ export default () => {
     const { page } = useParams() as { page: string | undefined }
     const [state, dispatch] = useReducer(reducer, initialValue)
 
-    const { googlePlacesApi, activity, googlePlaceDetailsApi, addOutlet, getPickupList, pickupStores, getPriceQuote, createOrder } = useOrdersStore(state => ({
+    const { googlePlacesApi, activity, googlePlaceDetailsApi, addOutlet, getPickupList, pickupStores, getPriceQuote, createOrder, getOrders, orders } = useOrdersStore(state => ({
         googlePlacesApi: state.googlePlacesApi,
         activity: state.activity,
         googlePlaceDetailsApi: state.googlePlaceDetailsApi,
@@ -37,13 +39,16 @@ export default () => {
         getPickupList: state.getPickupList,
         pickupStores: state.pickupStores,
         getPriceQuote: state.getPriceQuote,
-        createOrder: state.createOrder
+        createOrder: state.createOrder,
+        getOrders: state.getOrders,
+        orders: state.orders
     }))
 
     const { token, setToast } = useAppConfigStore(state => ({ token: state.token, setToast: state.setToast }))
 
     useEffect(() => {
         getPickupList(token || '', () => null)
+        getOrders(token || '', dayjs().format('YYYY-MM-DD'))
     }, [])
 
     const isDisabled = () => {
@@ -71,11 +76,15 @@ export default () => {
                         }, pincode: state.pincode, phone: state.phoneNumber
                     }, state.orderAmount, undefined, undefined, undefined, (success, message) => {
                         if (success) {
+                            getOrders(token||'', dayjs().format('YYYY-MM-DD'))
                             callback(message || '')
                         }
                     })
                 }
-            }} loading={activity.createOrder} reset={() => dispatch({type: 'reset'})}/> : page === 'orders' ? <p>Orders</p> : <>
+            }} loading={activity.createOrder} reset={() => dispatch({type: 'reset'})}/> : page === 'orders' ? <>
+            <OrderList orders={orders}/>
+            <NavMenu />
+            </> : <>
                 <PlaceOrderForm data={state} update={payload => dispatch({ type: 'update', payload })} />
                 <NavMenu onClick={() => {
                     if (state.storeLatitude && state.storeLongitude) {

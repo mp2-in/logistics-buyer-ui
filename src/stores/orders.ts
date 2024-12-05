@@ -271,7 +271,7 @@ export const useOrdersStore = create<State>()((set, get) => ({
                         callback(false, '', res.message || 'Error fetching price quotes')
                     }
                 })
-                .catch(e => {
+                .catch(() => {
                     set(produce((state: State) => {
                         state.activity.getPriceQuote = false
                     }))
