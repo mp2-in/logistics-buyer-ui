@@ -99,7 +99,7 @@ export default ({ orders, onCancelOrder }: { orders: Order[], onCancelOrder: (or
                             {eachOrder.deliveryProof ? <a href={eachOrder.deliveryProof} className='text-xs ml-2 underline text-blue-600 font-medium' target='_blank'>Drop</a> :
                                 <p className='text-xs ml-2 text-gray-400 font-medium opacity-0'>Drop</p>}
                         </div>
-                        <div className={`flex-[6] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}> {/*Actions*/}
+                        <div className={`flex-[3] flex justify-around md:justify-evenly items-center mx-0 ${rowBackground(eachOrder.orderState)} py-2 h-full`}> {/*Actions*/}
                             {eachOrder.trackingUrl ? <a href={eachOrder.trackingUrl} target='_blank' className='font-semibold underline text-blue-500 cursor-pointer w-5' onClick={e => e.stopPropagation()}>
                                 <img src={trackIcon} title='Track Shipment' className='w-5' />
                             </a> : <a className='font-semibold underline text-blue-500 cursor-pointer w-5'>
