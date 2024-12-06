@@ -22,7 +22,7 @@ export default ({ data, update }: { data: OrderFormData, update: (d: Partial<Ord
                     update({ storeId: val, storeLatitude: store?.latitude, storeLongitude: store?.longitude })
                 }} value={data.storeId} hideSearch size="large" required />
             <div className="flex justify-between items-center mt-2">
-                <p className="font-semibold underline text-dark-midnight" onClick={() => update({ showAddAddress: true })}>Add Address</p>
+                <p className="font-semibold underline text-dark-midnight" onClick={() => update({ storeId: undefined, storeLatitude: undefined, storeLongitude: undefined, showAddAddress: true })}>Add Address</p>
                 <p className={`font-semibold underline text-dark-midnight ${!data.storeId ? 'opacity-45' : ''}`}
                     onClick={() => data.storeId && update({ showAddAddress: true })}>Edit Address</p>
             </div>
