@@ -131,7 +131,7 @@ export default () => {
             }}
             activity={activity}
             addOutlet={(storeId, address, placesId) => {
-                addOutlet(storeId ? 'update' : 'create', token || '', storeId, address, placesId, (success, message) => {
+                addOutlet(state.storeId ? 'update' : 'create', token || '', storeId, address, placesId, (success, message) => {
                     if (success) {
                         dispatch({ type: 'update', payload: { showAddAddress: false } })
                         getPickupList(token || '', () => null)
