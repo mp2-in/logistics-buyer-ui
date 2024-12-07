@@ -48,7 +48,7 @@ export default ({ open, onClose, raiseIssue, loading, orderStatus, orderAmount, 
             case "Rider ran away with the item":
                 return orderStatus !== 'Order-delivered'
             case "Food spillage":
-                return orderStatus === 'Order-delivered'
+                return ["Order-picked-up", "Out-for-delivery", "At-delivery", "Order-delivered"].includes(orderStatus)
             case "MDND - Marked delivered without delivering":
                 return orderStatus === 'Order-delivered'
             case "Marked delivered without picking up items":
