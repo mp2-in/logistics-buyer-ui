@@ -3,7 +3,7 @@ import walletIcon from "@assets/wallet.png"
 import AddOutlet from "./AddOutlet"
 import { useOrdersStore } from "stores/orders"
 import { useAppConfigStore } from "stores/appConfig"
-import { useEffect, useReducer } from "react"
+import { useEffect, useReducer, useState } from "react"
 import PlaceOrderForm from "./PlaceOrderForm"
 import { OrderFormData } from "./interfaces"
 import NavMenu from "./NavMenu"
@@ -54,6 +54,8 @@ export default () => {
 
     const { token, setToast, role } = useAppConfigStore(state => ({ token: state.token, setToast: state.setToast, role: state.role }))
 
+    const [bridgeState, setBridgeState] = useState('')
+
     useEffect(() => {
         getPickupList(token || '', () => null)
         getOrders(token || '', dayjs().format('YYYY-MM-DD'));
@@ -62,10 +64,14 @@ export default () => {
             (window as any).JSBridge.call('paytmFetchAuthCode', {
                 clientId: 'vyjFMJ03414563892324'
             }, (result: any) => {
-                console.log(JSON.stringify(result));
+                setBridgeState(JSON.stringify(result))
             });
         } catch(e) {
-            console.log(e);
+            if (typeof e === "string") {
+                setBridgeState(e.toUpperCase()) // works, `e` narrowed to string
+            } else if (e instanceof Error) {
+                setBridgeState(e.message) // works, `e` narrowed to Error
+            }
         }
 
     }, [])
@@ -110,6 +116,7 @@ export default () => {
                 <NavMenu page="settings" />
             </> : <>
             <PlaceOrderForm data={state} update={payload => dispatch({ type: 'update', payload })} />
+            <p className="absolute bottom-[180px]">{bridgeState}</p>
             <NavMenu onClick={() => {
                 if (state.storeLatitude && state.storeLongitude) {
                     getPriceQuote(token || '', state.storeId, {
