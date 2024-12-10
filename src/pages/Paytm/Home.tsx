@@ -30,6 +30,7 @@ const reducer = (state: OrderFormData, action: { type: 'reset' } | { type: 'upda
     }
 }
 
+
 export default () => {
     const { page } = useParams() as { page: string | undefined }
     const [state, dispatch] = useReducer(reducer, initialValue)
@@ -55,7 +56,18 @@ export default () => {
 
     useEffect(() => {
         getPickupList(token || '', () => null)
-        getOrders(token || '', dayjs().format('YYYY-MM-DD'))
+        getOrders(token || '', dayjs().format('YYYY-MM-DD'));
+        
+        try {
+            (window as any).JSBridge.call('paytmFetchAuthCode', {
+                clientId: 'vyjFMJ03414563892324'
+            }, (result: any) => {
+                console.log(JSON.stringify(result));
+            });
+        } catch(e) {
+            console.log(e);
+        }
+
     }, [])
 
     const isDisabled = () => {
@@ -90,7 +102,7 @@ export default () => {
                 }
             }} loading={activity.createOrder} reset={() => dispatch({ type: 'reset' })} /> : page === 'orders' ? <>
                 <OrderList orders={orders} onCancelOrder={orderId => {
-                     dispatch({ type: 'update', payload: { showCancelOrderModal: true, toBeCancelledOrder: orderId } })
+                    dispatch({ type: 'update', payload: { showCancelOrderModal: true, toBeCancelledOrder: orderId } })
                 }} />
                 <NavMenu page="orders" />
             </> : page === 'settings' ? <>
