@@ -54,23 +54,24 @@ export default () => {
 
     const { token, setToast, role } = useAppConfigStore(state => ({ token: state.token, setToast: state.setToast, role: state.role }))
 
-    const [bridgeState, setBridgeState] = useState('')
+    const [bridgeState, setBridgeState] = useState('Default Value')
 
     useEffect(() => {
         getPickupList(token || '', () => null)
         getOrders(token || '', dayjs().format('YYYY-MM-DD'));
         
         try {
+            setBridgeState('making the call');
             (window as any).JSBridge.call('paytmFetchAuthCode', {
                 clientId: 'vyjFMJ03414563892324'
             }, (result: any) => {
-                setBridgeState(JSON.stringify(result))
+                setBridgeState('Success '+JSON.stringify(result))
             });
         } catch(e) {
             if (typeof e === "string") {
-                setBridgeState(e.toUpperCase()) // works, `e` narrowed to string
+                setBridgeState(e.toUpperCase())
             } else if (e instanceof Error) {
-                setBridgeState(e.message) // works, `e` narrowed to Error
+                setBridgeState(e.message)
             }
         }
 
