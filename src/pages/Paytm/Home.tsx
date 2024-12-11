@@ -59,9 +59,11 @@ export default () => {
     useEffect(() => {
         getPickupList(token || '', () => null)
         getOrders(token || '', dayjs().format('YYYY-MM-DD'));
-        
+    }, [])
+
+    document.addEventListener('JSBridgeReady', () => {
+        setBridgeState('making the call');
         try {
-            setBridgeState('making the call');
             (window as any).JSBridge.call('paytmFetchAuthCode', {
                 clientId: 'vyjFMJ03414563892324'
             }, (result: any) => {
@@ -74,8 +76,7 @@ export default () => {
                 setBridgeState(e.message)
             }
         }
-
-    }, [])
+    }, false)
 
     const isDisabled = () => {
         let keys: (keyof OrderFormData)[] = ['storeId', 'dropPlaceId', 'phoneNumber', 'billNumber', 'city', 'pincode', 'name', 'orderAmount']
