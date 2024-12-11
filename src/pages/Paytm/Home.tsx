@@ -61,10 +61,10 @@ export default () => {
         getOrders(token || '', dayjs().format('YYYY-MM-DD'));
 
         document.addEventListener('JSBridgeReady', () => {
-            setBridgeState('making the call');
+            setBridgeState('Calling paytmFetchAuthCode');
             try {
                 (window as any).JSBridge.call('paytmFetchAuthCode', {
-                    clientId: 'vyjFMJ03414563892324'
+                    clientId: 'LlRQsK24053494465759'
                 }, (result: any) => {
                     setBridgeState('Success '+JSON.stringify(result))
                 });
